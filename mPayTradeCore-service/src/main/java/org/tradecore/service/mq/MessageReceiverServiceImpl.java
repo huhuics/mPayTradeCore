@@ -19,7 +19,7 @@ public class MessageReceiverServiceImpl implements MessageReceiverService {
 
     @Override
     public void getMessage(Object obj) {
-        LogUtil.info(logger, "mechmng-service接收到消息,消息体obj={0}", obj);
+        LogUtil.info(logger, "mPayTradeCore-service接收到消息,消息体obj={0}", obj);
     }
 
 }
