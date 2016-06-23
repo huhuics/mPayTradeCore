@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>mPayTradeCore-dao</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>com.fesc.mPayTradeCore</groupId>
+		<artifactId>mPayTradeCore</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<name>mPayTradeCore-dao</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.fesc.mPayTradeCore</groupId>
+			<artifactId>mPayTradeCore-common</artifactId>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mybatis.generator</groupId>
+					<artifactId>mybatis-generator-maven-plugin</artifactId>
+					<!-- 1.3.3-SNAPSHOT这个版本是修改了源代码重新编译的版本 -->
+					<version>1.3.3-SNAPSHOT</version>
+					<configuration>
+						<verbose>true</verbose>
+						<overwrite>true</overwrite>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>mysql</groupId>
+							<artifactId>mysql-connector-java</artifactId>
+							<version>5.1.30</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>Generate MyBatis Artifacts</id>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
