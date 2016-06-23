@@ -19,7 +19,7 @@
 	</bean>
 
 	<!-- 扫描注解 -->
-	<context:component-scan base-package="org.mechmng">
+	<context:component-scan base-package="org.mPayTradeCore">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>

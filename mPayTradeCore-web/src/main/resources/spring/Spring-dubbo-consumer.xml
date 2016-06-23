@@ -18,8 +18,8 @@
 	<!-- 使用zookeeper注册中心暴露服务地址，check表示注册中心不存在时是否报错 -->
 	<dubbo:registry address="${dubbo.registry.address}" check="false" />
 		
-	<dubbo:reference interface="org.mechmng.facade.api.DepartmentFacade" id="departmentFacade" />
+	<dubbo:reference interface="org.mPayTradeCore.facade.api.DepartmentFacade" id="departmentFacade" />
 	
-	<dubbo:reference interface="org.mechmng.facade.api.UserFacade" id="userFacade" />
+	<dubbo:reference interface="org.mPayTradeCore.facade.api.UserFacade" id="userFacade" />
 	
 </beans>

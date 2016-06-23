@@ -15,16 +15,16 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>  
         <!-- 生成领域对象的包名和位置 -->
-        <javaModelGenerator targetPackage="org.mechmng.dao.domain" targetProject="src/main/java">  
+        <javaModelGenerator targetPackage="org.mPayTradeCore.dao.domain" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
             <property name="trimStrings" value="true"/>  
         </javaModelGenerator>  
         <!-- 生成mapping文件的包名和位置 -->
-        <sqlMapGenerator targetPackage="org.mechmng.dao.mapping" targetProject="src/main/java">  
+        <sqlMapGenerator targetPackage="org.mPayTradeCore.dao.mapping" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
         </sqlMapGenerator>  
         <!-- 生成DAO的包名和位置 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="org.mechmng.dao" targetProject="src/main/java">  
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.mPayTradeCore.dao" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
         </javaClientGenerator>  
         <!-- 要生成的表，tableName是数据库中的表名或者视图名，domainObjectName是实体类名 -->
@@ -37,7 +37,7 @@
 		</table> -->
 		<table tableName="goods" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<columnOverride column="id" javaType="java.lang.Long" />
-			<columnOverride column="price" javaType="org.mechmng.common.util.Money"></columnOverride>
+			<columnOverride column="price" javaType="org.mPayTradeCore.common.util.Money"></columnOverride>
 		</table>
     </context>  
 </generatorConfiguration>

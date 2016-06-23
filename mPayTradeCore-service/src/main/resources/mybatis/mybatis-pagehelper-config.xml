@@ -5,7 +5,7 @@
 
 	<!-- 注册typeHandler, 处理表示Money的字段 -->
 	<typeHandlers>
-		<typeHandler handler="org.mechmng.common.typehandler.MoneyTypeHandler" />
+		<typeHandler handler="org.mPayTradeCore.common.typehandler.MoneyTypeHandler" />
 	</typeHandlers>
 
 	<plugins>

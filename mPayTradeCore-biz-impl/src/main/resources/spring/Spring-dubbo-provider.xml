@@ -13,7 +13,7 @@
 	default-lazy-init="false">
 	
 	<!-- 提供方应用名称信息，这个相当于起一个名字，我们dubbo管理页面比较清晰是哪个应用暴露出来的 -->
-	<dubbo:application name="mechmng-biz-impl" logger="slf4j" />
+	<dubbo:application name="mPayTradeCore-biz-impl" logger="slf4j" />
 
 	<!-- 使用zookeeper注册中心暴露服务地址，check表示注册中心不存在时是否报错 -->
 	<dubbo:registry address="${dubbo.registry.address}" check="false" />
@@ -27,8 +27,8 @@
 	
 	<!-- 要对外暴露的接口 -->
 	
-	<dubbo:service interface="org.mechmng.facade.api.UserFacade" ref="userFacade" />
+	<dubbo:service interface="org.mPayTradeCore.facade.api.UserFacade" ref="userFacade" />
 	
-	<dubbo:service interface="org.mechmng.facade.api.DepartmentFacade" ref="departmentFacade" />
+	<dubbo:service interface="org.mPayTradeCore.facade.api.DepartmentFacade" ref="departmentFacade" />
 	
 </beans>

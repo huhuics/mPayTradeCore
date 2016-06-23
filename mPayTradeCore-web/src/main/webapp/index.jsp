@@ -1,5 +1,5 @@
 <html>
 <body>
-<h2>Hello mechmng mvc!</h2>
+<h2>Hello mPayTradeCore mvc!</h2>
 </body>
 </html>

@@ -16,18 +16,18 @@
 
 	<!-- 创建queue -->
 	<bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="mechmng.queue" />
+		<constructor-arg value="mPayTradeCore.queue" />
 	</bean>
 
 	<!-- 创建topic -->
 	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="mechmng.topic" />
+		<constructor-arg value="mPayTradeCore.topic" />
 	</bean>
 
 	<!-- 装配JMS模板 -->
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="connectionFactory" />
-		<property name="defaultDestinationName" value="mechmng.queue"></property>
+		<property name="defaultDestinationName" value="mPayTradeCore.queue"></property>
 	</bean>
 	
 </beans>

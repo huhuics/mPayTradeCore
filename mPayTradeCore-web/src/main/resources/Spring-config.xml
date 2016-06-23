@@ -7,7 +7,7 @@
                         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
 	<!-- 扫描注解 -->
-	<context:component-scan base-package="org.mechmng">
+	<context:component-scan base-package="org.mPayTradeCore">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
@@ -22,7 +22,7 @@
 		</property>
 		<property name="properties">
 			<props>
-				<prop key="dubbo.application.name">mechmng-web</prop>
+				<prop key="dubbo.application.name">mPayTradeCore-web</prop>
 			</props>
 		</property>
 	</bean>
