@@ -13,12 +13,12 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-pagehelper-config.xml" />
-		<property name="mapperLocations" value="classpath:org/mPayTradeCore/dao/mapping/*.xml" />
+		<property name="mapperLocations" value="classpath:org/tradecore/dao/mapping/*.xml" />
 	</bean>
 
 	<!-- 配置Dao接口所在包名 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="org.mPayTradeCore.dao" />
+		<property name="basePackage" value="org.tradecore.dao" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 	

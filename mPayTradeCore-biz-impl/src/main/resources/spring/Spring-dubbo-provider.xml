@@ -27,8 +27,8 @@
 	
 	<!-- 要对外暴露的接口 -->
 	
-	<dubbo:service interface="org.mPayTradeCore.facade.api.UserFacade" ref="userFacade" />
+	<dubbo:service interface="org.tradecore.facade.api.UserFacade" ref="userFacade" />
 	
-	<dubbo:service interface="org.mPayTradeCore.facade.api.DepartmentFacade" ref="departmentFacade" />
+	<dubbo:service interface="org.tradecore.facade.api.DepartmentFacade" ref="departmentFacade" />
 	
 </beans>

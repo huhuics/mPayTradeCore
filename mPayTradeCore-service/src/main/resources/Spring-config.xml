@@ -12,14 +12,13 @@
 		<property name="locations">
 			<list>
 				<value>classpath:config/jdbc.properties</value>
-				<value>classpath:config/mq.properties</value>
 				<value>classpath:config/dubbo.properties</value>
 			</list>
 		</property>
 	</bean>
 
 	<!-- 扫描注解 -->
-	<context:component-scan base-package="org.mPayTradeCore">
+	<context:component-scan base-package="org.tradecore">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
