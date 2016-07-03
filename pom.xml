@@ -256,6 +256,12 @@
 				<artifactId>commons-net</artifactId>
 				<version>3.4</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>0.1.53</version>
+			</dependency>
 			<!-- tools end -->
 
 			<dependency>

@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.tradecore.common.util.LogUtil;
 
 /**
- * FTP上传下载
+ * FTP上传下载<br>
+ * 使用该工具类完成文件上传或下载，一定要调用close()方法关闭连接，释放资源
  * @author HuHui
  * @version $Id: FtpClient.java, v 0.1 2016年6月11日 下午3:37:56 HuHui Exp $
  */
@@ -55,7 +56,7 @@ public class FtpClient {
                 ftpClient.connect(host, port);
             } catch (Exception e) {
                 LogUtil.error(e, logger, "FTP[{0}:{1}]连接失败!", host, port);
-                throw new RuntimeException("FTP连接失败!", e);
+                throw new RuntimeException(e);
             }
 
             if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
@@ -63,7 +64,7 @@ public class FtpClient {
                     ftpClient.login(username, password);
                 } catch (Exception e) {
                     LogUtil.error(e, logger, "FTP用户{0}登录失败!", username);
-                    throw new RuntimeException("FTP用户登录失败", e);
+                    throw new RuntimeException(e);
                 }
             } else {
                 throw new RuntimeException("FTP连接失败!");
@@ -78,7 +79,7 @@ public class FtpClient {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             } catch (Exception e) {
                 LogUtil.error(e, logger, "FTP初始化出错!");
-                throw new RuntimeException("FTP初始化出错!", e);
+                throw new RuntimeException(e);
             }
 
         }
@@ -95,7 +96,7 @@ public class FtpClient {
             } catch (Exception e) {
                 ftpClient = null;
                 LogUtil.error(e, logger, "FTP退出异常");
-                throw new RuntimeException("FTP退出异常", e);
+                throw new RuntimeException(e);
             }
             LogUtil.info(logger, "用户退出登录");
         }
@@ -192,7 +193,7 @@ public class FtpClient {
                 }
             } catch (Exception e) {
                 LogUtil.error(e, logger, "FTP下载{0}出错!", localPath);
-                throw new RuntimeException("FTP下载出错", e);
+                throw new RuntimeException(e);
             }
             return false;
         }
@@ -226,7 +227,7 @@ public class FtpClient {
                 }
             } catch (Exception e) {
                 LogUtil.error(e, logger, "FTP下载{0}出错!", localFilePath);
-                throw new RuntimeException("FTP下载出错", e);
+                throw new RuntimeException(e);
             }
         } else { // deal file
             if (ftpFile.getName().indexOf("?") == -1) {
@@ -245,7 +246,7 @@ public class FtpClient {
                     return true;
                 } catch (Exception e) {
                     LogUtil.error(e, logger, "FTP下载{0}出错!", localFilePath);
-                    throw new RuntimeException("FTP下载出错", e);
+                    throw new RuntimeException(e);
                 } finally {
                     try {
                         if (outputStream != null) {

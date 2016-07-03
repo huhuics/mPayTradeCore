@@ -58,6 +58,11 @@
 			<artifactId>commons-net</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+		</dependency>
+
 		<!-- 日志 -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
