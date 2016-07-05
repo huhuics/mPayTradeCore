@@ -13,9 +13,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
-import org.tradecore.common.facade.result.Result;
-import org.tradecore.facade.dto.UserDTO;
-import org.tradecore.mvc.integration.UserFacadeClient;
+import org.tradecore.dao.domain.User;
+import org.tradecore.service.UserService;
 
 /**
  * 
@@ -29,15 +28,15 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
-    private UserFacadeClient    userFacadeClient;
+    private UserService         userService;
 
     @RequestMapping(value = "/showUser", method = RequestMethod.GET)
     public String toShowUser(WebRequest request, ModelMap map) {
         try {
             Long id = Long.parseLong(request.getParameter("id"));
-            Result<UserDTO> userRet = userFacadeClient.selectUserById(id);
+            User user = userService.selectByPrimaryKey(id);
 
-            map.put("user", userRet.getResultObj());
+            map.put("user", user);
         } catch (Exception e) {
             logger.error("查询用户信息异常", e);
         }

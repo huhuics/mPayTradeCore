@@ -20,7 +20,7 @@
 		<!-- 导入mPayTradeCore-facade -->
 		<dependency>
 			<groupId>com.fesc.mPayTradeCore</groupId>
-			<artifactId>mPayTradeCore-facade</artifactId>
+			<artifactId>mPayTradeCore-service</artifactId>
 		</dependency>
 
 		<!-- spring核心 -->
@@ -87,23 +87,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- dubbo -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.101tec</groupId>
-			<artifactId>zkclient</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
 	<build>
 		<finalName>mPayTradeCore-web</finalName>
 		<plugins>

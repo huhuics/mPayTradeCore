@@ -22,10 +22,6 @@
 			<groupId>com.fesc.mPayTradeCore</groupId>
 			<artifactId>mPayTradeCore-dao</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.fesc.mPayTradeCore</groupId>
-			<artifactId>mPayTradeCore-common</artifactId>
-		</dependency>
 		<!-- mPayTradeCore end -->
 
 		<!-- spring核心 -->
@@ -120,6 +116,13 @@
 			<artifactId>jsqlparser</artifactId>
 		</dependency>
 		<!-- pagehelper end -->
+
+		<!-- tools -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+		</dependency>
+		<!-- tools end -->
 
 		<dependency>
 			<groupId>junit</groupId>

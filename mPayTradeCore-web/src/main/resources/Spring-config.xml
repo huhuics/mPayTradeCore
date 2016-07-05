@@ -11,21 +11,4 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-	<!-- 引入配置文件 -->
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:config/dubbo.properties</value>
-			</list>
-		</property>
-		<property name="properties">
-			<props>
-				<prop key="dubbo.application.name">mPayTradeCore-web</prop>
-			</props>
-		</property>
-	</bean>
-
-	<!-- 引入其它组件配置文件 -->
-	<import resource="spring/*.xml" />
 </beans>

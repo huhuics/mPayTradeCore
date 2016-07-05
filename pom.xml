@@ -14,10 +14,6 @@
 
 
 	<modules>
-		<module>mPayTradeCore-dao</module>
-		<module>mPayTradeCore-common</module>
-		<module>mPayTradeCore-facade</module>
-		<module>mPayTradeCore-biz-impl</module>
 		<module>mPayTradeCore-service</module>
 		<module>mPayTradeCore-web</module>
 	</modules>
@@ -33,7 +29,7 @@
 	<dependencyManagement>
 		<dependencies>
 
-			<!-- mPayTradeCore相关jar? -->
+			<!-- mPayTradeCore相关jar -->
 			<dependency>
 				<groupId>com.fesc.mPayTradeCore</groupId>
 				<artifactId>mPayTradeCore-dao</artifactId>
@@ -179,50 +175,6 @@
 				<version>0.9.5</version>
 			</dependency>
 			<!-- pagehelper end -->
-
-			<!-- Apache ActiveMQ -->
-			<dependency>
-				<groupId>org.apache.activemq</groupId>
-				<artifactId>activemq-core</artifactId>
-				<version>5.7.0</version>
-			</dependency>
-
-			<!-- Quartz -->
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>2.2.1</version>
-			</dependency>
-
-			<!-- dubbo -->
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>dubbo</artifactId>
-				<version>2.5.3</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.jboss.netty</groupId>
-						<artifactId>netty</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<!-- zookeeper client -->
-			<dependency>
-				<groupId>com.101tec</groupId>
-				<artifactId>zkclient</artifactId>
-				<version>0.9</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-log4j12</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 
 			<!-- commons tools -->
 			<dependency>
