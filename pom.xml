@@ -28,23 +28,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-
 			<!-- mPayTradeCore相关jar -->
-			<dependency>
-				<groupId>com.fesc.mPayTradeCore</groupId>
-				<artifactId>mPayTradeCore-dao</artifactId>
-				<version>${mPayTradeCore.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fesc.mPayTradeCore</groupId>
-				<artifactId>mPayTradeCore-common</artifactId>
-				<version>${mPayTradeCore.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fesc.mPayTradeCore</groupId>
-				<artifactId>mPayTradeCore-facade</artifactId>
-				<version>${mPayTradeCore.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>com.fesc.mPayTradeCore</groupId>
 				<artifactId>mPayTradeCore-service</artifactId>
@@ -213,13 +197,23 @@
 				<version>0.1.53</version>
 			</dependency>
 			<!-- tools end -->
-
+			
+			<!-- alipay trade sdk -->
+			<dependency>
+				<groupId>com.alipay.demo</groupId>
+				<artifactId>trade</artifactId>
+				<version>20160705</version>
+			</dependency>
+			<!-- sdk end -->
+			
+			<!-- junit -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
+			<!-- junit end -->
 		</dependencies>
 	</dependencyManagement>
 

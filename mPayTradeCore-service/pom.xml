@@ -147,11 +147,20 @@
 		</dependency>
 		<!-- tools end -->
 
+		<!-- alipay trade sdk -->
+		<dependency>
+			<groupId>com.alipay.demo</groupId>
+			<artifactId>trade</artifactId>
+		</dependency>
+		<!-- sdk end -->
+
+		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- junit end -->
 	</dependencies>
 
 </project>
