@@ -150,7 +150,12 @@
 		<!-- alipay trade sdk -->
 		<dependency>
 			<groupId>com.alipay.demo</groupId>
-			<artifactId>trade</artifactId>
+			<artifactId>TradePaySDK</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alipay.demo</groupId>
+			<artifactId>sdk</artifactId>
 		</dependency>
 		<!-- sdk end -->
 

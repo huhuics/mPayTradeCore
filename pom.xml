@@ -197,15 +197,21 @@
 				<version>0.1.53</version>
 			</dependency>
 			<!-- tools end -->
-			
+
 			<!-- alipay trade sdk -->
 			<dependency>
 				<groupId>com.alipay.demo</groupId>
-				<artifactId>trade</artifactId>
+				<artifactId>TradePaySDK</artifactId>
 				<version>20160705</version>
 			</dependency>
+
+			<dependency>
+				<groupId>com.alipay.demo</groupId>
+				<artifactId>sdk</artifactId>
+				<version>20160302220055</version>
+			</dependency>
 			<!-- sdk end -->
-			
+
 			<!-- junit -->
 			<dependency>
 				<groupId>junit</groupId>
