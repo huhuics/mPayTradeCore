@@ -20,8 +20,6 @@
 		<module>mPayTradeCore-biz-impl</module>
 		<module>mPayTradeCore-service</module>
 		<module>mPayTradeCore-web</module>
-		<module>mPayTradeCore-test</module>
-		<module>mPayTradeCore-integration</module>
 	</modules>
 
 	<properties>
