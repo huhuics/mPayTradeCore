@@ -149,13 +149,8 @@
 
 		<!-- alipay trade sdk -->
 		<dependency>
-			<groupId>com.alipay.demo</groupId>
+			<groupId>com.alipay.f2f</groupId>
 			<artifactId>TradePaySDK</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.alipay.demo</groupId>
-			<artifactId>sdk</artifactId>
 		</dependency>
 		<!-- sdk end -->
 

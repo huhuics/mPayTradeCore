@@ -8,7 +8,7 @@
         <dependent-module archiveName="mPayTradeCore-service-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/mPayTradeCore-service/mPayTradeCore-service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="TradePaySDK-20160705.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/TradePaySDK/TradePaySDK">
+        <dependent-module archiveName="TradePaySDK-20160707.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/TradePaySDK/TradePaySDK">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="mPayTradeCore-web"/>

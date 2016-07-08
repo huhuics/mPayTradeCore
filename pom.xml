@@ -200,15 +200,9 @@
 
 			<!-- alipay trade sdk -->
 			<dependency>
-				<groupId>com.alipay.demo</groupId>
+				<groupId>com.alipay.f2f</groupId>
 				<artifactId>TradePaySDK</artifactId>
-				<version>20160705</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.alipay.demo</groupId>
-				<artifactId>sdk</artifactId>
-				<version>20160302220055</version>
+				<version>20160707</version>
 			</dependency>
 			<!-- sdk end -->
 
