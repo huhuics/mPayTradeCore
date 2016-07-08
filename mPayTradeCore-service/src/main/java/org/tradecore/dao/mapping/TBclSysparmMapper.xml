@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.TBclSysparmDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.TBclSysparm">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="PARM_CODE" jdbcType="VARCHAR" property="parmCode" />
+    <result column="PARM_NAME" jdbcType="VARCHAR" property="parmName" />
+    <result column="PARM_VALUE" jdbcType="VARCHAR" property="parmValue" />
+    <result column="PARM_DESC" jdbcType="VARCHAR" property="parmDesc" />
+    <result column="STUTS" jdbcType="CHAR" property="stuts" />
+    <result column="MODIFY_FLAG" jdbcType="CHAR" property="modifyFlag" />
+    <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, PARM_CODE, PARM_NAME, PARM_VALUE, PARM_DESC, STUTS, MODIFY_FLAG, UPDATE_DATE, 
+    CREATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_BCL_SYSPARM
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from T_BCL_SYSPARM
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="org.tradecore.dao.domain.TBclSysparm">
+    insert into T_BCL_SYSPARM (ID, PARM_CODE, PARM_NAME, 
+      PARM_VALUE, PARM_DESC, STUTS, 
+      MODIFY_FLAG, UPDATE_DATE, CREATE_TIME
+      )
+    values (#{id,jdbcType=DECIMAL}, #{parmCode,jdbcType=VARCHAR}, #{parmName,jdbcType=VARCHAR}, 
+      #{parmValue,jdbcType=VARCHAR}, #{parmDesc,jdbcType=VARCHAR}, #{stuts,jdbcType=CHAR}, 
+      #{modifyFlag,jdbcType=CHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.tradecore.dao.domain.TBclSysparm">
+    insert into T_BCL_SYSPARM
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="parmCode != null">
+        PARM_CODE,
+      </if>
+      <if test="parmName != null">
+        PARM_NAME,
+      </if>
+      <if test="parmValue != null">
+        PARM_VALUE,
+      </if>
+      <if test="parmDesc != null">
+        PARM_DESC,
+      </if>
+      <if test="stuts != null">
+        STUTS,
+      </if>
+      <if test="modifyFlag != null">
+        MODIFY_FLAG,
+      </if>
+      <if test="updateDate != null">
+        UPDATE_DATE,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="parmCode != null">
+        #{parmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parmName != null">
+        #{parmName,jdbcType=VARCHAR},
+      </if>
+      <if test="parmValue != null">
+        #{parmValue,jdbcType=VARCHAR},
+      </if>
+      <if test="parmDesc != null">
+        #{parmDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="stuts != null">
+        #{stuts,jdbcType=CHAR},
+      </if>
+      <if test="modifyFlag != null">
+        #{modifyFlag,jdbcType=CHAR},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.TBclSysparm">
+    update T_BCL_SYSPARM
+    <set>
+      <if test="parmCode != null">
+        PARM_CODE = #{parmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parmName != null">
+        PARM_NAME = #{parmName,jdbcType=VARCHAR},
+      </if>
+      <if test="parmValue != null">
+        PARM_VALUE = #{parmValue,jdbcType=VARCHAR},
+      </if>
+      <if test="parmDesc != null">
+        PARM_DESC = #{parmDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="stuts != null">
+        STUTS = #{stuts,jdbcType=CHAR},
+      </if>
+      <if test="modifyFlag != null">
+        MODIFY_FLAG = #{modifyFlag,jdbcType=CHAR},
+      </if>
+      <if test="updateDate != null">
+        UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.TBclSysparm">
+    update T_BCL_SYSPARM
+    set PARM_CODE = #{parmCode,jdbcType=VARCHAR},
+      PARM_NAME = #{parmName,jdbcType=VARCHAR},
+      PARM_VALUE = #{parmValue,jdbcType=VARCHAR},
+      PARM_DESC = #{parmDesc,jdbcType=VARCHAR},
+      STUTS = #{stuts,jdbcType=CHAR},
+      MODIFY_FLAG = #{modifyFlag,jdbcType=CHAR},
+      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

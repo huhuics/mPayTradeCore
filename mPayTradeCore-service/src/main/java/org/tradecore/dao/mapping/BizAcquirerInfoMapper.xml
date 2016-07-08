@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.BizAcquirerInfoDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAcquirerInfo">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="acquirer_name" jdbcType="VARCHAR" property="acquirerName" />
+    <result column="acc_no" jdbcType="VARCHAR" property="accNo" />
+    <result column="acc_name" jdbcType="VARCHAR" property="accName" />
+    <result column="acc_bank_no" jdbcType="VARCHAR" property="accBankNo" />
+    <result column="acquirer_state" jdbcType="CHAR" property="acquirerState" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.tradecore.dao.domain.BizAcquirerInfo">
+    <result column="check_cert" jdbcType="BLOB" property="checkCert" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, acquirer_id, acquirer_name, acc_no, acc_name, acc_bank_no, acquirer_state, gmt_create, 
+    gmt_update
+  </sql>
+  <sql id="Blob_Column_List">
+    check_cert
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BIZ_ACQUIRER_INFO
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from BIZ_ACQUIRER_INFO
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
+    insert into BIZ_ACQUIRER_INFO (ID, acquirer_id, acquirer_name, 
+      acc_no, acc_name, acc_bank_no, 
+      acquirer_state, gmt_create, gmt_update, 
+      check_cert)
+    values (#{id,jdbcType=DECIMAL}, #{acquirerId,jdbcType=VARCHAR}, #{acquirerName,jdbcType=VARCHAR}, 
+      #{accNo,jdbcType=VARCHAR}, #{accName,jdbcType=VARCHAR}, #{accBankNo,jdbcType=VARCHAR}, 
+      #{acquirerState,jdbcType=CHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}, 
+      #{checkCert,jdbcType=BLOB})
+  </insert>
+  <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
+    insert into BIZ_ACQUIRER_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="acquirerId != null">
+        acquirer_id,
+      </if>
+      <if test="acquirerName != null">
+        acquirer_name,
+      </if>
+      <if test="accNo != null">
+        acc_no,
+      </if>
+      <if test="accName != null">
+        acc_name,
+      </if>
+      <if test="accBankNo != null">
+        acc_bank_no,
+      </if>
+      <if test="acquirerState != null">
+        acquirer_state,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+      <if test="checkCert != null">
+        check_cert,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="acquirerId != null">
+        #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerName != null">
+        #{acquirerName,jdbcType=VARCHAR},
+      </if>
+      <if test="accNo != null">
+        #{accNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accName != null">
+        #{accName,jdbcType=VARCHAR},
+      </if>
+      <if test="accBankNo != null">
+        #{accBankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerState != null">
+        #{acquirerState,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkCert != null">
+        #{checkCert,jdbcType=BLOB},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
+    update BIZ_ACQUIRER_INFO
+    <set>
+      <if test="acquirerId != null">
+        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerName != null">
+        acquirer_name = #{acquirerName,jdbcType=VARCHAR},
+      </if>
+      <if test="accNo != null">
+        acc_no = #{accNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accName != null">
+        acc_name = #{accName,jdbcType=VARCHAR},
+      </if>
+      <if test="accBankNo != null">
+        acc_bank_no = #{accBankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerState != null">
+        acquirer_state = #{acquirerState,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkCert != null">
+        check_cert = #{checkCert,jdbcType=BLOB},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
+    update BIZ_ACQUIRER_INFO
+    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      acquirer_name = #{acquirerName,jdbcType=VARCHAR},
+      acc_no = #{accNo,jdbcType=VARCHAR},
+      acc_name = #{accName,jdbcType=VARCHAR},
+      acc_bank_no = #{accBankNo,jdbcType=VARCHAR},
+      acquirer_state = #{acquirerState,jdbcType=CHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      check_cert = #{checkCert,jdbcType=BLOB}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
+    update BIZ_ACQUIRER_INFO
+    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      acquirer_name = #{acquirerName,jdbcType=VARCHAR},
+      acc_no = #{accNo,jdbcType=VARCHAR},
+      acc_name = #{accName,jdbcType=VARCHAR},
+      acc_bank_no = #{accBankNo,jdbcType=VARCHAR},
+      acquirer_state = #{acquirerState,jdbcType=CHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

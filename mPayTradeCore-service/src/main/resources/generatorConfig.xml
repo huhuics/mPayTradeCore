@@ -27,11 +27,8 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="org.tradecore.dao" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
         </javaClientGenerator>  
-        <!-- 要生成的表，tableName是数据库中的表名或者视图名，domainObjectName是实体类名 -->
-		<!-- <table tableName="BIZ_ALIPAY_PAY_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-		</table> -->
 		
-		<!-- 生成所有表 -->
+		<!-- 生成表 -->
 		<table tableName="BIZ_ALIPAY_PAY_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<columnOverride column="total_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
 			<columnOverride column="receipt_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
@@ -39,10 +36,5 @@
 			<columnOverride column="undiscountable_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
 		</table>
 		
-		<!-- 映射Money类举例 -->
-		<!-- <table tableName="goods" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-			<columnOverride column="id" javaType="java.lang.Long" />
-			<columnOverride column="price" javaType="org.tradecore.common.util.Money"></columnOverride>
-		</table> -->
     </context>  
 </generatorConfiguration>

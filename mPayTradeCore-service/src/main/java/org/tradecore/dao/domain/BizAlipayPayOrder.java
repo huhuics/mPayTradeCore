@@ -1,163 +1,168 @@
 package org.tradecore.dao.domain;
 
 import java.util.Date;
+
 import org.tradecore.common.util.Money;
 
-public class BizAlipayPayOrder {
+public class BizAlipayPayOrder extends BaseDomain {
+
+    /**  */
+    private static final long serialVersionUID = -2330876486504112476L;
+
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.id
      */
-    private String id;
+    private String            id;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.acquirer_id
      */
-    private String acquirerId;
+    private String            acquirerId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.merchant_id
      */
-    private String merchantId;
+    private String            merchantId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.alipay_trade_no
      */
-    private String alipayTradeNo;
+    private String            alipayTradeNo;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.out_trade_no
      */
-    private String outTradeNo;
+    private String            outTradeNo;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.order_status
      */
-    private String orderStatus;
+    private String            orderStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.cancel_status
      */
-    private String cancelStatus;
+    private String            cancelStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.refund_status
      */
-    private String refundStatus;
+    private String            refundStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.pay_detail
      */
-    private String payDetail;
+    private String            payDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.auth_code
      */
-    private String authCode;
+    private String            authCode;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.seller_id
      */
-    private String sellerId;
+    private String            sellerId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.total_amount
      */
-    private Money totalAmount;
+    private Money             totalAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.receipt_amount
      */
-    private Money receiptAmount;
+    private Money             receiptAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.discountable_amount
      */
-    private Money discountableAmount;
+    private Money             discountableAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.undiscountable_amount
      */
-    private Money undiscountableAmount;
+    private Money             undiscountableAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.subject
      */
-    private String subject;
+    private String            subject;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.body
      */
-    private String body;
+    private String            body;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.goods_detail
      */
-    private String goodsDetail;
+    private String            goodsDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.merchant_detail
      */
-    private String merchantDetail;
+    private String            merchantDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.extend_params
      */
-    private String extendParams;
+    private String            extendParams;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.timeout_express
      */
-    private String timeoutExpress;
+    private String            timeoutExpress;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.royalty_info
      */
-    private String royaltyInfo;
+    private String            royaltyInfo;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.fund_bill_list
      */
-    private String fundBillList;
+    private String            fundBillList;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.discount_goods_detail
      */
-    private String discountGoodsDetail;
+    private String            discountGoodsDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.error_detail
      */
-    private String errorDetail;
+    private String            errorDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.check_status
      */
-    private String checkStatus;
+    private String            checkStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.check_date
      */
-    private String checkDate;
+    private String            checkDate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.create_date
      */
-    private String createDate;
+    private String            createDate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.gmt_create
      */
-    private Date gmtCreate;
+    private Date              gmtCreate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.gmt_update
      */
-    private Date gmtUpdate;
+    private Date              gmtUpdate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.gmt_pay_success
      */
-    private Date gmtPaySuccess;
+    private Date              gmtPaySuccess;
 
     public String getId() {
         return id;

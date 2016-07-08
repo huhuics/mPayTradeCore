@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.BizAcquirerCashInfoDtlDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAcquirerCashInfoDtl">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="out_request_no" jdbcType="VARCHAR" property="outRequestNo" />
+    <result column="success_date" jdbcType="CHAR" property="successDate" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, acquirer_id, amount, out_trade_no, out_request_no, success_date, gmt_create
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from BIZ_ACQUIRER_CASH_INFO_DTL
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from BIZ_ACQUIRER_CASH_INFO_DTL
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="org.tradecore.dao.domain.BizAcquirerCashInfoDtl">
+    insert into BIZ_ACQUIRER_CASH_INFO_DTL (ID, acquirer_id, amount, 
+      out_trade_no, out_request_no, success_date, 
+      gmt_create)
+    values (#{id,jdbcType=DECIMAL}, #{acquirerId,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{outTradeNo,jdbcType=VARCHAR}, #{outRequestNo,jdbcType=VARCHAR}, #{successDate,jdbcType=CHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAcquirerCashInfoDtl">
+    insert into BIZ_ACQUIRER_CASH_INFO_DTL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="acquirerId != null">
+        acquirer_id,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="outRequestNo != null">
+        out_request_no,
+      </if>
+      <if test="successDate != null">
+        success_date,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="acquirerId != null">
+        #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outRequestNo != null">
+        #{outRequestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="successDate != null">
+        #{successDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.BizAcquirerCashInfoDtl">
+    update BIZ_ACQUIRER_CASH_INFO_DTL
+    <set>
+      <if test="acquirerId != null">
+        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outRequestNo != null">
+        out_request_no = #{outRequestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="successDate != null">
+        success_date = #{successDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAcquirerCashInfoDtl">
+    update BIZ_ACQUIRER_CASH_INFO_DTL
+    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      out_request_no = #{outRequestNo,jdbcType=VARCHAR},
+      success_date = #{successDate,jdbcType=CHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

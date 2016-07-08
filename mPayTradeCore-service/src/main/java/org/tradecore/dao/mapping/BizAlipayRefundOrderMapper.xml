@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.BizAlipayRefundOrderDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAlipayRefundOrder">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
+    <result column="alipay_trade_no" jdbcType="VARCHAR" property="alipayTradeNo" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="refund_amount" jdbcType="DECIMAL" property="refundAmount" />
+    <result column="send_back_fee" jdbcType="DECIMAL" property="sendBackFee" />
+    <result column="refund_reason" jdbcType="VARCHAR" property="refundReason" />
+    <result column="out_request_no" jdbcType="VARCHAR" property="outRequestNo" />
+    <result column="refund_status" jdbcType="VARCHAR" property="refundStatus" />
+    <result column="merchant_detail" jdbcType="VARCHAR" property="merchantDetail" />
+    <result column="fund_change" jdbcType="CHAR" property="fundChange" />
+    <result column="refund_detail_item_list" jdbcType="VARCHAR" property="refundDetailItemList" />
+    <result column="buyer_user_id" jdbcType="VARCHAR" property="buyerUserId" />
+    <result column="check_status" jdbcType="VARCHAR" property="checkStatus" />
+    <result column="check_date" jdbcType="CHAR" property="checkDate" />
+    <result column="error_detail" jdbcType="VARCHAR" property="errorDetail" />
+    <result column="create_date" jdbcType="CHAR" property="createDate" />
+    <result column="gmt_refund_pay" jdbcType="TIMESTAMP" property="gmtRefundPay" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, acquirer_id, merchant_id, alipay_trade_no, out_trade_no, total_amount, refund_amount, 
+    send_back_fee, refund_reason, out_request_no, refund_status, merchant_detail, fund_change, 
+    refund_detail_item_list, buyer_user_id, check_status, check_date, error_detail, create_date, 
+    gmt_refund_pay, gmt_create, gmt_update
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from BIZ_ALIPAY_REFUND_ORDER
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from BIZ_ALIPAY_REFUND_ORDER
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
+    insert into BIZ_ALIPAY_REFUND_ORDER (id, acquirer_id, merchant_id, 
+      alipay_trade_no, out_trade_no, total_amount, 
+      refund_amount, send_back_fee, refund_reason, 
+      out_request_no, refund_status, merchant_detail, 
+      fund_change, refund_detail_item_list, buyer_user_id, 
+      check_status, check_date, error_detail, 
+      create_date, gmt_refund_pay, gmt_create, 
+      gmt_update)
+    values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
+      #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
+      #{refundAmount,jdbcType=DECIMAL}, #{sendBackFee,jdbcType=DECIMAL}, #{refundReason,jdbcType=VARCHAR}, 
+      #{outRequestNo,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, 
+      #{fundChange,jdbcType=CHAR}, #{refundDetailItemList,jdbcType=VARCHAR}, #{buyerUserId,jdbcType=VARCHAR}, 
+      #{checkStatus,jdbcType=VARCHAR}, #{checkDate,jdbcType=CHAR}, #{errorDetail,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=CHAR}, #{gmtRefundPay,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtUpdate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
+    insert into BIZ_ALIPAY_REFUND_ORDER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="acquirerId != null">
+        acquirer_id,
+      </if>
+      <if test="merchantId != null">
+        merchant_id,
+      </if>
+      <if test="alipayTradeNo != null">
+        alipay_trade_no,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="totalAmount != null">
+        total_amount,
+      </if>
+      <if test="refundAmount != null">
+        refund_amount,
+      </if>
+      <if test="sendBackFee != null">
+        send_back_fee,
+      </if>
+      <if test="refundReason != null">
+        refund_reason,
+      </if>
+      <if test="outRequestNo != null">
+        out_request_no,
+      </if>
+      <if test="refundStatus != null">
+        refund_status,
+      </if>
+      <if test="merchantDetail != null">
+        merchant_detail,
+      </if>
+      <if test="fundChange != null">
+        fund_change,
+      </if>
+      <if test="refundDetailItemList != null">
+        refund_detail_item_list,
+      </if>
+      <if test="buyerUserId != null">
+        buyer_user_id,
+      </if>
+      <if test="checkStatus != null">
+        check_status,
+      </if>
+      <if test="checkDate != null">
+        check_date,
+      </if>
+      <if test="errorDetail != null">
+        error_detail,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="gmtRefundPay != null">
+        gmt_refund_pay,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerId != null">
+        #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantId != null">
+        #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="alipayTradeNo != null">
+        #{alipayTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null">
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundAmount != null">
+        #{refundAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="sendBackFee != null">
+        #{sendBackFee,jdbcType=DECIMAL},
+      </if>
+      <if test="refundReason != null">
+        #{refundReason,jdbcType=VARCHAR},
+      </if>
+      <if test="outRequestNo != null">
+        #{outRequestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundStatus != null">
+        #{refundStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantDetail != null">
+        #{merchantDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="fundChange != null">
+        #{fundChange,jdbcType=CHAR},
+      </if>
+      <if test="refundDetailItemList != null">
+        #{refundDetailItemList,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerUserId != null">
+        #{buyerUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkStatus != null">
+        #{checkStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null">
+        #{checkDate,jdbcType=CHAR},
+      </if>
+      <if test="errorDetail != null">
+        #{errorDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtRefundPay != null">
+        #{gmtRefundPay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
+    update BIZ_ALIPAY_REFUND_ORDER
+    <set>
+      <if test="acquirerId != null">
+        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantId != null">
+        merchant_id = #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="alipayTradeNo != null">
+        alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null">
+        total_amount = #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="refundAmount != null">
+        refund_amount = #{refundAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="sendBackFee != null">
+        send_back_fee = #{sendBackFee,jdbcType=DECIMAL},
+      </if>
+      <if test="refundReason != null">
+        refund_reason = #{refundReason,jdbcType=VARCHAR},
+      </if>
+      <if test="outRequestNo != null">
+        out_request_no = #{outRequestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="refundStatus != null">
+        refund_status = #{refundStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantDetail != null">
+        merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="fundChange != null">
+        fund_change = #{fundChange,jdbcType=CHAR},
+      </if>
+      <if test="refundDetailItemList != null">
+        refund_detail_item_list = #{refundDetailItemList,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerUserId != null">
+        buyer_user_id = #{buyerUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkStatus != null">
+        check_status = #{checkStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null">
+        check_date = #{checkDate,jdbcType=CHAR},
+      </if>
+      <if test="errorDetail != null">
+        error_detail = #{errorDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtRefundPay != null">
+        gmt_refund_pay = #{gmtRefundPay,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
+    update BIZ_ALIPAY_REFUND_ORDER
+    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      merchant_id = #{merchantId,jdbcType=VARCHAR},
+      alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
+      refund_amount = #{refundAmount,jdbcType=DECIMAL},
+      send_back_fee = #{sendBackFee,jdbcType=DECIMAL},
+      refund_reason = #{refundReason,jdbcType=VARCHAR},
+      out_request_no = #{outRequestNo,jdbcType=VARCHAR},
+      refund_status = #{refundStatus,jdbcType=VARCHAR},
+      merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
+      fund_change = #{fundChange,jdbcType=CHAR},
+      refund_detail_item_list = #{refundDetailItemList,jdbcType=VARCHAR},
+      buyer_user_id = #{buyerUserId,jdbcType=VARCHAR},
+      check_status = #{checkStatus,jdbcType=VARCHAR},
+      check_date = #{checkDate,jdbcType=CHAR},
+      error_detail = #{errorDetail,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=CHAR},
+      gmt_refund_pay = #{gmtRefundPay,jdbcType=TIMESTAMP},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

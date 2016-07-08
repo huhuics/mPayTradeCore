@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.BizAlipayCancelOrderDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAlipayCancelOrder">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
+    <result column="alipay_trade_no" jdbcType="VARCHAR" property="alipayTradeNo" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="retry_flag" jdbcType="CHAR" property="retryFlag" />
+    <result column="action" jdbcType="VARCHAR" property="action" />
+    <result column="cancel_status" jdbcType="VARCHAR" property="cancelStatus" />
+    <result column="error_detail" jdbcType="VARCHAR" property="errorDetail" />
+    <result column="create_date" jdbcType="CHAR" property="createDate" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, acquirer_id, merchant_id, alipay_trade_no, out_trade_no, total_amount, retry_flag, 
+    action, cancel_status, error_detail, create_date, gmt_create, gmt_update
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from BIZ_ALIPAY_CANCEL_ORDER
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from BIZ_ALIPAY_CANCEL_ORDER
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
+    insert into BIZ_ALIPAY_CANCEL_ORDER (id, acquirer_id, merchant_id, 
+      alipay_trade_no, out_trade_no, total_amount, 
+      retry_flag, action, cancel_status, 
+      error_detail, create_date, gmt_create, 
+      gmt_update)
+    values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
+      #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
+      #{retryFlag,jdbcType=CHAR}, #{action,jdbcType=VARCHAR}, #{cancelStatus,jdbcType=VARCHAR}, 
+      #{errorDetail,jdbcType=VARCHAR}, #{createDate,jdbcType=CHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtUpdate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
+    insert into BIZ_ALIPAY_CANCEL_ORDER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="acquirerId != null">
+        acquirer_id,
+      </if>
+      <if test="merchantId != null">
+        merchant_id,
+      </if>
+      <if test="alipayTradeNo != null">
+        alipay_trade_no,
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no,
+      </if>
+      <if test="totalAmount != null">
+        total_amount,
+      </if>
+      <if test="retryFlag != null">
+        retry_flag,
+      </if>
+      <if test="action != null">
+        action,
+      </if>
+      <if test="cancelStatus != null">
+        cancel_status,
+      </if>
+      <if test="errorDetail != null">
+        error_detail,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create,
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="acquirerId != null">
+        #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantId != null">
+        #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="alipayTradeNo != null">
+        #{alipayTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null">
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="retryFlag != null">
+        #{retryFlag,jdbcType=CHAR},
+      </if>
+      <if test="action != null">
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelStatus != null">
+        #{cancelStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="errorDetail != null">
+        #{errorDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
+    update BIZ_ALIPAY_CANCEL_ORDER
+    <set>
+      <if test="acquirerId != null">
+        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantId != null">
+        merchant_id = #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="alipayTradeNo != null">
+        alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outTradeNo != null">
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="totalAmount != null">
+        total_amount = #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="retryFlag != null">
+        retry_flag = #{retryFlag,jdbcType=CHAR},
+      </if>
+      <if test="action != null">
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="cancelStatus != null">
+        cancel_status = #{cancelStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="errorDetail != null">
+        error_detail = #{errorDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=CHAR},
+      </if>
+      <if test="gmtCreate != null">
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null">
+        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
+    update BIZ_ALIPAY_CANCEL_ORDER
+    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+      merchant_id = #{merchantId,jdbcType=VARCHAR},
+      alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
+      retry_flag = #{retryFlag,jdbcType=CHAR},
+      action = #{action,jdbcType=VARCHAR},
+      cancel_status = #{cancelStatus,jdbcType=VARCHAR},
+      error_detail = #{errorDetail,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=CHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
