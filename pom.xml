@@ -111,11 +111,11 @@
 			</dependency>
 			<!-- end mybatis -->
 
-			<!-- 数据库连 -->
+			<!-- 数据库连接 -->
 			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>5.1.30</version>
+				<groupId>oracle</groupId>
+				<artifactId>oracle-jdbc6</artifactId>
+				<version>11.2.0.3.0</version>
 			</dependency>
 
 			<!-- 数据库连接池 -->

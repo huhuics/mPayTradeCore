@@ -82,8 +82,8 @@
 
 		<!-- 数据库链接 -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>oracle</groupId>
+			<artifactId>oracle-jdbc6</artifactId>
 		</dependency>
 
 		<!-- druid数据源 -->
@@ -162,5 +162,37 @@
 		</dependency>
 		<!-- junit end -->
 	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mybatis.generator</groupId>
+					<artifactId>mybatis-generator-maven-plugin</artifactId>
+					<!-- 1.3.3-SNAPSHOT这个版本是修改了源代码重新编译的版本 -->
+					<version>1.3.3-SNAPSHOT</version>
+					<configuration>
+						<verbose>true</verbose>
+						<overwrite>true</overwrite>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>oracle</groupId>
+							<artifactId>oracle-jdbc6</artifactId>
+							<version>11.2.0.3.0</version>
+						</dependency>
+					</dependencies>
+					<executions>
+						<execution>
+							<id>Generate MyBatis Artifacts</id>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 </project>

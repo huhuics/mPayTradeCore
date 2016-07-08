@@ -4,17 +4,10 @@
  */
 package org.tradecore.mvc.web.controller;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.WebRequest;
-import org.tradecore.dao.domain.User;
-import org.tradecore.service.UserService;
 
 /**
  * 
@@ -27,20 +20,20 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Resource
-    private UserService         userService;
+    /*  @Resource
+      private UserService         userService;
 
-    @RequestMapping(value = "/showUser", method = RequestMethod.GET)
-    public String toShowUser(WebRequest request, ModelMap map) {
-        try {
-            Long id = Long.parseLong(request.getParameter("id"));
-            User user = userService.selectByPrimaryKey(id);
+      @RequestMapping(value = "/showUser", method = RequestMethod.GET)
+      public String toShowUser(WebRequest request, ModelMap map) {
+          try {
+              Long id = Long.parseLong(request.getParameter("id"));
+              User user = userService.selectByPrimaryKey(id);
 
-            map.put("user", user);
-        } catch (Exception e) {
-            logger.error("查询用户信息异常", e);
-        }
-        return "showUser";
-    }
+              map.put("user", user);
+          } catch (Exception e) {
+              logger.error("查询用户信息异常", e);
+          }
+          return "showUser";
+      }*/
 
 }
