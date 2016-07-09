@@ -69,7 +69,7 @@ public class TradeServiceImpl implements TradeService {
         //4.调用支付宝支付接口
         AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
 
-        LogUtil.info(logger, "支付宝返回支付结果result={0}", alipayF2FPayResult.getTradeStatus().toString());
+        LogUtil.info(logger, "支付宝返回支付结果result={0}", alipayF2FPayResult.getTradeStatus());
 
         //5.根据支付宝返回结果更新本地数据
         tradeRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);

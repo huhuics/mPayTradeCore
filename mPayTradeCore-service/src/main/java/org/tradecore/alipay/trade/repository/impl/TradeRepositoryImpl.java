@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -101,6 +102,8 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(returnDetailMap));
 
+        bizAlipayPayOrder.setGmtUpdate(new Date());
+
         //修改本地订单数据
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "修改订单失败!");
 
@@ -128,8 +131,16 @@ public class TradeRepositoryImpl implements TradeRepository {
         payOrder.setAuthCode(payRequest.getAuthCode());
         payOrder.setSellerId(payRequest.getSellerId());
         payOrder.setTotalAmount(new Money(payRequest.getTotalAmount()));
-        payOrder.setDiscountableAmount(new Money(payRequest.getDiscountableAmount()));
-        payOrder.setUndiscountableAmount(new Money(payRequest.getUndiscountableAmount()));
+
+        //判断金额是否为空
+        if (StringUtils.isNotBlank(payRequest.getDiscountableAmount())) {
+            payOrder.setDiscountableAmount(new Money(payRequest.getDiscountableAmount()));
+        }
+
+        if (StringUtils.isNotBlank(payRequest.getUndiscountableAmount())) {
+            payOrder.setUndiscountableAmount(new Money(payRequest.getUndiscountableAmount()));
+        }
+
         payOrder.setSubject(payRequest.getSubject());
         payOrder.setBody(payRequest.getBody());
         payOrder.setAppauthtoken(payRequest.getAppAuthToken());
@@ -143,7 +154,10 @@ public class TradeRepositoryImpl implements TradeRepository {
         merchantDetailMap.put(JSONFieldConstant.ALIPAY_STORE_ID, payRequest.getAlipayStoreId());
         payOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
 
-        payOrder.setExtendParams(payRequest.getExtendParams().toString());
+        if (payRequest.getExtendParams() != null) {
+            payOrder.setExtendParams(payRequest.getExtendParams().toString());
+        }
+
         payOrder.setTimeoutExpress(payRequest.getTimeoutExpress());
         payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
 
@@ -156,5 +170,4 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         return payOrder;
     }
-
 }
