@@ -7,7 +7,7 @@ import org.tradecore.common.util.Money;
 public class BizAlipayPayOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4096032310091792852L;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.id
@@ -95,6 +95,11 @@ public class BizAlipayPayOrder extends BaseDomain {
     private String            body;
 
     /**
+     *  null, BIZ_ALIPAY_PAY_ORDER.appAuthToken
+     */
+    private String            appauthtoken;
+
+    /**
      *  null, BIZ_ALIPAY_PAY_ORDER.goods_detail
      */
     private String            goodsDetail;
@@ -130,9 +135,9 @@ public class BizAlipayPayOrder extends BaseDomain {
     private String            qrCode;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.error_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.return_detail
      */
-    private String            errorDetail;
+    private String            returnDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.check_status
@@ -300,6 +305,14 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.body = body == null ? null : body.trim();
     }
 
+    public String getAppauthtoken() {
+        return appauthtoken;
+    }
+
+    public void setAppauthtoken(String appauthtoken) {
+        this.appauthtoken = appauthtoken == null ? null : appauthtoken.trim();
+    }
+
     public String getGoodsDetail() {
         return goodsDetail;
     }
@@ -356,12 +369,12 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.qrCode = qrCode == null ? null : qrCode.trim();
     }
 
-    public String getErrorDetail() {
-        return errorDetail;
+    public String getReturnDetail() {
+        return returnDetail;
     }
 
-    public void setErrorDetail(String errorDetail) {
-        this.errorDetail = errorDetail == null ? null : errorDetail.trim();
+    public void setReturnDetail(String returnDetail) {
+        this.returnDetail = returnDetail == null ? null : returnDetail.trim();
     }
 
     public String getCheckStatus() {

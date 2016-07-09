@@ -75,6 +75,11 @@ public class PayRequest extends BaseRequest {
     private String            body;
 
     /**
+     * 应用授权令牌
+     */
+    private String            appAuthToken;
+
+    /**
      * 商品明细列表，需填写购买商品详细信息
      */
     private List<GoodsDetail> goodsDetailList;
@@ -278,6 +283,14 @@ public class PayRequest extends BaseRequest {
 
     public void setTimeoutExpress(String timeoutExpress) {
         this.timeoutExpress = timeoutExpress;
+    }
+
+    public String getAppAuthToken() {
+        return appAuthToken;
+    }
+
+    public void setAppAuthToken(String appAuthToken) {
+        this.appAuthToken = appAuthToken;
     }
 
 }

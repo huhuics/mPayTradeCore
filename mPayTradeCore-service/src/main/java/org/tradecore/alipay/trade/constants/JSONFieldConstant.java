@@ -14,6 +14,9 @@ public class JSONFieldConstant {
     /** 支付场景 */
     public static final String SCENE           = "scene";
 
+    /** 买家支付宝账号 */
+    public static final String BUYER_LOGON_ID  = "buyerLogonId";
+
     /** 商户操作员编号 */
     public static final String OPERATOR_ID     = "operatorId";
 
@@ -25,5 +28,17 @@ public class JSONFieldConstant {
 
     /** 支付宝店铺编号 */
     public static final String ALIPAY_STORE_ID = "alipayStoreId";
+
+    /** 支付宝返回码 */
+    public static final String CODE            = "code";
+
+    /** 支付宝返回信息 */
+    public static final String MSG             = "msg";
+
+    /** 支付宝子返回码 */
+    public static final String SUB_CODE        = "subCode";
+
+    /** 支付宝子返回信息 */
+    public static final String SUB_MSG         = "subMsg";
 
 }

@@ -18,6 +18,7 @@ import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.repository.TradeRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
@@ -26,6 +27,10 @@ import org.tradecore.dao.BizAlipayPayOrderDAO;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.demo.trade.model.TradeStatus;
+import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 
 /**
  * 交易类仓储服务接口实现类
@@ -43,7 +48,7 @@ public class TradeRepositoryImpl implements TradeRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public boolean savePayOrder(PayRequest payRequest) {
+    public BizAlipayPayOrder savePayOrder(PayRequest payRequest) {
 
         LogUtil.info(logger, "收到付款持久化请求,payRequest={0}", payRequest);
 
@@ -51,7 +56,53 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         LogUtil.info(logger, "付款请求payRequest转化为payOrder对象成功,payOrder={0}", payOrder);
 
-        return bizAlipayPayOrderDAO.insert(payOrder) > 0;
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "支付数据持久化失败");
+
+        return payOrder;
+
+    }
+
+    @Override
+    public void updatePayOrder(BizAlipayPayOrder bizAlipayPayOrder, AlipayF2FPayResult alipayF2FPayResult) {
+
+        LogUtil.info(logger, "收到交易更新请求");
+
+        TradeStatus tradeStatus = alipayF2FPayResult.getTradeStatus();
+        AlipayTradePayResponse response = alipayF2FPayResult.getResponse();
+
+        if (tradeStatus == TradeStatus.SUCCESS) {
+            LogUtil.info(logger, "支付宝支付成功!");
+
+            bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
+            bizAlipayPayOrder.setAlipayTradeNo(response.getTradeNo());
+
+            //增加PayDetail字段数据
+            Map<String, Object> payDetailMap = JSON.parseObject(bizAlipayPayOrder.getPayDetail(), new TypeReference<Map<String, Object>>() {
+            });
+            payDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, response.getBuyerLogonId());
+            bizAlipayPayOrder.setPayDetail(JSON.toJSONString(payDetailMap));
+
+            bizAlipayPayOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
+            bizAlipayPayOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
+            bizAlipayPayOrder.setGmtPayment(response.getGmtPayment());
+
+        } else {
+            LogUtil.error(logger, "支付宝支付失败!");
+
+            bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+        }
+
+        //封装支付宝返回信息
+        Map<String, Object> returnDetailMap = new HashMap<String, Object>();
+        returnDetailMap.put(JSONFieldConstant.CODE, response.getCode());
+        returnDetailMap.put(JSONFieldConstant.MSG, response.getMsg());
+        returnDetailMap.put(JSONFieldConstant.SUB_CODE, response.getSubCode());
+        returnDetailMap.put(JSONFieldConstant.SUB_MSG, response.getSubMsg());
+
+        bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(returnDetailMap));
+
+        //修改本地订单数据
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "修改订单失败!");
 
     }
 
@@ -81,6 +132,7 @@ public class TradeRepositoryImpl implements TradeRepository {
         payOrder.setUndiscountableAmount(new Money(payRequest.getUndiscountableAmount()));
         payOrder.setSubject(payRequest.getSubject());
         payOrder.setBody(payRequest.getBody());
+        payOrder.setAppauthtoken(payRequest.getAppAuthToken());
         payOrder.setGoodsDetail(JSON.toJSONString(payRequest.getGoodsDetailList()));
 
         //封装merchantDetail
@@ -104,4 +156,5 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         return payOrder;
     }
+
 }

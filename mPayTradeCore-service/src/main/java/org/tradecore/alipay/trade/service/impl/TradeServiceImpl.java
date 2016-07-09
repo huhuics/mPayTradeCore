@@ -15,6 +15,7 @@ import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
@@ -50,8 +51,8 @@ public class TradeServiceImpl implements TradeService {
         alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public AlipayF2FPayResult pay(PayRequest payRequest) {
 
         LogUtil.info(logger, "收到交易请求参数,payRequest={0}", payRequest);
@@ -63,16 +64,17 @@ public class TradeServiceImpl implements TradeService {
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
 
         //3.持久化
-        tradeRepository.savePayOrder(payRequest);
+        BizAlipayPayOrder bizAlipayPayOrder = tradeRepository.savePayOrder(payRequest);
 
         //4.调用支付宝支付接口
-        AlipayF2FPayResult result = alipayTradeService.tradePay(builder);
+        AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
 
-        LogUtil.info(logger, "支付宝返回支付结果result={0}", result.getTradeStatus().toString());
+        LogUtil.info(logger, "支付宝返回支付结果result={0}", alipayF2FPayResult.getTradeStatus().toString());
 
         //5.根据支付宝返回结果更新本地数据
+        tradeRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
 
-        return result;
+        return alipayF2FPayResult;
     }
 
     /**
@@ -85,7 +87,7 @@ public class TradeServiceImpl implements TradeService {
             .setAuthCode(payRequest.getAuthCode()).setTotalAmount(payRequest.getTotalAmount()).setStoreId(payRequest.getStoreId())
             .setUndiscountableAmount(payRequest.getUndiscountableAmount()).setBody(payRequest.getBody()).setOperatorId(payRequest.getOperatorId())
             .setExtendParams(payRequest.getExtendParams()).setSellerId(payRequest.getSellerId()).setGoodsDetailList(payRequest.getGoodsDetailList())
-            .setTimeoutExpress(payRequest.getTimeoutExpress());
+            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAppAuthToken(payRequest.getAppAuthToken());
     }
 
 }
