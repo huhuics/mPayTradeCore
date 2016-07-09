@@ -22,20 +22,20 @@ public class PayRequest extends BaseRequest {
     /**  */
     private static final long serialVersionUID = -4651634291538225127L;
 
-    /** 收单机构编号 */
+    /** (必填)收单机构编号 */
     private String            acquirerId;
 
-    /** 商户识别号 */
+    /** (必填)商户识别号 */
     private String            merchantId;
 
-    /** 支付场景，条码支付场景为bar_code */
+    /** (必填)支付场景，条码支付场景为bar_code，扫码支付为scan_code */
     private String            scene;
 
-    /** 付款条码，用户支付宝钱包手机app点击“付款”产生的付款条码 */
+    /** (必填)付款条码，用户支付宝钱包手机app点击“付款”产生的付款条码 */
     private String            authCode;
 
     /**
-     *  商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，需保证商户系统端不能重复，建议通过数据库sequence生成， 
+     *  (必填)商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，需保证商户系统端不能重复，建议通过数据库sequence生成， 
      */
     private String            outTradeNo;
 
@@ -46,7 +46,7 @@ public class PayRequest extends BaseRequest {
     private String            sellerId;
 
     /**
-     * 订单总金额，整形，此处单位为元，精确到小数点后2位，不能超过1亿元<br>
+     * (必填)订单总金额，整形，此处单位为元，精确到小数点后2位，不能超过1亿元<br>
      * 如果同时传入了【打折金额】,【不可打折金额】,【订单总金额】三者,则必须满足如下条件:【订单总金额】=【打折金额】+【不可打折金额】
      */
     private String            totalAmount;
@@ -65,7 +65,7 @@ public class PayRequest extends BaseRequest {
     private String            undiscountableAmount;
 
     /**
-     * 订单标题，粗略描述用户的支付目的。如“喜士多（浦东店）消费”
+     * (必填)订单标题，粗略描述用户的支付目的。如“喜士多（浦东店）消费”
      */
     private String            subject;
 
@@ -85,7 +85,7 @@ public class PayRequest extends BaseRequest {
     private String            operatorId;
 
     /**
-     * 商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
+     * (必填)商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
      */
     private String            storeId;
 
