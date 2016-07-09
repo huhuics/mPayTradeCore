@@ -4,9 +4,13 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.tradecore.alipay.trade.repository.TradeRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
@@ -32,6 +36,12 @@ public class TradeServiceImpl implements TradeService {
     /** 支付宝交易接口 */
     private static AlipayTradeService alipayTradeService;
 
+    /**
+     * 交易类仓储服务
+     */
+    @Resource
+    private TradeRepository           tradeRepository;
+
     static {
         //1.读取配置文件
         Configs.init("config/zfbinfo.properties");
@@ -40,6 +50,7 @@ public class TradeServiceImpl implements TradeService {
         alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
     }
 
+    @Transactional
     @Override
     public AlipayF2FPayResult pay(PayRequest payRequest) {
 
@@ -52,11 +63,12 @@ public class TradeServiceImpl implements TradeService {
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
 
         //3.持久化
+        tradeRepository.savePayOrder(payRequest);
 
         //4.调用支付宝支付接口
         AlipayF2FPayResult result = alipayTradeService.tradePay(builder);
 
-        LogUtil.info(logger, "支付结果result={0}", result.getTradeStatus().toString());
+        LogUtil.info(logger, "支付宝返回支付结果result={0}", result.getTradeStatus().toString());
 
         //5.根据支付宝返回结果更新本地数据
 

@@ -7,7 +7,7 @@ import org.tradecore.common.util.Money;
 public class BizAlipayPayOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -2330876486504112476L;
+    private static final long serialVersionUID = 1L;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.id
@@ -115,11 +115,6 @@ public class BizAlipayPayOrder extends BaseDomain {
     private String            timeoutExpress;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.royalty_info
-     */
-    private String            royaltyInfo;
-
-    /**
      *  null, BIZ_ALIPAY_PAY_ORDER.fund_bill_list
      */
     private String            fundBillList;
@@ -128,6 +123,11 @@ public class BizAlipayPayOrder extends BaseDomain {
      *  null, BIZ_ALIPAY_PAY_ORDER.discount_goods_detail
      */
     private String            discountGoodsDetail;
+
+    /**
+     *  null, BIZ_ALIPAY_PAY_ORDER.qr_code
+     */
+    private String            qrCode;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.error_detail
@@ -150,6 +150,11 @@ public class BizAlipayPayOrder extends BaseDomain {
     private String            createDate;
 
     /**
+     *  null, BIZ_ALIPAY_PAY_ORDER.gmt_payment
+     */
+    private Date              gmtPayment;
+
+    /**
      *  null, BIZ_ALIPAY_PAY_ORDER.gmt_create
      */
     private Date              gmtCreate;
@@ -158,11 +163,6 @@ public class BizAlipayPayOrder extends BaseDomain {
      *  null, BIZ_ALIPAY_PAY_ORDER.gmt_update
      */
     private Date              gmtUpdate;
-
-    /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.gmt_pay_success
-     */
-    private Date              gmtPaySuccess;
 
     public String getId() {
         return id;
@@ -332,14 +332,6 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.timeoutExpress = timeoutExpress == null ? null : timeoutExpress.trim();
     }
 
-    public String getRoyaltyInfo() {
-        return royaltyInfo;
-    }
-
-    public void setRoyaltyInfo(String royaltyInfo) {
-        this.royaltyInfo = royaltyInfo == null ? null : royaltyInfo.trim();
-    }
-
     public String getFundBillList() {
         return fundBillList;
     }
@@ -354,6 +346,14 @@ public class BizAlipayPayOrder extends BaseDomain {
 
     public void setDiscountGoodsDetail(String discountGoodsDetail) {
         this.discountGoodsDetail = discountGoodsDetail == null ? null : discountGoodsDetail.trim();
+    }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode == null ? null : qrCode.trim();
     }
 
     public String getErrorDetail() {
@@ -388,6 +388,14 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.createDate = createDate == null ? null : createDate.trim();
     }
 
+    public Date getGmtPayment() {
+        return gmtPayment;
+    }
+
+    public void setGmtPayment(Date gmtPayment) {
+        this.gmtPayment = gmtPayment;
+    }
+
     public Date getGmtCreate() {
         return gmtCreate;
     }
@@ -402,13 +410,5 @@ public class BizAlipayPayOrder extends BaseDomain {
 
     public void setGmtUpdate(Date gmtUpdate) {
         this.gmtUpdate = gmtUpdate;
-    }
-
-    public Date getGmtPaySuccess() {
-        return gmtPaySuccess;
-    }
-
-    public void setGmtPaySuccess(Date gmtPaySuccess) {
-        this.gmtPaySuccess = gmtPaySuccess;
     }
 }
