@@ -2,74 +2,74 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.tradecore.dao.BizAlipayPayOrderDAO">
   <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAlipayPayOrder">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
-    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
-    <result column="alipay_trade_no" jdbcType="VARCHAR" property="alipayTradeNo" />
-    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
-    <result column="order_status" jdbcType="VARCHAR" property="orderStatus" />
-    <result column="cancel_status" jdbcType="VARCHAR" property="cancelStatus" />
-    <result column="refund_status" jdbcType="VARCHAR" property="refundStatus" />
-    <result column="pay_detail" jdbcType="VARCHAR" property="payDetail" />
-    <result column="auth_code" jdbcType="VARCHAR" property="authCode" />
-    <result column="seller_id" jdbcType="VARCHAR" property="sellerId" />
-    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
-    <result column="receipt_amount" jdbcType="DECIMAL" property="receiptAmount" />
-    <result column="discountable_amount" jdbcType="DECIMAL" property="discountableAmount" />
-    <result column="undiscountable_amount" jdbcType="DECIMAL" property="undiscountableAmount" />
-    <result column="subject" jdbcType="VARCHAR" property="subject" />
-    <result column="body" jdbcType="VARCHAR" property="body" />
-    <result column="appAuthToken" jdbcType="VARCHAR" property="appauthtoken" />
-    <result column="goods_detail" jdbcType="VARCHAR" property="goodsDetail" />
-    <result column="merchant_detail" jdbcType="VARCHAR" property="merchantDetail" />
-    <result column="extend_params" jdbcType="VARCHAR" property="extendParams" />
-    <result column="timeout_express" jdbcType="VARCHAR" property="timeoutExpress" />
-    <result column="fund_bill_list" jdbcType="VARCHAR" property="fundBillList" />
-    <result column="discount_goods_detail" jdbcType="VARCHAR" property="discountGoodsDetail" />
-    <result column="qr_code" jdbcType="VARCHAR" property="qrCode" />
-    <result column="return_detail" jdbcType="VARCHAR" property="returnDetail" />
-    <result column="check_status" jdbcType="VARCHAR" property="checkStatus" />
-    <result column="check_date" jdbcType="CHAR" property="checkDate" />
-    <result column="create_date" jdbcType="CHAR" property="createDate" />
-    <result column="gmt_payment" jdbcType="TIMESTAMP" property="gmtPayment" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
+    <result column="ALIPAY_TRADE_NO" jdbcType="VARCHAR" property="alipayTradeNo" />
+    <result column="OUT_TRADE_NO" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="ORDER_STATUS" jdbcType="VARCHAR" property="orderStatus" />
+    <result column="CANCEL_STATUS" jdbcType="VARCHAR" property="cancelStatus" />
+    <result column="REFUND_STATUS" jdbcType="VARCHAR" property="refundStatus" />
+    <result column="PAY_DETAIL" jdbcType="VARCHAR" property="payDetail" />
+    <result column="AUTH_CODE" jdbcType="VARCHAR" property="authCode" />
+    <result column="SELLER_ID" jdbcType="VARCHAR" property="sellerId" />
+    <result column="TOTAL_AMOUNT" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="RECEIPT_AMOUNT" jdbcType="DECIMAL" property="receiptAmount" />
+    <result column="DISCOUNTABLE_AMOUNT" jdbcType="DECIMAL" property="discountableAmount" />
+    <result column="UNDISCOUNTABLE_AMOUNT" jdbcType="DECIMAL" property="undiscountableAmount" />
+    <result column="SUBJECT" jdbcType="VARCHAR" property="subject" />
+    <result column="BODY" jdbcType="VARCHAR" property="body" />
+    <result column="APP_AUTH_TOKEN" jdbcType="VARCHAR" property="appAuthToken" />
+    <result column="GOODS_DETAIL" jdbcType="VARCHAR" property="goodsDetail" />
+    <result column="MERCHANT_DETAIL" jdbcType="VARCHAR" property="merchantDetail" />
+    <result column="EXTEND_PARAMS" jdbcType="VARCHAR" property="extendParams" />
+    <result column="TIMEOUT_EXPRESS" jdbcType="VARCHAR" property="timeoutExpress" />
+    <result column="FUND_BILL_LIST" jdbcType="VARCHAR" property="fundBillList" />
+    <result column="DISCOUNT_GOODS_DETAIL" jdbcType="VARCHAR" property="discountGoodsDetail" />
+    <result column="QR_CODE" jdbcType="VARCHAR" property="qrCode" />
+    <result column="RETURN_DETAIL" jdbcType="VARCHAR" property="returnDetail" />
+    <result column="CHECK_STATUS" jdbcType="VARCHAR" property="checkStatus" />
+    <result column="CHECK_DATE" jdbcType="CHAR" property="checkDate" />
+    <result column="CREATE_DATE" jdbcType="CHAR" property="createDate" />
+    <result column="GMT_PAYMENT" jdbcType="TIMESTAMP" property="gmtPayment" />
+    <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, acquirer_id, merchant_id, alipay_trade_no, out_trade_no, order_status, cancel_status, 
-    refund_status, pay_detail, auth_code, seller_id, total_amount, receipt_amount, discountable_amount, 
-    undiscountable_amount, subject, body, appAuthToken, goods_detail, merchant_detail, 
-    extend_params, timeout_express, fund_bill_list, discount_goods_detail, qr_code, return_detail, 
-    check_status, check_date, create_date, gmt_payment, gmt_create, gmt_update
+    ID, ACQUIRER_ID, MERCHANT_ID, ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, CANCEL_STATUS, 
+    REFUND_STATUS, PAY_DETAIL, AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, 
+    UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, APP_AUTH_TOKEN, GOODS_DETAIL, MERCHANT_DETAIL, 
+    EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, QR_CODE, RETURN_DETAIL, 
+    CHECK_STATUS, CHECK_DATE, CREATE_DATE, GMT_PAYMENT, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from BIZ_ALIPAY_PAY_ORDER
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from BIZ_ALIPAY_PAY_ORDER
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayPayOrder">
-    insert into BIZ_ALIPAY_PAY_ORDER (id, acquirer_id, merchant_id, 
-      alipay_trade_no, out_trade_no, order_status, 
-      cancel_status, refund_status, pay_detail, 
-      auth_code, seller_id, total_amount, 
-      receipt_amount, discountable_amount, undiscountable_amount, 
-      subject, body, appAuthToken, 
-      goods_detail, merchant_detail, extend_params, 
-      timeout_express, fund_bill_list, discount_goods_detail, 
-      qr_code, return_detail, check_status, 
-      check_date, create_date, gmt_payment, 
-      gmt_create, gmt_update)
+    insert into BIZ_ALIPAY_PAY_ORDER (ID, ACQUIRER_ID, MERCHANT_ID, 
+      ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, 
+      CANCEL_STATUS, REFUND_STATUS, PAY_DETAIL, 
+      AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, 
+      RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, UNDISCOUNTABLE_AMOUNT, 
+      SUBJECT, BODY, APP_AUTH_TOKEN, 
+      GOODS_DETAIL, MERCHANT_DETAIL, EXTEND_PARAMS, 
+      TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, 
+      QR_CODE, RETURN_DETAIL, CHECK_STATUS, 
+      CHECK_DATE, CREATE_DATE, GMT_PAYMENT, 
+      GMT_CREATE, GMT_UPDATE)
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
       #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR}, 
       #{cancelStatus,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, #{payDetail,jdbcType=VARCHAR}, 
       #{authCode,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
       #{receiptAmount,jdbcType=DECIMAL}, #{discountableAmount,jdbcType=DECIMAL}, #{undiscountableAmount,jdbcType=DECIMAL}, 
-      #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, #{appauthtoken,jdbcType=VARCHAR}, 
+      #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, #{appAuthToken,jdbcType=VARCHAR}, 
       #{goodsDetail,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, #{extendParams,jdbcType=VARCHAR}, 
       #{timeoutExpress,jdbcType=VARCHAR}, #{fundBillList,jdbcType=VARCHAR}, #{discountGoodsDetail,jdbcType=VARCHAR}, 
       #{qrCode,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, 
@@ -80,100 +80,100 @@
     insert into BIZ_ALIPAY_PAY_ORDER
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        id,
+        ID,
       </if>
       <if test="acquirerId != null">
-        acquirer_id,
+        ACQUIRER_ID,
       </if>
       <if test="merchantId != null">
-        merchant_id,
+        MERCHANT_ID,
       </if>
       <if test="alipayTradeNo != null">
-        alipay_trade_no,
+        ALIPAY_TRADE_NO,
       </if>
       <if test="outTradeNo != null">
-        out_trade_no,
+        OUT_TRADE_NO,
       </if>
       <if test="orderStatus != null">
-        order_status,
+        ORDER_STATUS,
       </if>
       <if test="cancelStatus != null">
-        cancel_status,
+        CANCEL_STATUS,
       </if>
       <if test="refundStatus != null">
-        refund_status,
+        REFUND_STATUS,
       </if>
       <if test="payDetail != null">
-        pay_detail,
+        PAY_DETAIL,
       </if>
       <if test="authCode != null">
-        auth_code,
+        AUTH_CODE,
       </if>
       <if test="sellerId != null">
-        seller_id,
+        SELLER_ID,
       </if>
       <if test="totalAmount != null">
-        total_amount,
+        TOTAL_AMOUNT,
       </if>
       <if test="receiptAmount != null">
-        receipt_amount,
+        RECEIPT_AMOUNT,
       </if>
       <if test="discountableAmount != null">
-        discountable_amount,
+        DISCOUNTABLE_AMOUNT,
       </if>
       <if test="undiscountableAmount != null">
-        undiscountable_amount,
+        UNDISCOUNTABLE_AMOUNT,
       </if>
       <if test="subject != null">
-        subject,
+        SUBJECT,
       </if>
       <if test="body != null">
-        body,
+        BODY,
       </if>
-      <if test="appauthtoken != null">
-        appAuthToken,
+      <if test="appAuthToken != null">
+        APP_AUTH_TOKEN,
       </if>
       <if test="goodsDetail != null">
-        goods_detail,
+        GOODS_DETAIL,
       </if>
       <if test="merchantDetail != null">
-        merchant_detail,
+        MERCHANT_DETAIL,
       </if>
       <if test="extendParams != null">
-        extend_params,
+        EXTEND_PARAMS,
       </if>
       <if test="timeoutExpress != null">
-        timeout_express,
+        TIMEOUT_EXPRESS,
       </if>
       <if test="fundBillList != null">
-        fund_bill_list,
+        FUND_BILL_LIST,
       </if>
       <if test="discountGoodsDetail != null">
-        discount_goods_detail,
+        DISCOUNT_GOODS_DETAIL,
       </if>
       <if test="qrCode != null">
-        qr_code,
+        QR_CODE,
       </if>
       <if test="returnDetail != null">
-        return_detail,
+        RETURN_DETAIL,
       </if>
       <if test="checkStatus != null">
-        check_status,
+        CHECK_STATUS,
       </if>
       <if test="checkDate != null">
-        check_date,
+        CHECK_DATE,
       </if>
       <if test="createDate != null">
-        create_date,
+        CREATE_DATE,
       </if>
       <if test="gmtPayment != null">
-        gmt_payment,
+        GMT_PAYMENT,
       </if>
       <if test="gmtCreate != null">
-        gmt_create,
+        GMT_CREATE,
       </if>
       <if test="gmtUpdate != null">
-        gmt_update,
+        GMT_UPDATE,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -228,8 +228,8 @@
       <if test="body != null">
         #{body,jdbcType=VARCHAR},
       </if>
-      <if test="appauthtoken != null">
-        #{appauthtoken,jdbcType=VARCHAR},
+      <if test="appAuthToken != null">
+        #{appAuthToken,jdbcType=VARCHAR},
       </if>
       <if test="goodsDetail != null">
         #{goodsDetail,jdbcType=VARCHAR},
@@ -279,134 +279,134 @@
     update BIZ_ALIPAY_PAY_ORDER
     <set>
       <if test="acquirerId != null">
-        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+        ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       </if>
       <if test="merchantId != null">
-        merchant_id = #{merchantId,jdbcType=VARCHAR},
+        MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       </if>
       <if test="alipayTradeNo != null">
-        alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+        ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
       <if test="outTradeNo != null">
-        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+        OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
       </if>
       <if test="orderStatus != null">
-        order_status = #{orderStatus,jdbcType=VARCHAR},
+        ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
       </if>
       <if test="cancelStatus != null">
-        cancel_status = #{cancelStatus,jdbcType=VARCHAR},
+        CANCEL_STATUS = #{cancelStatus,jdbcType=VARCHAR},
       </if>
       <if test="refundStatus != null">
-        refund_status = #{refundStatus,jdbcType=VARCHAR},
+        REFUND_STATUS = #{refundStatus,jdbcType=VARCHAR},
       </if>
       <if test="payDetail != null">
-        pay_detail = #{payDetail,jdbcType=VARCHAR},
+        PAY_DETAIL = #{payDetail,jdbcType=VARCHAR},
       </if>
       <if test="authCode != null">
-        auth_code = #{authCode,jdbcType=VARCHAR},
+        AUTH_CODE = #{authCode,jdbcType=VARCHAR},
       </if>
       <if test="sellerId != null">
-        seller_id = #{sellerId,jdbcType=VARCHAR},
+        SELLER_ID = #{sellerId,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=DECIMAL},
+        TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
       </if>
       <if test="receiptAmount != null">
-        receipt_amount = #{receiptAmount,jdbcType=DECIMAL},
+        RECEIPT_AMOUNT = #{receiptAmount,jdbcType=DECIMAL},
       </if>
       <if test="discountableAmount != null">
-        discountable_amount = #{discountableAmount,jdbcType=DECIMAL},
+        DISCOUNTABLE_AMOUNT = #{discountableAmount,jdbcType=DECIMAL},
       </if>
       <if test="undiscountableAmount != null">
-        undiscountable_amount = #{undiscountableAmount,jdbcType=DECIMAL},
+        UNDISCOUNTABLE_AMOUNT = #{undiscountableAmount,jdbcType=DECIMAL},
       </if>
       <if test="subject != null">
-        subject = #{subject,jdbcType=VARCHAR},
+        SUBJECT = #{subject,jdbcType=VARCHAR},
       </if>
       <if test="body != null">
-        body = #{body,jdbcType=VARCHAR},
+        BODY = #{body,jdbcType=VARCHAR},
       </if>
-      <if test="appauthtoken != null">
-        appAuthToken = #{appauthtoken,jdbcType=VARCHAR},
+      <if test="appAuthToken != null">
+        APP_AUTH_TOKEN = #{appAuthToken,jdbcType=VARCHAR},
       </if>
       <if test="goodsDetail != null">
-        goods_detail = #{goodsDetail,jdbcType=VARCHAR},
+        GOODS_DETAIL = #{goodsDetail,jdbcType=VARCHAR},
       </if>
       <if test="merchantDetail != null">
-        merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
+        MERCHANT_DETAIL = #{merchantDetail,jdbcType=VARCHAR},
       </if>
       <if test="extendParams != null">
-        extend_params = #{extendParams,jdbcType=VARCHAR},
+        EXTEND_PARAMS = #{extendParams,jdbcType=VARCHAR},
       </if>
       <if test="timeoutExpress != null">
-        timeout_express = #{timeoutExpress,jdbcType=VARCHAR},
+        TIMEOUT_EXPRESS = #{timeoutExpress,jdbcType=VARCHAR},
       </if>
       <if test="fundBillList != null">
-        fund_bill_list = #{fundBillList,jdbcType=VARCHAR},
+        FUND_BILL_LIST = #{fundBillList,jdbcType=VARCHAR},
       </if>
       <if test="discountGoodsDetail != null">
-        discount_goods_detail = #{discountGoodsDetail,jdbcType=VARCHAR},
+        DISCOUNT_GOODS_DETAIL = #{discountGoodsDetail,jdbcType=VARCHAR},
       </if>
       <if test="qrCode != null">
-        qr_code = #{qrCode,jdbcType=VARCHAR},
+        QR_CODE = #{qrCode,jdbcType=VARCHAR},
       </if>
       <if test="returnDetail != null">
-        return_detail = #{returnDetail,jdbcType=VARCHAR},
+        RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
       </if>
       <if test="checkStatus != null">
-        check_status = #{checkStatus,jdbcType=VARCHAR},
+        CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
       </if>
       <if test="checkDate != null">
-        check_date = #{checkDate,jdbcType=CHAR},
+        CHECK_DATE = #{checkDate,jdbcType=CHAR},
       </if>
       <if test="createDate != null">
-        create_date = #{createDate,jdbcType=CHAR},
+        CREATE_DATE = #{createDate,jdbcType=CHAR},
       </if>
       <if test="gmtPayment != null">
-        gmt_payment = #{gmtPayment,jdbcType=TIMESTAMP},
+        GMT_PAYMENT = #{gmtPayment,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtUpdate != null">
-        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+        GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAlipayPayOrder">
     update BIZ_ALIPAY_PAY_ORDER
-    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
-      merchant_id = #{merchantId,jdbcType=VARCHAR},
-      alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
-      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
-      order_status = #{orderStatus,jdbcType=VARCHAR},
-      cancel_status = #{cancelStatus,jdbcType=VARCHAR},
-      refund_status = #{refundStatus,jdbcType=VARCHAR},
-      pay_detail = #{payDetail,jdbcType=VARCHAR},
-      auth_code = #{authCode,jdbcType=VARCHAR},
-      seller_id = #{sellerId,jdbcType=VARCHAR},
-      total_amount = #{totalAmount,jdbcType=DECIMAL},
-      receipt_amount = #{receiptAmount,jdbcType=DECIMAL},
-      discountable_amount = #{discountableAmount,jdbcType=DECIMAL},
-      undiscountable_amount = #{undiscountableAmount,jdbcType=DECIMAL},
-      subject = #{subject,jdbcType=VARCHAR},
-      body = #{body,jdbcType=VARCHAR},
-      appAuthToken = #{appauthtoken,jdbcType=VARCHAR},
-      goods_detail = #{goodsDetail,jdbcType=VARCHAR},
-      merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
-      extend_params = #{extendParams,jdbcType=VARCHAR},
-      timeout_express = #{timeoutExpress,jdbcType=VARCHAR},
-      fund_bill_list = #{fundBillList,jdbcType=VARCHAR},
-      discount_goods_detail = #{discountGoodsDetail,jdbcType=VARCHAR},
-      qr_code = #{qrCode,jdbcType=VARCHAR},
-      return_detail = #{returnDetail,jdbcType=VARCHAR},
-      check_status = #{checkStatus,jdbcType=VARCHAR},
-      check_date = #{checkDate,jdbcType=CHAR},
-      create_date = #{createDate,jdbcType=CHAR},
-      gmt_payment = #{gmtPayment,jdbcType=TIMESTAMP},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+    set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
+      ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
+      OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
+      ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      CANCEL_STATUS = #{cancelStatus,jdbcType=VARCHAR},
+      REFUND_STATUS = #{refundStatus,jdbcType=VARCHAR},
+      PAY_DETAIL = #{payDetail,jdbcType=VARCHAR},
+      AUTH_CODE = #{authCode,jdbcType=VARCHAR},
+      SELLER_ID = #{sellerId,jdbcType=VARCHAR},
+      TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
+      RECEIPT_AMOUNT = #{receiptAmount,jdbcType=DECIMAL},
+      DISCOUNTABLE_AMOUNT = #{discountableAmount,jdbcType=DECIMAL},
+      UNDISCOUNTABLE_AMOUNT = #{undiscountableAmount,jdbcType=DECIMAL},
+      SUBJECT = #{subject,jdbcType=VARCHAR},
+      BODY = #{body,jdbcType=VARCHAR},
+      APP_AUTH_TOKEN = #{appAuthToken,jdbcType=VARCHAR},
+      GOODS_DETAIL = #{goodsDetail,jdbcType=VARCHAR},
+      MERCHANT_DETAIL = #{merchantDetail,jdbcType=VARCHAR},
+      EXTEND_PARAMS = #{extendParams,jdbcType=VARCHAR},
+      TIMEOUT_EXPRESS = #{timeoutExpress,jdbcType=VARCHAR},
+      FUND_BILL_LIST = #{fundBillList,jdbcType=VARCHAR},
+      DISCOUNT_GOODS_DETAIL = #{discountGoodsDetail,jdbcType=VARCHAR},
+      QR_CODE = #{qrCode,jdbcType=VARCHAR},
+      RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
+      CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
+      CHECK_DATE = #{checkDate,jdbcType=CHAR},
+      CREATE_DATE = #{createDate,jdbcType=CHAR},
+      GMT_PAYMENT = #{gmtPayment,jdbcType=TIMESTAMP},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

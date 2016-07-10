@@ -40,7 +40,7 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setMerchantId("mechant_id_" + Math.random() * 10000000L);
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("282972765893720475");
+        payRequest.setAuthCode("28310017390299828");
         payRequest.setOutTradeNo("tradepay" + System.currentTimeMillis() + (long) (Math.random() * 10000000L));
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("胡辉测试交易" + Math.random() * 10000000L);

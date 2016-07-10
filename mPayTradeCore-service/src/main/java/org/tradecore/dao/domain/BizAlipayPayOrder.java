@@ -7,165 +7,165 @@ import org.tradecore.common.util.Money;
 public class BizAlipayPayOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = 4096032310091792852L;
+    private static final long serialVersionUID = 2571028003123457122L;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.id
+     *  null, BIZ_ALIPAY_PAY_ORDER.ID
      */
     private String            id;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.acquirer_id
+     *  null, BIZ_ALIPAY_PAY_ORDER.ACQUIRER_ID
      */
     private String            acquirerId;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.merchant_id
+     *  null, BIZ_ALIPAY_PAY_ORDER.MERCHANT_ID
      */
     private String            merchantId;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.alipay_trade_no
+     *  null, BIZ_ALIPAY_PAY_ORDER.ALIPAY_TRADE_NO
      */
     private String            alipayTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.out_trade_no
+     *  null, BIZ_ALIPAY_PAY_ORDER.OUT_TRADE_NO
      */
     private String            outTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.order_status
+     *  null, BIZ_ALIPAY_PAY_ORDER.ORDER_STATUS
      */
     private String            orderStatus;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.cancel_status
+     *  null, BIZ_ALIPAY_PAY_ORDER.CANCEL_STATUS
      */
     private String            cancelStatus;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.refund_status
+     *  null, BIZ_ALIPAY_PAY_ORDER.REFUND_STATUS
      */
     private String            refundStatus;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.pay_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.PAY_DETAIL
      */
     private String            payDetail;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.auth_code
+     *  null, BIZ_ALIPAY_PAY_ORDER.AUTH_CODE
      */
     private String            authCode;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.seller_id
+     *  null, BIZ_ALIPAY_PAY_ORDER.SELLER_ID
      */
     private String            sellerId;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.total_amount
+     *  null, BIZ_ALIPAY_PAY_ORDER.TOTAL_AMOUNT
      */
     private Money             totalAmount;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.receipt_amount
+     *  null, BIZ_ALIPAY_PAY_ORDER.RECEIPT_AMOUNT
      */
     private Money             receiptAmount;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.discountable_amount
+     *  null, BIZ_ALIPAY_PAY_ORDER.DISCOUNTABLE_AMOUNT
      */
     private Money             discountableAmount;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.undiscountable_amount
+     *  null, BIZ_ALIPAY_PAY_ORDER.UNDISCOUNTABLE_AMOUNT
      */
     private Money             undiscountableAmount;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.subject
+     *  null, BIZ_ALIPAY_PAY_ORDER.SUBJECT
      */
     private String            subject;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.body
+     *  null, BIZ_ALIPAY_PAY_ORDER.BODY
      */
     private String            body;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.appAuthToken
+     *  null, BIZ_ALIPAY_PAY_ORDER.APP_AUTH_TOKEN
      */
-    private String            appauthtoken;
+    private String            appAuthToken;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.goods_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.GOODS_DETAIL
      */
     private String            goodsDetail;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.merchant_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.MERCHANT_DETAIL
      */
     private String            merchantDetail;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.extend_params
+     *  null, BIZ_ALIPAY_PAY_ORDER.EXTEND_PARAMS
      */
     private String            extendParams;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.timeout_express
+     *  null, BIZ_ALIPAY_PAY_ORDER.TIMEOUT_EXPRESS
      */
     private String            timeoutExpress;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.fund_bill_list
+     *  null, BIZ_ALIPAY_PAY_ORDER.FUND_BILL_LIST
      */
     private String            fundBillList;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.discount_goods_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.DISCOUNT_GOODS_DETAIL
      */
     private String            discountGoodsDetail;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.qr_code
+     *  null, BIZ_ALIPAY_PAY_ORDER.QR_CODE
      */
     private String            qrCode;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.return_detail
+     *  null, BIZ_ALIPAY_PAY_ORDER.RETURN_DETAIL
      */
     private String            returnDetail;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.check_status
+     *  null, BIZ_ALIPAY_PAY_ORDER.CHECK_STATUS
      */
     private String            checkStatus;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.check_date
+     *  null, BIZ_ALIPAY_PAY_ORDER.CHECK_DATE
      */
     private String            checkDate;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.create_date
+     *  null, BIZ_ALIPAY_PAY_ORDER.CREATE_DATE
      */
     private String            createDate;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.gmt_payment
+     *  null, BIZ_ALIPAY_PAY_ORDER.GMT_PAYMENT
      */
     private Date              gmtPayment;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.gmt_create
+     *  null, BIZ_ALIPAY_PAY_ORDER.GMT_CREATE
      */
     private Date              gmtCreate;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.gmt_update
+     *  null, BIZ_ALIPAY_PAY_ORDER.GMT_UPDATE
      */
     private Date              gmtUpdate;
 
@@ -305,12 +305,12 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.body = body == null ? null : body.trim();
     }
 
-    public String getAppauthtoken() {
-        return appauthtoken;
+    public String getAppAuthToken() {
+        return appAuthToken;
     }
 
-    public void setAppauthtoken(String appauthtoken) {
-        this.appauthtoken = appauthtoken == null ? null : appauthtoken.trim();
+    public void setAppAuthToken(String appAuthToken) {
+        this.appAuthToken = appAuthToken == null ? null : appAuthToken.trim();
     }
 
     public String getGoodsDetail() {

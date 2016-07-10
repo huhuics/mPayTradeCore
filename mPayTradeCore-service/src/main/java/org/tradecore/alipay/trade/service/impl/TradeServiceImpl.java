@@ -55,10 +55,10 @@ public class TradeServiceImpl implements TradeService {
     @Transactional
     public AlipayF2FPayResult pay(PayRequest payRequest) {
 
-        LogUtil.info(logger, "收到交易请求参数,payRequest={0}", payRequest);
+        LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 
         //1.校验参数
-        AssertUtil.assertTrue(payRequest.validate(), "交易请求参数不合法");
+        AssertUtil.assertTrue(payRequest.validate(), "支付请求参数不合法");
 
         //2.请求参数转换成支付宝请求参数
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);

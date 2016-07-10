@@ -95,10 +95,7 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         //封装支付宝返回信息
         Map<String, Object> returnDetailMap = new HashMap<String, Object>();
-        returnDetailMap.put(JSONFieldConstant.CODE, response.getCode());
-        returnDetailMap.put(JSONFieldConstant.MSG, response.getMsg());
-        returnDetailMap.put(JSONFieldConstant.SUB_CODE, response.getSubCode());
-        returnDetailMap.put(JSONFieldConstant.SUB_MSG, response.getSubMsg());
+        returnDetailMap.put(JSONFieldConstant.BODY, response.getBody());
 
         bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(returnDetailMap));
 
@@ -143,7 +140,7 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         payOrder.setSubject(payRequest.getSubject());
         payOrder.setBody(payRequest.getBody());
-        payOrder.setAppauthtoken(payRequest.getAppAuthToken());
+        payOrder.setAppAuthToken(payRequest.getAppAuthToken());
         payOrder.setGoodsDetail(JSON.toJSONString(payRequest.getGoodsDetailList()));
 
         //封装merchantDetail
