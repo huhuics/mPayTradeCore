@@ -5,8 +5,10 @@
 package org.tradecore.alipay.trade.service;
 
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.QueryRequest;
 
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
  * 交易服务类
@@ -17,9 +19,16 @@ public interface TradeService {
 
     /**
      * 条码支付
-     * @param payRequest
-     * @return
+     * @param payRequest  请求参数
+     * @return            支付返回结果信息
      */
     AlipayF2FPayResult pay(PayRequest payRequest);
+
+    /**
+     * 订单查询
+     * @param queryRequest  请求参数
+     * @return              订单查询结果信息
+     */
+    AlipayF2FQueryResult query(QueryRequest queryRequest);
 
 }

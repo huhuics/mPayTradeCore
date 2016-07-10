@@ -12,14 +12,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.trade.repository.TradeRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
+import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 
@@ -58,6 +63,7 @@ public class TradeServiceImpl implements TradeService {
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 
         //1.校验参数
+        AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
         AssertUtil.assertTrue(payRequest.validate(), "支付请求参数不合法");
 
         //2.请求参数转换成支付宝请求参数
@@ -69,12 +75,44 @@ public class TradeServiceImpl implements TradeService {
         //4.调用支付宝支付接口
         AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
 
-        LogUtil.info(logger, "支付宝返回支付结果result={0}", alipayF2FPayResult.getTradeStatus());
+        LogUtil.info(logger, "支付宝返回支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
 
         //5.根据支付宝返回结果更新本地数据
         tradeRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
 
         return alipayF2FPayResult;
+    }
+
+    @Override
+    public AlipayF2FQueryResult query(QueryRequest queryRequest) {
+
+        LogUtil.info(logger, "收到订单查询请求,queryRequest={0}", queryRequest);
+
+        //1.校验参数
+        AssertUtil.assertNotNull(queryRequest, "查询请求不能为空");
+        AssertUtil.assertTrue(queryRequest.validate(), "查询请求参数不合法");
+
+        //2.转换成支付宝请求参数
+        AlipayTradeQueryRequestBuilder builder = convert2Builder(queryRequest);
+
+        //3.调用支付宝接口
+        AlipayF2FQueryResult alipayF2FQueryResult = alipayTradeService.queryTradeResult(builder);
+
+        LogUtil.info(logger, "支付宝返回查询业务结果alipayF2FQueryResult={0}", JSON.toJSONString(alipayF2FQueryResult, SerializerFeature.UseSingleQuotes));
+
+        //4.如果业务成功，则修改本地订单状态
+
+        return alipayF2FQueryResult;
+    }
+
+    /**
+     * 将订单查询请求转换成支付宝请求
+     * @param queryRequest
+     * @return
+     */
+    private AlipayTradeQueryRequestBuilder convert2Builder(QueryRequest queryRequest) {
+        return new AlipayTradeQueryRequestBuilder().setOutTradeNo(queryRequest.getOutTradeNo()).setTradeNo(queryRequest.getAlipayTradeNo())
+            .setAppAuthToken(queryRequest.getAppAuthToken());
     }
 
     /**

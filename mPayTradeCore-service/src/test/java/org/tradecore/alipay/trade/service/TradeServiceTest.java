@@ -11,13 +11,20 @@ import javax.annotation.Resource;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.demo.trade.model.GoodsDetail;
 import com.alipay.demo.trade.model.TradeStatus;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
  * 测试支付宝交易服务类
@@ -26,9 +33,15 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
  */
 public class TradeServiceTest extends BaseTest {
 
-    @Resource
-    TradeService tradeService;
+    /** 日志 */
+    private static final Logger logger = LoggerFactory.getLogger(TradeServiceTest.class);
 
+    @Resource
+    TradeService                tradeService;
+
+    /**
+     * 测试条码支付
+     */
     @Test
     public void testPay() {
 
@@ -40,7 +53,7 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setMerchantId("mechant_id_" + Math.random() * 10000000L);
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("28310017390299828");
+        payRequest.setAuthCode("28310015973868221");
         payRequest.setOutTradeNo("tradepay" + System.currentTimeMillis() + (long) (Math.random() * 10000000L));
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("胡辉测试交易" + Math.random() * 10000000L);
@@ -61,5 +74,25 @@ public class TradeServiceTest extends BaseTest {
 
         Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
 
+    }
+
+    /**
+     * 测试订单查询
+     */
+    @Test
+    public void testQuery() {
+        Assert.assertNotNull(tradeService);
+
+        //组装参数
+        QueryRequest queryRequest = new QueryRequest();
+        queryRequest.setAcquirerId("acquire_id_2535400.4703792045");
+        queryRequest.setMerchantId("mechant_id_2382725.100804911");
+        queryRequest.setOutTradeNo("tradepay14681526897512625016");
+        queryRequest.setAlipayTradeNo("");
+
+        AlipayF2FQueryResult ret = tradeService.query(queryRequest);
+
+        LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
+        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
     }
 }

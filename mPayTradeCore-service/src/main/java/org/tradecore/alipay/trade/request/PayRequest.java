@@ -13,7 +13,7 @@ import com.alipay.demo.trade.model.ExtendParams;
 import com.alipay.demo.trade.model.GoodsDetail;
 
 /**
- * 支付请求
+ * 条码支付请求
  * @author HuHui
  * @version $Id: PayRequest.java, v 0.1 2016年7月8日 下午3:28:19 HuHui Exp $
  */
@@ -114,9 +114,11 @@ public class PayRequest extends BaseRequest {
      */
     private String            timeoutExpress;
 
+    /**
+     * 参数校验
+     * @return 校验是否成功
+     */
     public boolean validate() {
-
-        AssertUtil.assertNotNull(this, "交易请求为空");
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");
 

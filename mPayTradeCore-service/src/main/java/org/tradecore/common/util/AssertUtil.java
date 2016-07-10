@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.tradecore.common.util.Exception.MechException;
 
 import com.github.pagehelper.StringUtil;
 
@@ -29,12 +28,12 @@ public class AssertUtil {
     public static void assertTrue(boolean expValue, String errMsg) {
 
         if (!expValue) {
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言表达式的值为false，否则抛MechException
+     * 断言表达式的值为false，否则抛RuntimeException
      * 
      * @param expValue 断言表达式
      * @param errMsg 异常描述
@@ -43,12 +42,12 @@ public class AssertUtil {
 
         if (expValue) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言两个对象相等，否则抛MechException
+     * 断言两个对象相等，否则抛RuntimeException
      * 
      * @param obj1
      * @param obj2
@@ -64,12 +63,12 @@ public class AssertUtil {
 
         if (!obj1.equals(obj2)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言两个对象不等，否则抛MechException
+     * 断言两个对象不等，否则抛RuntimeException
      * 
      * @param obj1
      * @param obj2
@@ -85,7 +84,7 @@ public class AssertUtil {
 
         if (obj1.equals(obj2)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
@@ -100,7 +99,7 @@ public class AssertUtil {
 
         if (null == objects) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
 
         for (Object obj2 : objects) {
@@ -120,11 +119,11 @@ public class AssertUtil {
             }
         }
 
-        throw new MechException(errMsg);
+        throw new RuntimeException(errMsg);
     }
 
     /**
-     * 断言两个对象相同，否则抛MechException
+     * 断言两个对象相同，否则抛RuntimeException
      * 
      * @param obj1
      * @param obj2
@@ -134,12 +133,12 @@ public class AssertUtil {
 
         if (obj1 != obj2) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言两个对象不同，否则抛MechException
+     * 断言两个对象不同，否则抛RuntimeException
      * 
      * @param obj1
      * @param obj2
@@ -149,7 +148,7 @@ public class AssertUtil {
 
         if (obj1 == obj2) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
@@ -164,7 +163,7 @@ public class AssertUtil {
 
         if (null == objs) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
 
         for (Object obj : objs) {
@@ -175,11 +174,11 @@ public class AssertUtil {
             }
         }
 
-        throw new MechException(errMsg);
+        throw new RuntimeException(errMsg);
     }
 
     /**
-     * 断言对象为空，否则抛MechException
+     * 断言对象为空，否则抛RuntimeException
      * 
      * @param str 断言字符串
      * @param errMsg 异常描述
@@ -188,12 +187,12 @@ public class AssertUtil {
 
         if (StringUtil.isNotEmpty(str)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象为非空，否则抛MechException
+     * 断言对象为非空，否则抛RuntimeException
      * 
      * @param str 断言字符串
      * @param errMsg 异常描述
@@ -202,12 +201,12 @@ public class AssertUtil {
 
         if (StringUtil.isEmpty(str)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象为空，否则抛MechException
+     * 断言对象为空，否则抛RuntimeException
      * 
      * @param str 断言字符串
      * @param errMsg 异常描述
@@ -216,12 +215,12 @@ public class AssertUtil {
 
         if (StringUtils.isNotBlank(str)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象为非空，否则抛MechException
+     * 断言对象为非空，否则抛RuntimeException
      * 
      * @param str 断言字符串
      * @param errMsg 异常描述
@@ -230,12 +229,12 @@ public class AssertUtil {
 
         if (StringUtils.isBlank(str)) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象为null，否则抛MechException
+     * 断言对象为null，否则抛RuntimeException
      * 
      * @param object 断言对象
      * @param errMsg 异常描述
@@ -244,12 +243,12 @@ public class AssertUtil {
 
         if (object != null) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象非null，否则抛MechException
+     * 断言对象非null，否则抛RuntimeException
      * 
      * @param object 断言对象
      * @param errMsg 异常描述
@@ -258,12 +257,12 @@ public class AssertUtil {
 
         if (null == object) {
 
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 
     /**
-     * 断言对象非null，否则抛MechException
+     * 断言对象非null，否则抛RuntimeException
      * 
      * @param object 断言对象
      */
@@ -271,12 +270,12 @@ public class AssertUtil {
 
         if (null == object) {
 
-            throw new MechException(DEFAULT_ERR_MESSAGE);
+            throw new RuntimeException(DEFAULT_ERR_MESSAGE);
         }
     }
 
     /**
-     * 断言集合不为空或null，否则抛MechException
+     * 断言集合不为空或null，否则抛RuntimeException
      * 
      * @param collection 断言集合
      * @param errMsg 异常描述
@@ -285,7 +284,7 @@ public class AssertUtil {
     public static void assertNotBlank(Collection collection, String errMsg) {
 
         if (CollectionUtils.isEmpty(collection)) {
-            throw new MechException(errMsg);
+            throw new RuntimeException(errMsg);
         }
     }
 }

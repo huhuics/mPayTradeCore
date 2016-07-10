@@ -5,9 +5,11 @@
 package org.tradecore.alipay.trade.repository;
 
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
  * 交易类仓储服务接口<br>
@@ -43,5 +45,12 @@ public interface TradeRepository {
      * @param alipayF2FPayResult   支付宝返回结果对象
      */
     void updatePayOrder(BizAlipayPayOrder bizAlipayPayOrder, AlipayF2FPayResult alipayF2FPayResult);
+
+    /**
+     * 如果查询支付宝端的订单状态与本地订单状态不一致，则修改本地订单状态
+     * @param queryRequest           订单查询请求对象
+     * @param alipayF2FQueryResult   支付宝返回订单查询结果对象
+     */
+    void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult);
 
 }
