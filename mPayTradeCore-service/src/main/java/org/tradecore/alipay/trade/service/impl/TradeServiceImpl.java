@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.trade.repository.TradeRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
@@ -26,6 +27,7 @@ import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
@@ -84,6 +86,11 @@ public class TradeServiceImpl implements TradeService {
         tradeRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
 
         return alipayF2FPayResult;
+    }
+
+    @Override
+    public AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest) {
+        return null;
     }
 
     @Override

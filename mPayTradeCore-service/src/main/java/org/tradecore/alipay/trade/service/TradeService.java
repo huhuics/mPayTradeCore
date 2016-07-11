@@ -5,10 +5,12 @@
 package org.tradecore.alipay.trade.service;
 
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 
@@ -25,6 +27,13 @@ public interface TradeService {
      * @return            支付返回结果信息
      */
     AlipayF2FPayResult pay(PayRequest payRequest);
+
+    /**
+     * 扫码支付，预下单(生成二维码)接口
+     * @param precreateRequest
+     * @return
+     */
+    AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest);
 
     /**
      * 订单查询
