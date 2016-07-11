@@ -29,7 +29,4 @@ public class JSONFieldConstant {
     /** 支付宝店铺编号 */
     public static final String ALIPAY_STORE_ID = "alipayStoreId";
 
-    /** 支付宝返回信息体 */
-    public static final String BODY            = "body";
-
 }

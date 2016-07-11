@@ -108,9 +108,9 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         RefundRequest refundRequest = new RefundRequest();
-        refundRequest.setAcquirerId("acquire_id_2535400.4703792045");
-        refundRequest.setMerchantId("mechant_id_2382725.100804911");
-        refundRequest.setOutTradeNo("tradepay1468155933244153356");
+        refundRequest.setAcquirerId("acquire_id_8831476.635618655");
+        refundRequest.setMerchantId("mechant_id_1876214.1478672957");
+        refundRequest.setOutTradeNo("tradepay14682204756429961535");
         refundRequest.setRefundAmount("0.01");
         refundRequest.setRefundReason("正常退款");
         refundRequest.setStoreId("store_id");

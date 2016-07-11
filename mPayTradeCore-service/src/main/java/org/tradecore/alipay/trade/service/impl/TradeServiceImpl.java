@@ -149,6 +149,7 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误");
 
         //3.本地持久化退款信息
+        BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest);
 
         //4.转换成支付宝退款请求参数
         AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
@@ -158,7 +159,11 @@ public class TradeServiceImpl implements TradeService {
 
         LogUtil.info(logger, "支付宝返回退款业务结果alipayF2FRefundResult={0}", JSON.toJSONString(alipayF2FRefundResult, SerializerFeature.UseSingleQuotes));
 
-        //TODO:6.根据支付宝返回结果更新本地数据
+        //6.根据支付宝返回结果更新本地数据
+        refundRepository.updateRefundOrder(refundOrder, alipayF2FRefundResult);
+
+        //7.根据退款订单状态更新本地交易订单的退款状态数据
+        payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
 
         return alipayF2FRefundResult;
     }

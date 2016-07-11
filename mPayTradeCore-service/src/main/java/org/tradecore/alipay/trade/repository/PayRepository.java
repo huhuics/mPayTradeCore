@@ -7,12 +7,13 @@ package org.tradecore.alipay.trade.repository;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
+import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
- * 条码支付仓储服务接口
+ * 支付仓储服务接口
  * @author HuHui
  * @version $Id: TradeRepository.java, v 0.1 2016年7月9日 上午10:10:07 HuHui Exp $
  */
@@ -51,6 +52,13 @@ public interface PayRepository {
      * @param alipayF2FQueryResult   支付宝返回订单查询结果对象
      */
     void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult);
+
+    /**
+     * 根据退款业务是否成功更新交易订单中的退款状态
+     * @param oriOrder         退款业务原始交易订单
+     * @param refundOrder      退款订单
+     */
+    void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder);
 
     /**
      * 根据商户标识号和外部商户号加锁查询订单

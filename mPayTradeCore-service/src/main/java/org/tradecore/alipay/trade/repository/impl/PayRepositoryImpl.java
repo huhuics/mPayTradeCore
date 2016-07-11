@@ -29,6 +29,7 @@ import org.tradecore.common.util.Money;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayPayOrderDAO;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
+import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -40,7 +41,7 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
- * 交易类仓储服务接口实现类<br>
+ * 支付仓储服务接口实现类<br>
  * 请注意，本类中所有方法均不会校验入参，参数为空将直接抛出RuntimeException，请调用者自行校验入参是否合法
  * @author HuHui
  * @version $Id: TradeRepositoryImpl.java, v 0.1 2016年7月9日 上午10:17:42 HuHui Exp $
@@ -58,13 +59,13 @@ public class PayRepositoryImpl implements PayRepository {
     @Override
     public BizAlipayPayOrder savePayOrder(PayRequest payRequest) {
 
-        LogUtil.info(logger, "收到付款持久化请求,payRequest={0}", payRequest);
+        LogUtil.info(logger, "收到条码支付持久化请求,payRequest={0}", payRequest);
 
         BizAlipayPayOrder payOrder = convert2PayOrder(payRequest);
 
-        LogUtil.info(logger, "付款请求payRequest转化为payOrder对象成功,payOrder={0}", payOrder);
+        LogUtil.info(logger, "条码支付请求payRequest转化为domian对象成功,payOrder={0}", payOrder);
 
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "支付数据持久化失败");
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "条码支付数据持久化失败");
 
         return payOrder;
 
@@ -73,13 +74,13 @@ public class PayRepositoryImpl implements PayRepository {
     @Override
     public void updatePayOrder(BizAlipayPayOrder bizAlipayPayOrder, AlipayF2FPayResult alipayF2FPayResult) {
 
-        LogUtil.info(logger, "收到交易更新请求");
+        LogUtil.info(logger, "收到条码支付更新请求");
 
         TradeStatus tradeStatus = alipayF2FPayResult.getTradeStatus();
         AlipayTradePayResponse response = alipayF2FPayResult.getResponse();
 
         if (tradeStatus == TradeStatus.SUCCESS) {
-            LogUtil.info(logger, "支付宝支付成功!");
+            LogUtil.info(logger, "支付宝条码支付成功");
 
             bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
             bizAlipayPayOrder.setAlipayTradeNo(response.getTradeNo());
@@ -95,20 +96,18 @@ public class PayRepositoryImpl implements PayRepository {
             bizAlipayPayOrder.setGmtPayment(response.getGmtPayment());
 
         } else {
-            LogUtil.error(logger, "支付宝支付失败!");
+            LogUtil.error(logger, "支付宝条码支付失败");
 
             bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        //封装支付宝返回信息
-        Map<String, Object> returnDetailMap = new HashMap<String, Object>();
-        returnDetailMap.put(JSONFieldConstant.BODY, response.getBody());
-        bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(returnDetailMap, SerializerFeature.UseSingleQuotes));
+        //支付宝返回信息
+        bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
 
         bizAlipayPayOrder.setGmtUpdate(new Date());
 
         //修改本地订单数据
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "修改订单失败");
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "条码支付修改订单失败");
 
     }
 
@@ -139,6 +138,16 @@ public class PayRepositoryImpl implements PayRepository {
             }
         }
 
+    }
+
+    @Override
+    public void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder) {
+
+        LogUtil.info(logger, "收到订单状态更新请求");
+
+        oriOrder.setRefundStatus(refundOrder.getRefundStatus());
+
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单退款状态修改失败");
     }
 
     @Override
