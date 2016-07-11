@@ -4,13 +4,17 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tradecore.alipay.trade.repository.TradeRepository;
+import org.tradecore.alipay.trade.repository.PayRepository;
+import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
@@ -20,6 +24,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
+import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -49,10 +54,16 @@ public class TradeServiceImpl implements TradeService {
     private static AlipayTradeService alipayTradeService;
 
     /**
-     * 交易类仓储服务
+     * 条码支付仓储服务
      */
     @Resource
-    private TradeRepository           tradeRepository;
+    private PayRepository             payRepository;
+
+    /**
+     * 退款仓储服务
+     */
+    @Resource
+    private RefundRepository          refundRepository;
 
     static {
         //1.读取配置文件
@@ -76,7 +87,7 @@ public class TradeServiceImpl implements TradeService {
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
 
         //3.本地持久化
-        BizAlipayPayOrder bizAlipayPayOrder = tradeRepository.savePayOrder(payRequest);
+        BizAlipayPayOrder bizAlipayPayOrder = payRepository.savePayOrder(payRequest);
 
         //4.调用支付宝支付接口
         AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
@@ -84,7 +95,7 @@ public class TradeServiceImpl implements TradeService {
         LogUtil.info(logger, "支付宝返回支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
 
         //5.根据支付宝返回结果更新本地数据
-        tradeRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
+        payRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
 
         return alipayF2FPayResult;
     }
@@ -114,7 +125,7 @@ public class TradeServiceImpl implements TradeService {
         LogUtil.info(logger, "支付宝返回查询业务结果alipayF2FQueryResult={0}", JSON.toJSONString(alipayF2FQueryResult, SerializerFeature.UseSingleQuotes));
 
         //4.如果业务成功，则修改本地订单状态
-        tradeRepository.updateOrderStatus(queryRequest, alipayF2FQueryResult);
+        payRepository.updateOrderStatus(queryRequest, alipayF2FQueryResult);
 
         return alipayF2FQueryResult;
     }
@@ -130,7 +141,7 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(refundRequest.validate(), "退款请求参数不合法");
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = tradeRepository.selectPayOrderForUpdate(refundRequest.getMerchantId(), refundRequest.getOutTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(refundRequest.getMerchantId(), refundRequest.getOutTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -213,12 +224,7 @@ public class TradeServiceImpl implements TradeService {
      * @return
      */
     private boolean checkTotalFee(Money totalAmount, Money refundAmount) {
-
-        if (totalAmount.compareTo(refundAmount) >= 0) {
-            return true;
-        }
-
-        return false;
+        return totalAmount.compareTo(refundAmount) >= 0;
     }
 
     /**
@@ -229,6 +235,19 @@ public class TradeServiceImpl implements TradeService {
      * @return
      */
     private boolean checkTotalRufundFee(String outTradeNo, Money totalAmount, Money refundAmount) {
-        return false;
+
+        List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrdersByOutTradeNo(outTradeNo);
+
+        if (CollectionUtils.isNotEmpty(refundOrders)) {
+            Money totalRefundAmount = new Money(refundAmount.getAmount());
+            for (BizAlipayRefundOrder order : refundOrders) {
+                totalRefundAmount.addTo(order.getRefundAmount());
+            }
+
+            return totalAmount.compareTo(totalRefundAmount) >= 0;
+        }
+
+        //如果refundOrders为空，则退回到checkTotalFee方法，因此直接返回true
+        return true;
     }
 }

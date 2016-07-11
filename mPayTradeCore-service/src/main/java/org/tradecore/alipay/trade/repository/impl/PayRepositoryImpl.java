@@ -19,7 +19,7 @@ import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
-import org.tradecore.alipay.trade.repository.TradeRepository;
+import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.common.util.AssertUtil;
@@ -40,15 +40,16 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
- * 交易类仓储服务接口实现类
+ * 交易类仓储服务接口实现类<br>
+ * 请注意，本类中所有方法均不会校验入参，参数为空将直接抛出RuntimeException，请调用者自行校验入参是否合法
  * @author HuHui
  * @version $Id: TradeRepositoryImpl.java, v 0.1 2016年7月9日 上午10:17:42 HuHui Exp $
  */
 @Repository
-public class TradeRepositoryImpl implements TradeRepository {
+public class PayRepositoryImpl implements PayRepository {
 
     /** 日志 */
-    private static final Logger  logger = LoggerFactory.getLogger(TradeRepositoryImpl.class);
+    private static final Logger  logger = LoggerFactory.getLogger(PayRepositoryImpl.class);
 
     /** 付款DAO */
     @Resource
@@ -217,4 +218,5 @@ public class TradeRepositoryImpl implements TradeRepository {
 
         return payOrder;
     }
+
 }

@@ -292,4 +292,13 @@
       GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+
+	<!-- 根据商户订单号查询所有退款订单 -->
+	<select id="selectRefundOrdersByOutTradeNo" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_ALIPAY_REFUND_ORDER where out_trade_no = #{outTradeNo}
+	</select>
+  
 </mapper>

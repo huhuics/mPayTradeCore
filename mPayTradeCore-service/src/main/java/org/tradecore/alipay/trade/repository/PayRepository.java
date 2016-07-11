@@ -12,12 +12,11 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
- * 交易类仓储服务接口<br>
- * 完成交易请求转化成Domain对象并持久化
+ * 条码支付仓储服务接口
  * @author HuHui
  * @version $Id: TradeRepository.java, v 0.1 2016年7月9日 上午10:10:07 HuHui Exp $
  */
-public interface TradeRepository {
+public interface PayRepository {
 
     /**
      * 将条码支付请求转化为Domain对象，并持久化<br>
