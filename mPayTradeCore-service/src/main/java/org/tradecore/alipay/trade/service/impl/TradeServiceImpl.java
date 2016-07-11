@@ -89,6 +89,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
+    @Transactional
     public AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest) {
         return null;
     }
@@ -117,6 +118,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
+    @Transactional
     public AlipayF2FRefundResult refund(RefundRequest refundRequest) {
 
         LogUtil.info(logger, "收到订单退款请求,refundRequest={0}", refundRequest);

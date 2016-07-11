@@ -28,6 +28,8 @@
     <result column="DISCOUNT_GOODS_DETAIL" jdbcType="VARCHAR" property="discountGoodsDetail" />
     <result column="QR_CODE" jdbcType="VARCHAR" property="qrCode" />
     <result column="RETURN_DETAIL" jdbcType="VARCHAR" property="returnDetail" />
+    <result column="OUT_NOTIFY_URL" jdbcType="VARCHAR" property="outNotifyUrl" />
+    <result column="NOTIFY_BODY" jdbcType="VARCHAR" property="notifyBody" />
     <result column="CHECK_STATUS" jdbcType="VARCHAR" property="checkStatus" />
     <result column="CHECK_DATE" jdbcType="CHAR" property="checkDate" />
     <result column="CREATE_DATE" jdbcType="CHAR" property="createDate" />
@@ -40,7 +42,8 @@
     REFUND_STATUS, PAY_DETAIL, AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, 
     UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, APP_AUTH_TOKEN, GOODS_DETAIL, MERCHANT_DETAIL, 
     EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, QR_CODE, RETURN_DETAIL, 
-    CHECK_STATUS, CHECK_DATE, CREATE_DATE, GMT_PAYMENT, GMT_CREATE, GMT_UPDATE
+    OUT_NOTIFY_URL, NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, CREATE_DATE, GMT_PAYMENT, 
+    GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -61,9 +64,10 @@
       SUBJECT, BODY, APP_AUTH_TOKEN, 
       GOODS_DETAIL, MERCHANT_DETAIL, EXTEND_PARAMS, 
       TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, 
-      QR_CODE, RETURN_DETAIL, CHECK_STATUS, 
-      CHECK_DATE, CREATE_DATE, GMT_PAYMENT, 
-      GMT_CREATE, GMT_UPDATE)
+      QR_CODE, RETURN_DETAIL, OUT_NOTIFY_URL, 
+      NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, 
+      CREATE_DATE, GMT_PAYMENT, GMT_CREATE, 
+      GMT_UPDATE)
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
       #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR}, 
       #{cancelStatus,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, #{payDetail,jdbcType=VARCHAR}, 
@@ -72,9 +76,10 @@
       #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, #{appAuthToken,jdbcType=VARCHAR}, 
       #{goodsDetail,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, #{extendParams,jdbcType=VARCHAR}, 
       #{timeoutExpress,jdbcType=VARCHAR}, #{fundBillList,jdbcType=VARCHAR}, #{discountGoodsDetail,jdbcType=VARCHAR}, 
-      #{qrCode,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, 
-      #{checkDate,jdbcType=CHAR}, #{createDate,jdbcType=CHAR}, #{gmtPayment,jdbcType=TIMESTAMP}, 
-      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
+      #{qrCode,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{outNotifyUrl,jdbcType=VARCHAR}, 
+      #{notifyBody,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, #{checkDate,jdbcType=CHAR}, 
+      #{createDate,jdbcType=CHAR}, #{gmtPayment,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAlipayPayOrder">
     insert into BIZ_ALIPAY_PAY_ORDER
@@ -156,6 +161,12 @@
       </if>
       <if test="returnDetail != null">
         RETURN_DETAIL,
+      </if>
+      <if test="outNotifyUrl != null">
+        OUT_NOTIFY_URL,
+      </if>
+      <if test="notifyBody != null">
+        NOTIFY_BODY,
       </if>
       <if test="checkStatus != null">
         CHECK_STATUS,
@@ -255,6 +266,12 @@
       <if test="returnDetail != null">
         #{returnDetail,jdbcType=VARCHAR},
       </if>
+      <if test="outNotifyUrl != null">
+        #{outNotifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyBody != null">
+        #{notifyBody,jdbcType=VARCHAR},
+      </if>
       <if test="checkStatus != null">
         #{checkStatus,jdbcType=VARCHAR},
       </if>
@@ -353,6 +370,12 @@
       <if test="returnDetail != null">
         RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
       </if>
+      <if test="outNotifyUrl != null">
+        OUT_NOTIFY_URL = #{outNotifyUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyBody != null">
+        NOTIFY_BODY = #{notifyBody,jdbcType=VARCHAR},
+      </if>
       <if test="checkStatus != null">
         CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
       </if>
@@ -401,6 +424,8 @@
       DISCOUNT_GOODS_DETAIL = #{discountGoodsDetail,jdbcType=VARCHAR},
       QR_CODE = #{qrCode,jdbcType=VARCHAR},
       RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
+      OUT_NOTIFY_URL = #{outNotifyUrl,jdbcType=VARCHAR},
+      NOTIFY_BODY = #{notifyBody,jdbcType=VARCHAR},
       CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
       CHECK_DATE = #{checkDate,jdbcType=CHAR},
       CREATE_DATE = #{createDate,jdbcType=CHAR},
