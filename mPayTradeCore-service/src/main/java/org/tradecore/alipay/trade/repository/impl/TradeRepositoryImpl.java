@@ -18,6 +18,7 @@ import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
+import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.TradeRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
@@ -106,7 +107,7 @@ public class TradeRepositoryImpl implements TradeRepository {
         bizAlipayPayOrder.setGmtUpdate(new Date());
 
         //修改本地订单数据
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "修改订单失败!");
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "修改订单失败");
 
     }
 
@@ -181,8 +182,23 @@ public class TradeRepositoryImpl implements TradeRepository {
             //判断业务是否业务成功
             if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
                 //1.加锁查询本地订单数据
+                Map<String, Object> paramMap = new HashMap<String, Object>();
+                paramMap.put(QueryFieldConstant.MERCHANT_ID, queryRequest.getMerchantId());
+                paramMap.put(QueryFieldConstant.OUT_TRADE_NO, queryRequest.getOutTradeNo());
+                BizAlipayPayOrder order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
+
+                LogUtil.info(logger, "原订单查询结果:order={0}", order);
+
+                AssertUtil.assertNotNull(order, "原订单查询为空");
 
                 //2.判断订单状态是否一致，如果不一致则更新本地订单状态
+                if (!StringUtils.equals(order.getOrderStatus(), response.getTradeStatus())) {
+                    order.setOrderStatus(response.getTradeStatus());
+                    order.setGmtUpdate(new Date());
+
+                    //更新订单
+                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "修改订单失败");
+                }
 
             }
         }

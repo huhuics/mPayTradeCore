@@ -1,178 +1,183 @@
 package org.tradecore.dao.domain;
 
 import java.util.Date;
+
 import org.tradecore.common.util.Money;
 
-public class BizAlipayPayOrder {
+public class BizAlipayPayOrder extends BaseDomain {
+
+    /**  */
+    private static final long serialVersionUID = -2696913156538849497L;
+
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.ID
      */
-    private String id;
+    private String            id;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.ACQUIRER_ID
      */
-    private String acquirerId;
+    private String            acquirerId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.MERCHANT_ID
      */
-    private String merchantId;
+    private String            merchantId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.ALIPAY_TRADE_NO
      */
-    private String alipayTradeNo;
+    private String            alipayTradeNo;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.OUT_TRADE_NO
      */
-    private String outTradeNo;
+    private String            outTradeNo;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.ORDER_STATUS
      */
-    private String orderStatus;
+    private String            orderStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.CANCEL_STATUS
      */
-    private String cancelStatus;
+    private String            cancelStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.REFUND_STATUS
      */
-    private String refundStatus;
+    private String            refundStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.PAY_DETAIL
      */
-    private String payDetail;
+    private String            payDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.AUTH_CODE
      */
-    private String authCode;
+    private String            authCode;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.SELLER_ID
      */
-    private String sellerId;
+    private String            sellerId;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.TOTAL_AMOUNT
      */
-    private Money totalAmount;
+    private Money             totalAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.RECEIPT_AMOUNT
      */
-    private Money receiptAmount;
+    private Money             receiptAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.DISCOUNTABLE_AMOUNT
      */
-    private Money discountableAmount;
+    private Money             discountableAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.UNDISCOUNTABLE_AMOUNT
      */
-    private Money undiscountableAmount;
+    private Money             undiscountableAmount;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.SUBJECT
      */
-    private String subject;
+    private String            subject;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.BODY
      */
-    private String body;
+    private String            body;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.APP_AUTH_TOKEN
      */
-    private String appAuthToken;
+    private String            appAuthToken;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.GOODS_DETAIL
      */
-    private String goodsDetail;
+    private String            goodsDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.MERCHANT_DETAIL
      */
-    private String merchantDetail;
+    private String            merchantDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.EXTEND_PARAMS
      */
-    private String extendParams;
+    private String            extendParams;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.TIMEOUT_EXPRESS
      */
-    private String timeoutExpress;
+    private String            timeoutExpress;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.FUND_BILL_LIST
      */
-    private String fundBillList;
+    private String            fundBillList;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.DISCOUNT_GOODS_DETAIL
      */
-    private String discountGoodsDetail;
+    private String            discountGoodsDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.QR_CODE
      */
-    private String qrCode;
+    private String            qrCode;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.RETURN_DETAIL
      */
-    private String returnDetail;
+    private String            returnDetail;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.OUT_NOTIFY_URL
      */
-    private String outNotifyUrl;
+    private String            outNotifyUrl;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.NOTIFY_BODY
      */
-    private String notifyBody;
+    private String            notifyBody;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.CHECK_STATUS
      */
-    private String checkStatus;
+    private String            checkStatus;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.CHECK_DATE
      */
-    private String checkDate;
+    private String            checkDate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.CREATE_DATE
      */
-    private String createDate;
+    private String            createDate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.GMT_PAYMENT
      */
-    private Date gmtPayment;
+    private Date              gmtPayment;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.GMT_CREATE
      */
-    private Date gmtCreate;
+    private Date              gmtCreate;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.GMT_UPDATE
      */
-    private Date gmtUpdate;
+    private Date              gmtUpdate;
 
     public String getId() {
         return id;

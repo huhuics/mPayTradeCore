@@ -95,6 +95,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     @Override
+    @Transactional
     public AlipayF2FQueryResult query(QueryRequest queryRequest) {
 
         LogUtil.info(logger, "收到订单查询请求,queryRequest={0}", queryRequest);
@@ -112,7 +113,7 @@ public class TradeServiceImpl implements TradeService {
         LogUtil.info(logger, "支付宝返回查询业务结果alipayF2FQueryResult={0}", JSON.toJSONString(alipayF2FQueryResult, SerializerFeature.UseSingleQuotes));
 
         //4.如果业务成功，则修改本地订单状态
-        //TODO: 
+        tradeRepository.updateOrderStatus(queryRequest, alipayF2FQueryResult);
 
         return alipayF2FQueryResult;
     }
