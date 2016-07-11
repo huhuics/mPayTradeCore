@@ -7,115 +7,115 @@ import org.tradecore.common.util.Money;
 public class BizAlipayRefundOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = 1672370574965415758L;
+    private static final long serialVersionUID = -4916593202439536547L;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.id
+     *  null, BIZ_ALIPAY_REFUND_ORDER.ID
      */
     private String            id;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.acquirer_id
+     *  null, BIZ_ALIPAY_REFUND_ORDER.ACQUIRER_ID
      */
     private String            acquirerId;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.merchant_id
+     *  null, BIZ_ALIPAY_REFUND_ORDER.MERCHANT_ID
      */
     private String            merchantId;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.alipay_trade_no
+     *  null, BIZ_ALIPAY_REFUND_ORDER.ALIPAY_TRADE_NO
      */
     private String            alipayTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.out_trade_no
+     *  null, BIZ_ALIPAY_REFUND_ORDER.OUT_TRADE_NO
      */
     private String            outTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.total_amount
+     *  null, BIZ_ALIPAY_REFUND_ORDER.TOTAL_AMOUNT
      */
     private Money             totalAmount;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.refund_amount
+     *  null, BIZ_ALIPAY_REFUND_ORDER.REFUND_AMOUNT
      */
     private Money             refundAmount;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.send_back_fee
+     *  null, BIZ_ALIPAY_REFUND_ORDER.SEND_BACK_FEE
      */
-    private Long              sendBackFee;
+    private Money             sendBackFee;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.refund_reason
+     *  null, BIZ_ALIPAY_REFUND_ORDER.REFUND_REASON
      */
     private String            refundReason;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.out_request_no
+     *  null, BIZ_ALIPAY_REFUND_ORDER.OUT_REQUEST_NO
      */
     private String            outRequestNo;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.refund_status
+     *  null, BIZ_ALIPAY_REFUND_ORDER.REFUND_STATUS
      */
     private String            refundStatus;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.merchant_detail
+     *  null, BIZ_ALIPAY_REFUND_ORDER.MERCHANT_DETAIL
      */
     private String            merchantDetail;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.fund_change
+     *  null, BIZ_ALIPAY_REFUND_ORDER.FUND_CHANGE
      */
     private String            fundChange;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.refund_detail_item_list
+     *  null, BIZ_ALIPAY_REFUND_ORDER.REFUND_DETAIL_ITEM_LIST
      */
     private String            refundDetailItemList;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.buyer_user_id
+     *  null, BIZ_ALIPAY_REFUND_ORDER.BUYER_USER_ID
      */
     private String            buyerUserId;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.check_status
+     *  null, BIZ_ALIPAY_REFUND_ORDER.CHECK_STATUS
      */
     private String            checkStatus;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.check_date
+     *  null, BIZ_ALIPAY_REFUND_ORDER.CHECK_DATE
      */
     private String            checkDate;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.error_detail
+     *  null, BIZ_ALIPAY_REFUND_ORDER.RETURN_DETAIL
      */
-    private String            errorDetail;
+    private String            returnDetail;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.create_date
+     *  null, BIZ_ALIPAY_REFUND_ORDER.CREATE_DATE
      */
     private String            createDate;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.gmt_refund_pay
+     *  null, BIZ_ALIPAY_REFUND_ORDER.GMT_REFUND_PAY
      */
     private Date              gmtRefundPay;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.gmt_create
+     *  null, BIZ_ALIPAY_REFUND_ORDER.GMT_CREATE
      */
     private Date              gmtCreate;
 
     /**
-     *  null, BIZ_ALIPAY_REFUND_ORDER.gmt_update
+     *  null, BIZ_ALIPAY_REFUND_ORDER.GMT_UPDATE
      */
     private Date              gmtUpdate;
 
@@ -175,11 +175,11 @@ public class BizAlipayRefundOrder extends BaseDomain {
         this.refundAmount = refundAmount;
     }
 
-    public Long getSendBackFee() {
+    public Money getSendBackFee() {
         return sendBackFee;
     }
 
-    public void setSendBackFee(Long sendBackFee) {
+    public void setSendBackFee(Money sendBackFee) {
         this.sendBackFee = sendBackFee;
     }
 
@@ -255,12 +255,12 @@ public class BizAlipayRefundOrder extends BaseDomain {
         this.checkDate = checkDate == null ? null : checkDate.trim();
     }
 
-    public String getErrorDetail() {
-        return errorDetail;
+    public String getReturnDetail() {
+        return returnDetail;
     }
 
-    public void setErrorDetail(String errorDetail) {
-        this.errorDetail = errorDetail == null ? null : errorDetail.trim();
+    public void setReturnDetail(String returnDetail) {
+        this.returnDetail = returnDetail == null ? null : returnDetail.trim();
     }
 
     public String getCreateDate() {

@@ -111,6 +111,51 @@ public class TradeRepositoryImpl implements TradeRepository {
 
     }
 
+    @Override
+    public void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult) {
+
+        LogUtil.info(logger, "收到订单状态更新请求");
+
+        if (alipayF2FQueryResult != null && alipayF2FQueryResult.getResponse() != null) {
+            AlipayTradeQueryResponse response = alipayF2FQueryResult.getResponse();
+
+            //判断业务是否业务成功
+            if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
+                //1.加锁查询本地订单数据
+                BizAlipayPayOrder order = selectPayOrderForUpdate(queryRequest.getMerchantId(), queryRequest.getOutTradeNo());
+
+                AssertUtil.assertNotNull(order, "原订单查询为空");
+
+                //2.判断订单状态是否一致，如果不一致则更新本地订单状态
+                if (!StringUtils.equals(order.getOrderStatus(), response.getTradeStatus())) {
+                    order.setOrderStatus(response.getTradeStatus());
+                    order.setGmtUpdate(new Date());
+
+                    //更新订单
+                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "修改订单失败");
+                }
+
+            }
+        }
+
+    }
+
+    @Override
+    public BizAlipayPayOrder selectPayOrderForUpdate(String merchantId, String outTradeNo) {
+
+        LogUtil.info(logger, "收到订单加锁查询请求,merchantId={0},outTradeNo={1}", merchantId, outTradeNo);
+
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
+        paramMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+
+        BizAlipayPayOrder order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
+
+        LogUtil.info(logger, "订单加锁查询结果,order={0}", order);
+
+        return order;
+    }
+
     /**
      * 将payRequest转化为domian对象
      * @param payRequest
@@ -171,37 +216,5 @@ public class TradeRepositoryImpl implements TradeRepository {
         payOrder.setGmtUpdate(new Date());
 
         return payOrder;
-    }
-
-    @Override
-    public void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult) {
-
-        if (alipayF2FQueryResult != null && alipayF2FQueryResult.getResponse() != null) {
-            AlipayTradeQueryResponse response = alipayF2FQueryResult.getResponse();
-
-            //判断业务是否业务成功
-            if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
-                //1.加锁查询本地订单数据
-                Map<String, Object> paramMap = new HashMap<String, Object>();
-                paramMap.put(QueryFieldConstant.MERCHANT_ID, queryRequest.getMerchantId());
-                paramMap.put(QueryFieldConstant.OUT_TRADE_NO, queryRequest.getOutTradeNo());
-                BizAlipayPayOrder order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
-
-                LogUtil.info(logger, "原订单查询结果:order={0}", order);
-
-                AssertUtil.assertNotNull(order, "原订单查询为空");
-
-                //2.判断订单状态是否一致，如果不一致则更新本地订单状态
-                if (!StringUtils.equals(order.getOrderStatus(), response.getTradeStatus())) {
-                    order.setOrderStatus(response.getTradeStatus());
-                    order.setGmtUpdate(new Date());
-
-                    //更新订单
-                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "修改订单失败");
-                }
-
-            }
-        }
-
     }
 }

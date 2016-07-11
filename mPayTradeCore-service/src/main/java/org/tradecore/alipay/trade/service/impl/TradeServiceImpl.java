@@ -18,6 +18,7 @@ import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
@@ -128,17 +129,25 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(refundRequest, "退款请求参数不能为空");
         AssertUtil.assertTrue(refundRequest.validate(), "退款请求参数不合法");
 
-        //2.转换成支付宝退款请求参数
+        //2.查询原始订单
+        BizAlipayPayOrder oriOrder = tradeRepository.selectPayOrderForUpdate(refundRequest.getMerchantId(), refundRequest.getOutTradeNo());
+
+        AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
+
+        //  2.1原始订单和退款请求参数校验
+        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误");
+
+        //3.本地持久化退款信息
+
+        //4.转换成支付宝退款请求参数
         AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
 
-        //TODO: 3.本地持久化
-
-        //4.调用支付宝接口
+        //5.调用支付宝接口
         AlipayF2FRefundResult alipayF2FRefundResult = alipayTradeService.tradeRefund(builder);
 
         LogUtil.info(logger, "支付宝返回退款业务结果alipayF2FRefundResult={0}", JSON.toJSONString(alipayF2FRefundResult, SerializerFeature.UseSingleQuotes));
 
-        //TODO:5.根据支付宝返回结果更新本地数据
+        //TODO:6.根据支付宝返回结果更新本地数据
 
         return alipayF2FRefundResult;
     }
@@ -178,4 +187,48 @@ public class TradeServiceImpl implements TradeService {
             .setTimeoutExpress(payRequest.getTimeoutExpress()).setAppAuthToken(payRequest.getAppAuthToken());
     }
 
+    /**
+     * 原始订单与退款金额校验
+     * @param oriOrder      原始订单
+     * @param refundAmount  本次退款金额
+     * @return
+     */
+    private boolean checkFee(BizAlipayPayOrder oriOrder, String refundAmountStr) {
+        //原订单总金额
+        Money totalAmount = oriOrder.getTotalAmount();
+        //本次退款金额
+        Money refundAmount = new Money(refundAmountStr);
+
+        AssertUtil.assertTrue(checkTotalFee(totalAmount, refundAmount), "退款金额不能大于订单总金额");
+
+        AssertUtil.assertTrue(checkTotalRufundFee(oriOrder.getOutTradeNo(), totalAmount, refundAmount), "多次退款,退款总金额不能大于订单总金额");
+
+        return true;
+    }
+
+    /**
+     * 订单总金额与本次退款金额校验
+     * @param totalAmount
+     * @param refundAmount
+     * @return
+     */
+    private boolean checkTotalFee(Money totalAmount, Money refundAmount) {
+
+        if (totalAmount.compareTo(refundAmount) >= 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 订单总金额与所有退款总金额校验
+     * @param outTradeNo
+     * @param totalAmount
+     * @param refundAmount
+     * @return
+     */
+    private boolean checkTotalRufundFee(String outTradeNo, Money totalAmount, Money refundAmount) {
+        return false;
+    }
 }

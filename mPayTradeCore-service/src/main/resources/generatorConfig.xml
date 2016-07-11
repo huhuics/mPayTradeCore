@@ -29,11 +29,10 @@
         </javaClientGenerator>  
 		
 		<!-- 生成表 -->
-		<table tableName="BIZ_ALIPAY_PAY_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-			<columnOverride column="total_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
-			<columnOverride column="receipt_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
-			<columnOverride column="discountable_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
-			<columnOverride column="undiscountable_amount" javaType="org.tradecore.common.util.Money"></columnOverride>
+		<table tableName="BIZ_ALIPAY_REFUND_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<columnOverride column="TOTAL_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
+			<columnOverride column="REFUND_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
+			<columnOverride column="SEND_BACK_FEE" javaType="org.tradecore.common.util.Money"></columnOverride>
 		</table>
 		
     </context>  

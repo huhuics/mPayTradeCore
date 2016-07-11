@@ -2,60 +2,60 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.tradecore.dao.BizAlipayRefundOrderDAO">
   <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizAlipayRefundOrder">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
-    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
-    <result column="alipay_trade_no" jdbcType="VARCHAR" property="alipayTradeNo" />
-    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
-    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
-    <result column="refund_amount" jdbcType="DECIMAL" property="refundAmount" />
-    <result column="send_back_fee" jdbcType="DECIMAL" property="sendBackFee" />
-    <result column="refund_reason" jdbcType="VARCHAR" property="refundReason" />
-    <result column="out_request_no" jdbcType="VARCHAR" property="outRequestNo" />
-    <result column="refund_status" jdbcType="VARCHAR" property="refundStatus" />
-    <result column="merchant_detail" jdbcType="VARCHAR" property="merchantDetail" />
-    <result column="fund_change" jdbcType="CHAR" property="fundChange" />
-    <result column="refund_detail_item_list" jdbcType="VARCHAR" property="refundDetailItemList" />
-    <result column="buyer_user_id" jdbcType="VARCHAR" property="buyerUserId" />
-    <result column="check_status" jdbcType="VARCHAR" property="checkStatus" />
-    <result column="check_date" jdbcType="CHAR" property="checkDate" />
-    <result column="error_detail" jdbcType="VARCHAR" property="errorDetail" />
-    <result column="create_date" jdbcType="CHAR" property="createDate" />
-    <result column="gmt_refund_pay" jdbcType="TIMESTAMP" property="gmtRefundPay" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
+    <result column="ALIPAY_TRADE_NO" jdbcType="VARCHAR" property="alipayTradeNo" />
+    <result column="OUT_TRADE_NO" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="TOTAL_AMOUNT" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="REFUND_AMOUNT" jdbcType="DECIMAL" property="refundAmount" />
+    <result column="SEND_BACK_FEE" jdbcType="DECIMAL" property="sendBackFee" />
+    <result column="REFUND_REASON" jdbcType="VARCHAR" property="refundReason" />
+    <result column="OUT_REQUEST_NO" jdbcType="VARCHAR" property="outRequestNo" />
+    <result column="REFUND_STATUS" jdbcType="VARCHAR" property="refundStatus" />
+    <result column="MERCHANT_DETAIL" jdbcType="VARCHAR" property="merchantDetail" />
+    <result column="FUND_CHANGE" jdbcType="CHAR" property="fundChange" />
+    <result column="REFUND_DETAIL_ITEM_LIST" jdbcType="VARCHAR" property="refundDetailItemList" />
+    <result column="BUYER_USER_ID" jdbcType="VARCHAR" property="buyerUserId" />
+    <result column="CHECK_STATUS" jdbcType="VARCHAR" property="checkStatus" />
+    <result column="CHECK_DATE" jdbcType="CHAR" property="checkDate" />
+    <result column="RETURN_DETAIL" jdbcType="VARCHAR" property="returnDetail" />
+    <result column="CREATE_DATE" jdbcType="CHAR" property="createDate" />
+    <result column="GMT_REFUND_PAY" jdbcType="TIMESTAMP" property="gmtRefundPay" />
+    <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, acquirer_id, merchant_id, alipay_trade_no, out_trade_no, total_amount, refund_amount, 
-    send_back_fee, refund_reason, out_request_no, refund_status, merchant_detail, fund_change, 
-    refund_detail_item_list, buyer_user_id, check_status, check_date, error_detail, create_date, 
-    gmt_refund_pay, gmt_create, gmt_update
+    ID, ACQUIRER_ID, MERCHANT_ID, ALIPAY_TRADE_NO, OUT_TRADE_NO, TOTAL_AMOUNT, REFUND_AMOUNT, 
+    SEND_BACK_FEE, REFUND_REASON, OUT_REQUEST_NO, REFUND_STATUS, MERCHANT_DETAIL, FUND_CHANGE, 
+    REFUND_DETAIL_ITEM_LIST, BUYER_USER_ID, CHECK_STATUS, CHECK_DATE, RETURN_DETAIL, 
+    CREATE_DATE, GMT_REFUND_PAY, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from BIZ_ALIPAY_REFUND_ORDER
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from BIZ_ALIPAY_REFUND_ORDER
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
-    insert into BIZ_ALIPAY_REFUND_ORDER (id, acquirer_id, merchant_id, 
-      alipay_trade_no, out_trade_no, total_amount, 
-      refund_amount, send_back_fee, refund_reason, 
-      out_request_no, refund_status, merchant_detail, 
-      fund_change, refund_detail_item_list, buyer_user_id, 
-      check_status, check_date, error_detail, 
-      create_date, gmt_refund_pay, gmt_create, 
-      gmt_update)
+    insert into BIZ_ALIPAY_REFUND_ORDER (ID, ACQUIRER_ID, MERCHANT_ID, 
+      ALIPAY_TRADE_NO, OUT_TRADE_NO, TOTAL_AMOUNT, 
+      REFUND_AMOUNT, SEND_BACK_FEE, REFUND_REASON, 
+      OUT_REQUEST_NO, REFUND_STATUS, MERCHANT_DETAIL, 
+      FUND_CHANGE, REFUND_DETAIL_ITEM_LIST, BUYER_USER_ID, 
+      CHECK_STATUS, CHECK_DATE, RETURN_DETAIL, 
+      CREATE_DATE, GMT_REFUND_PAY, GMT_CREATE, 
+      GMT_UPDATE)
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
       #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
       #{refundAmount,jdbcType=DECIMAL}, #{sendBackFee,jdbcType=DECIMAL}, #{refundReason,jdbcType=VARCHAR}, 
       #{outRequestNo,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, 
       #{fundChange,jdbcType=CHAR}, #{refundDetailItemList,jdbcType=VARCHAR}, #{buyerUserId,jdbcType=VARCHAR}, 
-      #{checkStatus,jdbcType=VARCHAR}, #{checkDate,jdbcType=CHAR}, #{errorDetail,jdbcType=VARCHAR}, 
+      #{checkStatus,jdbcType=VARCHAR}, #{checkDate,jdbcType=CHAR}, #{returnDetail,jdbcType=VARCHAR}, 
       #{createDate,jdbcType=CHAR}, #{gmtRefundPay,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
       #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
@@ -63,70 +63,70 @@
     insert into BIZ_ALIPAY_REFUND_ORDER
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        id,
+        ID,
       </if>
       <if test="acquirerId != null">
-        acquirer_id,
+        ACQUIRER_ID,
       </if>
       <if test="merchantId != null">
-        merchant_id,
+        MERCHANT_ID,
       </if>
       <if test="alipayTradeNo != null">
-        alipay_trade_no,
+        ALIPAY_TRADE_NO,
       </if>
       <if test="outTradeNo != null">
-        out_trade_no,
+        OUT_TRADE_NO,
       </if>
       <if test="totalAmount != null">
-        total_amount,
+        TOTAL_AMOUNT,
       </if>
       <if test="refundAmount != null">
-        refund_amount,
+        REFUND_AMOUNT,
       </if>
       <if test="sendBackFee != null">
-        send_back_fee,
+        SEND_BACK_FEE,
       </if>
       <if test="refundReason != null">
-        refund_reason,
+        REFUND_REASON,
       </if>
       <if test="outRequestNo != null">
-        out_request_no,
+        OUT_REQUEST_NO,
       </if>
       <if test="refundStatus != null">
-        refund_status,
+        REFUND_STATUS,
       </if>
       <if test="merchantDetail != null">
-        merchant_detail,
+        MERCHANT_DETAIL,
       </if>
       <if test="fundChange != null">
-        fund_change,
+        FUND_CHANGE,
       </if>
       <if test="refundDetailItemList != null">
-        refund_detail_item_list,
+        REFUND_DETAIL_ITEM_LIST,
       </if>
       <if test="buyerUserId != null">
-        buyer_user_id,
+        BUYER_USER_ID,
       </if>
       <if test="checkStatus != null">
-        check_status,
+        CHECK_STATUS,
       </if>
       <if test="checkDate != null">
-        check_date,
+        CHECK_DATE,
       </if>
-      <if test="errorDetail != null">
-        error_detail,
+      <if test="returnDetail != null">
+        RETURN_DETAIL,
       </if>
       <if test="createDate != null">
-        create_date,
+        CREATE_DATE,
       </if>
       <if test="gmtRefundPay != null">
-        gmt_refund_pay,
+        GMT_REFUND_PAY,
       </if>
       <if test="gmtCreate != null">
-        gmt_create,
+        GMT_CREATE,
       </if>
       <if test="gmtUpdate != null">
-        gmt_update,
+        GMT_UPDATE,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -181,8 +181,8 @@
       <if test="checkDate != null">
         #{checkDate,jdbcType=CHAR},
       </if>
-      <if test="errorDetail != null">
-        #{errorDetail,jdbcType=VARCHAR},
+      <if test="returnDetail != null">
+        #{returnDetail,jdbcType=VARCHAR},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=CHAR},
@@ -202,94 +202,94 @@
     update BIZ_ALIPAY_REFUND_ORDER
     <set>
       <if test="acquirerId != null">
-        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+        ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       </if>
       <if test="merchantId != null">
-        merchant_id = #{merchantId,jdbcType=VARCHAR},
+        MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       </if>
       <if test="alipayTradeNo != null">
-        alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
+        ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
       <if test="outTradeNo != null">
-        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+        OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=DECIMAL},
+        TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
       </if>
       <if test="refundAmount != null">
-        refund_amount = #{refundAmount,jdbcType=DECIMAL},
+        REFUND_AMOUNT = #{refundAmount,jdbcType=DECIMAL},
       </if>
       <if test="sendBackFee != null">
-        send_back_fee = #{sendBackFee,jdbcType=DECIMAL},
+        SEND_BACK_FEE = #{sendBackFee,jdbcType=DECIMAL},
       </if>
       <if test="refundReason != null">
-        refund_reason = #{refundReason,jdbcType=VARCHAR},
+        REFUND_REASON = #{refundReason,jdbcType=VARCHAR},
       </if>
       <if test="outRequestNo != null">
-        out_request_no = #{outRequestNo,jdbcType=VARCHAR},
+        OUT_REQUEST_NO = #{outRequestNo,jdbcType=VARCHAR},
       </if>
       <if test="refundStatus != null">
-        refund_status = #{refundStatus,jdbcType=VARCHAR},
+        REFUND_STATUS = #{refundStatus,jdbcType=VARCHAR},
       </if>
       <if test="merchantDetail != null">
-        merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
+        MERCHANT_DETAIL = #{merchantDetail,jdbcType=VARCHAR},
       </if>
       <if test="fundChange != null">
-        fund_change = #{fundChange,jdbcType=CHAR},
+        FUND_CHANGE = #{fundChange,jdbcType=CHAR},
       </if>
       <if test="refundDetailItemList != null">
-        refund_detail_item_list = #{refundDetailItemList,jdbcType=VARCHAR},
+        REFUND_DETAIL_ITEM_LIST = #{refundDetailItemList,jdbcType=VARCHAR},
       </if>
       <if test="buyerUserId != null">
-        buyer_user_id = #{buyerUserId,jdbcType=VARCHAR},
+        BUYER_USER_ID = #{buyerUserId,jdbcType=VARCHAR},
       </if>
       <if test="checkStatus != null">
-        check_status = #{checkStatus,jdbcType=VARCHAR},
+        CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
       </if>
       <if test="checkDate != null">
-        check_date = #{checkDate,jdbcType=CHAR},
+        CHECK_DATE = #{checkDate,jdbcType=CHAR},
       </if>
-      <if test="errorDetail != null">
-        error_detail = #{errorDetail,jdbcType=VARCHAR},
+      <if test="returnDetail != null">
+        RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
       </if>
       <if test="createDate != null">
-        create_date = #{createDate,jdbcType=CHAR},
+        CREATE_DATE = #{createDate,jdbcType=CHAR},
       </if>
       <if test="gmtRefundPay != null">
-        gmt_refund_pay = #{gmtRefundPay,jdbcType=TIMESTAMP},
+        GMT_REFUND_PAY = #{gmtRefundPay,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtUpdate != null">
-        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+        GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAlipayRefundOrder">
     update BIZ_ALIPAY_REFUND_ORDER
-    set acquirer_id = #{acquirerId,jdbcType=VARCHAR},
-      merchant_id = #{merchantId,jdbcType=VARCHAR},
-      alipay_trade_no = #{alipayTradeNo,jdbcType=VARCHAR},
-      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
-      total_amount = #{totalAmount,jdbcType=DECIMAL},
-      refund_amount = #{refundAmount,jdbcType=DECIMAL},
-      send_back_fee = #{sendBackFee,jdbcType=DECIMAL},
-      refund_reason = #{refundReason,jdbcType=VARCHAR},
-      out_request_no = #{outRequestNo,jdbcType=VARCHAR},
-      refund_status = #{refundStatus,jdbcType=VARCHAR},
-      merchant_detail = #{merchantDetail,jdbcType=VARCHAR},
-      fund_change = #{fundChange,jdbcType=CHAR},
-      refund_detail_item_list = #{refundDetailItemList,jdbcType=VARCHAR},
-      buyer_user_id = #{buyerUserId,jdbcType=VARCHAR},
-      check_status = #{checkStatus,jdbcType=VARCHAR},
-      check_date = #{checkDate,jdbcType=CHAR},
-      error_detail = #{errorDetail,jdbcType=VARCHAR},
-      create_date = #{createDate,jdbcType=CHAR},
-      gmt_refund_pay = #{gmtRefundPay,jdbcType=TIMESTAMP},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+    set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
+      ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
+      OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
+      TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
+      REFUND_AMOUNT = #{refundAmount,jdbcType=DECIMAL},
+      SEND_BACK_FEE = #{sendBackFee,jdbcType=DECIMAL},
+      REFUND_REASON = #{refundReason,jdbcType=VARCHAR},
+      OUT_REQUEST_NO = #{outRequestNo,jdbcType=VARCHAR},
+      REFUND_STATUS = #{refundStatus,jdbcType=VARCHAR},
+      MERCHANT_DETAIL = #{merchantDetail,jdbcType=VARCHAR},
+      FUND_CHANGE = #{fundChange,jdbcType=CHAR},
+      REFUND_DETAIL_ITEM_LIST = #{refundDetailItemList,jdbcType=VARCHAR},
+      BUYER_USER_ID = #{buyerUserId,jdbcType=VARCHAR},
+      CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
+      CHECK_DATE = #{checkDate,jdbcType=CHAR},
+      RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
+      CREATE_DATE = #{createDate,jdbcType=CHAR},
+      GMT_REFUND_PAY = #{gmtRefundPay,jdbcType=TIMESTAMP},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

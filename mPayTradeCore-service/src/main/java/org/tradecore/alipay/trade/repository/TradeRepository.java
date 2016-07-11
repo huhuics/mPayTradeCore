@@ -53,4 +53,12 @@ public interface TradeRepository {
      */
     void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult);
 
+    /**
+     * 根据商户标识号和外部商户号加锁查询订单
+     * @param merchantId  商户标识号
+     * @param outTradeNo  外部商户号
+     * @return            订单对象
+     */
+    BizAlipayPayOrder selectPayOrderForUpdate(String merchantId, String outTradeNo);
+
 }
