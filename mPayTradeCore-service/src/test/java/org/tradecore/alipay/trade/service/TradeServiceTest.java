@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
 
@@ -25,6 +26,7 @@ import com.alipay.demo.trade.model.GoodsDetail;
 import com.alipay.demo.trade.model.TradeStatus;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
+import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 
 /**
  * 测试支付宝交易服务类
@@ -93,6 +95,31 @@ public class TradeServiceTest extends BaseTest {
         AlipayF2FQueryResult ret = tradeService.query(queryRequest);
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
+
         Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+    }
+
+    /**
+     * 测试订单退款
+     */
+    @Test
+    public void testRefund() {
+        Assert.assertNotNull(tradeService);
+
+        //组装参数
+        RefundRequest refundRequest = new RefundRequest();
+        refundRequest.setAcquirerId("acquire_id_2535400.4703792045");
+        refundRequest.setMerchantId("mechant_id_2382725.100804911");
+        refundRequest.setOutTradeNo("tradepay1468155933244153356");
+        refundRequest.setRefundAmount("0.01");
+        refundRequest.setRefundReason("正常退款");
+        refundRequest.setStoreId("store_id");
+
+        AlipayF2FRefundResult ret = tradeService.refund(refundRequest);
+
+        LogUtil.info(logger, "订单退款结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
+
+        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+
     }
 }
