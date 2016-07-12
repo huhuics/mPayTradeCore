@@ -21,6 +21,7 @@ import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
+import org.tradecore.alipay.trade.repository.PrecreateRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -45,6 +46,7 @@ import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
+import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
@@ -78,6 +80,12 @@ public class TradeServiceImpl implements TradeService {
     private PayRepository             payRepository;
 
     /**
+     * 扫码支付仓储服务
+     */
+    @Resource
+    private PrecreateRepository       precreateRepository;
+
+    /**
      * 退款仓储服务
      */
     @Resource
@@ -109,18 +117,20 @@ public class TradeServiceImpl implements TradeService {
 
         //1.校验参数
         AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
-        AssertUtil.assertTrue(payRequest.validate(), "支付请求参数不合法");
+        AssertUtil.assertTrue(payRequest.validate(), "支付支付请求参数不合法");
 
-        //2.请求参数转换成支付宝支付请求参数
-        AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
-
-        //3.本地持久化
+        //2.本地持久化
         BizAlipayPayOrder bizAlipayPayOrder = payRepository.savePayOrder(payRequest);
 
-        //4.调用支付宝支付接口
+        //3.请求参数转换成支付宝支付请求参数
+        AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
+
+        //4.调用支付宝条码支付接口
         AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
 
-        LogUtil.info(logger, "支付宝返回支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "支付宝返回条码支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
+
+        AssertUtil.assertNotNull(alipayF2FPayResult, "支付宝返回条码支付结果为空");
 
         //5.根据支付宝返回结果更新本地数据
         payRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
@@ -132,7 +142,26 @@ public class TradeServiceImpl implements TradeService {
     @Transactional
     public AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest) {
 
-        return null;
+        LogUtil.info(logger, "收到扫码支付请求参数,precreateRequest={0}", precreateRequest);
+
+        //1.参数校验
+        AssertUtil.assertNotNull(precreateRequest, "扫码支付请求不能为空");
+        AssertUtil.assertTrue(precreateRequest.validate(), "扫码支付请求参数不合法");
+
+        //2.请求参数转换成支付宝支付请求参数
+        AlipayTradePrecreateRequestBuilder builder = convert2Builder(precreateRequest);
+
+        //3.调用支付宝扫码支付接口
+        AlipayF2FPrecreateResult alipayF2FPrecreateResult = alipayTradeService.tradePrecreate(builder);
+
+        LogUtil.info(logger, "支付宝返回扫码支付业务结果alipayF2FPrecreateResult={0}", JSON.toJSONString(alipayF2FPrecreateResult, SerializerFeature.UseSingleQuotes));
+
+        AssertUtil.assertNotNull(alipayF2FPrecreateResult, "支付宝返回扫码业务结果为空");
+
+        //4.根据支付宝返回结果持久化本地订单数据
+        precreateRepository.savePrecreateOrder(precreateRequest, alipayF2FPrecreateResult);
+
+        return alipayF2FPrecreateResult;
     }
 
     @Override
@@ -283,7 +312,7 @@ public class TradeServiceImpl implements TradeService {
     }
 
     /**
-     * 将支付请求参数转换成支付宝请求
+     * 将条码支付请求参数转换成支付宝请求
      * @param payRequest 
      * @return
      */
@@ -293,6 +322,20 @@ public class TradeServiceImpl implements TradeService {
             .setUndiscountableAmount(payRequest.getUndiscountableAmount()).setBody(payRequest.getBody()).setOperatorId(payRequest.getOperatorId())
             .setExtendParams(payRequest.getExtendParams()).setSellerId(payRequest.getSellerId()).setGoodsDetailList(payRequest.getGoodsDetailList())
             .setTimeoutExpress(payRequest.getTimeoutExpress()).setAppAuthToken(payRequest.getAppAuthToken());
+    }
+
+    /**
+     * 将扫码支付请求转换成支付宝请求
+     * @param precreateRequest
+     * @return
+     */
+    private AlipayTradePrecreateRequestBuilder convert2Builder(PrecreateRequest precreateRequest) {
+        return new AlipayTradePrecreateRequestBuilder().setSubject(precreateRequest.getSubject()).setTotalAmount(precreateRequest.getTotalAmount())
+            .setOutTradeNo(precreateRequest.getOutTradeNo()).setUndiscountableAmount(precreateRequest.getUndiscountableAmount())
+            .setSellerId(precreateRequest.getSellerId()).setBody(precreateRequest.getBody()).setOperatorId(precreateRequest.getOperatorId())
+            .setStoreId(precreateRequest.getStoreId()).setExtendParams(precreateRequest.getExtendParams())
+            .setTimeoutExpress(precreateRequest.getTimeoutExpress()).setGoodsDetailList(precreateRequest.getGoodsDetailList())
+            .setNotifyUrl(precreateRequest.getNotifyUrl());
     }
 
     /**

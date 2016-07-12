@@ -42,7 +42,7 @@ import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
- * 支付仓储服务接口实现类<br>
+ * 条码支付仓储服务接口实现类<br>
  * 请注意，本类中所有方法均不会校验入参，参数为空将直接抛出RuntimeException，请调用者自行校验入参是否合法
  * @author HuHui
  * @version $Id: TradeRepositoryImpl.java, v 0.1 2016年7月9日 上午10:17:42 HuHui Exp $
@@ -53,7 +53,7 @@ public class PayRepositoryImpl implements PayRepository {
     /** 日志 */
     private static final Logger  logger = LoggerFactory.getLogger(PayRepositoryImpl.class);
 
-    /** 付款DAO */
+    /** 订单DAO */
     @Resource
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
@@ -66,7 +66,7 @@ public class PayRepositoryImpl implements PayRepository {
 
         LogUtil.info(logger, "条码支付请求payRequest转化为domian对象成功,payOrder={0}", payOrder);
 
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "条码支付数据持久化失败");
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "条码支付订单持久化失败");
 
         return payOrder;
 
