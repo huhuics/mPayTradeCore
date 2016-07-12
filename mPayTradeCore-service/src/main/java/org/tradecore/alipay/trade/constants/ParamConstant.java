@@ -13,9 +13,6 @@ public class ParamConstant {
 
     public static final String APP_AUTH_TOKEN        = "app_auth_token";
 
-    /** 支付宝ApiDomain */
-    public static final String GATE_WAY              = "/gateway.do";
-
     /** 支付宝配置信息格式 */
     public static final String ALIPAY_CONFIG_FORMAT  = "JSON";
 

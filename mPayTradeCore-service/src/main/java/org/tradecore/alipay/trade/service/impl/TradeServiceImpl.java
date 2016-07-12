@@ -97,8 +97,8 @@ public class TradeServiceImpl implements TradeService {
         alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
 
         //3.实例化AlipayClient
-        alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain() + ParamConstant.GATE_WAY, Configs.getAppid(), Configs.getPrivateKey(),
-            ParamConstant.ALIPAY_CONFIG_FORMAT, ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
+        alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain(), Configs.getAppid(), Configs.getPrivateKey(), ParamConstant.ALIPAY_CONFIG_FORMAT,
+            ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
     }
 
     @Override

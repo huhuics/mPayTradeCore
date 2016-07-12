@@ -136,9 +136,9 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         CancelRequest cancelRequest = new CancelRequest();
-        cancelRequest.setAcquirerId("acquire_id_4948248.502670019");
-        cancelRequest.setMerchantId("mechant_id_3062919.5403585494");
-        cancelRequest.setOutTradeNo("tradepay1468326599343284774");
+        cancelRequest.setAcquirerId("acquire_id_1468334082337");
+        cancelRequest.setMerchantId("mechant_id_1468334911719");
+        cancelRequest.setOutTradeNo("tradepay1468329244485");
 
         AlipayTradeCancelResponse ret = tradeService.cancel(cancelRequest);
 
