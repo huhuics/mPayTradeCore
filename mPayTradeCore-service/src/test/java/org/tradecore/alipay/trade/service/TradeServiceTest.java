@@ -17,6 +17,7 @@ import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.LogUtil;
@@ -28,8 +29,10 @@ import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.demo.trade.model.GoodsDetail;
 import com.alipay.demo.trade.model.TradeStatus;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
+import com.alipay.demo.trade.utils.ZxingUtils;
 
 /**
  * 测试支付宝交易服务类
@@ -61,7 +64,7 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setAuthCode("280180683001541267");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
         payRequest.setTotalAmount("0.01");
-        payRequest.setSubject("胡辉测试交易" + geneRandomId());
+        payRequest.setSubject("胡辉条码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
         payRequest.setBody("购买商品3件共20.00元");
         payRequest.setOperatorId("test_operator_id");
@@ -79,6 +82,50 @@ public class TradeServiceTest extends BaseTest {
 
         Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
 
+    }
+
+    /**
+     * 测试扫码支付
+     */
+    @Test
+    public void testPrecreate() {
+
+        Assert.assertNotNull(tradeService);
+
+        //组装参数
+        PrecreateRequest payRequest = new PrecreateRequest();
+        payRequest.setAcquirerId("acquire_id_" + geneRandomId());
+        payRequest.setMerchantId("mechant_id_" + geneRandomId());
+        payRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
+        payRequest.setOutTradeNo("tradepay" + geneRandomId());
+        payRequest.setTotalAmount("0.01");
+        payRequest.setSubject("胡辉扫码交易测试" + geneRandomId());
+        payRequest.setStoreId("store_id_" + geneRandomId());
+        payRequest.setBody("购买商品3件共20.00元");
+        payRequest.setOperatorId("test_operator_id");
+        payRequest.setTimeoutExpress("15m");//15分钟
+
+        // 商品明细列表
+        List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
+        GoodsDetail goods1 = GoodsDetail.newInstance("goods_id001", "西瓜", 1000, 1);//单位为分，数量为1
+        goodsDetailList.add(goods1);
+        GoodsDetail goods2 = GoodsDetail.newInstance("goods_id002", "苹果", 500, 2);
+        goodsDetailList.add(goods2);
+        payRequest.setGoodsDetailList(goodsDetailList);
+
+        payRequest.setNotifyUrl("http://www.notify.url");
+        payRequest.setOutNotifyUrl("http://www.notify.url.out");
+
+        AlipayF2FPrecreateResult ret = tradeService.precreate(payRequest);
+
+        String qrFilePath = String.format("F:/qr/%s.png", ret.getResponse().getOutTradeNo());
+
+        LogUtil.info(logger, "qrFilePath={0}", qrFilePath);
+
+        //生成二维码图片
+        ZxingUtils.getQRCodeImge(ret.getResponse().getQrCode(), 256, qrFilePath);
+
+        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
     }
 
     /**
