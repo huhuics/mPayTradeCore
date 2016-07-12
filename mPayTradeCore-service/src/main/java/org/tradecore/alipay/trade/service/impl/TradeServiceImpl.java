@@ -4,7 +4,10 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,14 +17,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
+import org.tradecore.alipay.trade.constants.JSONFieldConstant;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
+import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
+import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -29,6 +36,11 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayTradeCancelRequest;
+import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
@@ -54,6 +66,9 @@ public class TradeServiceImpl implements TradeService {
     /** 支付宝交易接口 */
     private static AlipayTradeService alipayTradeService;
 
+    /** 公共请求方法类 */
+    private static AlipayClient       alipayClient;
+
     /**
      * 条码支付仓储服务
      */
@@ -72,6 +87,10 @@ public class TradeServiceImpl implements TradeService {
 
         //2.工厂方法创建静态支付服务类
         alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
+
+        //3.实例化AlipayClient
+        alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain() + ParamConstant.GATE_WAY, Configs.getAppid(), Configs.getPrivateKey(),
+            ParamConstant.ALIPAY_CONFIG_FORMAT, ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
     }
 
     @Override
@@ -149,6 +168,8 @@ public class TradeServiceImpl implements TradeService {
         //  2.1原始订单和退款请求参数校验
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误");
 
+        //TODO:退款订单幂等控制
+
         //3.本地持久化退款信息
         BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest);
 
@@ -167,6 +188,60 @@ public class TradeServiceImpl implements TradeService {
         payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
 
         return alipayF2FRefundResult;
+    }
+
+    @Override
+    @Transactional
+    public AlipayTradeCancelResponse tradeCancel(CancelRequest cancelRequest) {
+
+        LogUtil.info(logger, "收到订单撤销请求,cancelRequest={0}", cancelRequest);
+
+        //1.参数校验
+        AssertUtil.assertNotNull(cancelRequest, "撤销请求参数不能为空");
+        AssertUtil.assertTrue(cancelRequest.validate(), "撤销请求参数不合法");
+
+        //2.查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo());
+
+        AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
+
+        //3.判断是否在撤销时效内
+        AssertUtil.assertTrue(checkCancelTime(oriOrder.getGmtCreate()), "已超过可撤销时间，订单无法进行撤销");
+
+        //4.转换成支付宝撤销请求
+        AlipayTradeCancelRequest alipayTradeCancelRequest = convert2Request(cancelRequest);
+
+        //5.调用支付宝撤销接口
+        AlipayTradeCancelResponse cancelResponse = null;
+        try {
+            cancelResponse = alipayClient.execute(alipayTradeCancelRequest);
+        } catch (AlipayApiException e) {
+            LogUtil.error(e, logger, "调用支付宝撤销接口异常,alipayTradeCancelRequest={0}", alipayTradeCancelRequest);
+            throw new RuntimeException("调用支付宝撤销接口异常", e);
+        }
+
+        //TODO:6.本地持久化撤销数据
+
+        return cancelResponse;
+    }
+
+    /**
+     * 将撤销请求转换成支付宝请求
+     * @param cancelRequest
+     * @return
+     */
+    private AlipayTradeCancelRequest convert2Request(CancelRequest cancelRequest) {
+
+        AlipayTradeCancelRequest alipayCancelRequest = new AlipayTradeCancelRequest();
+        alipayCancelRequest.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, cancelRequest.getAppAuthToken());
+
+        //封装查询参数并序列化
+        Map<String, Object> paraMap = new HashMap<String, Object>();
+        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, cancelRequest.getOutTradeNo());
+
+        alipayCancelRequest.setBizContent(JSON.toJSONString(paraMap));
+
+        return alipayCancelRequest;
     }
 
     /**
@@ -256,5 +331,24 @@ public class TradeServiceImpl implements TradeService {
 
         //如果refundOrders为空，则退回到checkTotalFee方法，因此直接返回true
         return true;
+    }
+
+    /**
+     * 判断是否在撤销时效内<br>
+     * 撤销发起时间必须在订单创建的自然日内，否则超过0点将不能撤销<br>
+     * @param gmtCreate
+     * @return
+     */
+    private boolean checkCancelTime(Date gmtCreate) {
+
+        //获取订单创建时间的yyyyMMdd格式
+        String formatedStr = DateUtil.format(gmtCreate, DateUtil.shortFormat);
+
+        //订单撤销截止时间
+        String endDateStr = formatedStr + "235959";
+
+        Date endDate = DateUtil.parseDateLongFormat(endDateStr);
+
+        return endDate.after(new Date());
     }
 }

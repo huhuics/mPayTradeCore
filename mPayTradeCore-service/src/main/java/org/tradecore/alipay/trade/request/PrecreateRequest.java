@@ -11,4 +11,7 @@ package org.tradecore.alipay.trade.request;
  */
 public class PrecreateRequest extends BaseRequest {
 
+    /**  */
+    private static final long serialVersionUID = -7844292619083824239L;
+
 }
