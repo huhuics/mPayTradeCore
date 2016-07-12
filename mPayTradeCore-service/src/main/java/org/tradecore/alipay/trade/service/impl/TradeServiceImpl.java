@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
@@ -31,6 +32,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
+import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
@@ -81,6 +83,12 @@ public class TradeServiceImpl implements TradeService {
     @Resource
     private RefundRepository          refundRepository;
 
+    /**
+     * 撤销仓储服务
+     */
+    @Resource
+    private CancelRepository          cancelRepository;
+
     static {
         //1.读取配置文件
         Configs.init("config/zfbinfo.properties");
@@ -123,6 +131,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     @Transactional
     public AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest) {
+
         return null;
     }
 
@@ -192,7 +201,7 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     @Transactional
-    public AlipayTradeCancelResponse tradeCancel(CancelRequest cancelRequest) {
+    public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) {
 
         LogUtil.info(logger, "收到订单撤销请求,cancelRequest={0}", cancelRequest);
 
@@ -216,11 +225,18 @@ public class TradeServiceImpl implements TradeService {
         try {
             cancelResponse = alipayClient.execute(alipayTradeCancelRequest);
         } catch (AlipayApiException e) {
-            LogUtil.error(e, logger, "调用支付宝撤销接口异常,alipayTradeCancelRequest={0}", alipayTradeCancelRequest);
+            LogUtil
+                .error(e, logger, "调用支付宝撤销接口异常,alipayTradeCancelRequest={0}", JSON.toJSONString(alipayTradeCancelRequest, SerializerFeature.UseSingleQuotes));
             throw new RuntimeException("调用支付宝撤销接口异常", e);
         }
 
-        //TODO:6.本地持久化撤销数据
+        LogUtil.info(logger, "支付宝返回撤销业务结果cancelResponse={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
+
+        //6.本地持久化撤销数据
+        BizAlipayCancelOrder cancelOrder = cancelRepository.saveCancelOrder(oriOrder, cancelRequest, cancelResponse);
+
+        //7.修改原始订单的撤销状态
+        payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
 
         return cancelResponse;
     }

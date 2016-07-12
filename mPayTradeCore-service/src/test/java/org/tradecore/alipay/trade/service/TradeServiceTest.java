@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
+import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
@@ -22,6 +24,7 @@ import org.tradecore.service.test.BaseTest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.demo.trade.model.GoodsDetail;
 import com.alipay.demo.trade.model.TradeStatus;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
@@ -51,15 +54,15 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         PayRequest payRequest = new PayRequest();
-        payRequest.setAcquirerId("acquire_id_" + Math.random() * 10000000L);
-        payRequest.setMerchantId("mechant_id_" + Math.random() * 10000000L);
+        payRequest.setAcquirerId("acquire_id_" + geneRandomId());
+        payRequest.setMerchantId("mechant_id_" + geneRandomId());
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("280826073747515806");
-        payRequest.setOutTradeNo("tradepay" + System.currentTimeMillis() + (long) (Math.random() * 10000000L));
-        payRequest.setTotalAmount("0.05");
-        payRequest.setSubject("胡辉测试交易" + Math.random() * 10000000L);
-        payRequest.setStoreId("store_id_" + Math.random() * 10000000L);
+        payRequest.setAuthCode("280180683001541267");
+        payRequest.setOutTradeNo("tradepay" + geneRandomId());
+        payRequest.setTotalAmount("0.01");
+        payRequest.setSubject("胡辉测试交易" + geneRandomId());
+        payRequest.setStoreId("store_id_" + geneRandomId());
         payRequest.setBody("购买商品3件共20.00元");
         payRequest.setOperatorId("test_operator_id");
         payRequest.setTimeoutExpress("5m");//5分钟
@@ -108,13 +111,13 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         RefundRequest refundRequest = new RefundRequest();
-        refundRequest.setAcquirerId("acquire_id_8831476.635618655");
-        refundRequest.setMerchantId("mechant_id_1876214.1478672957");
-        refundRequest.setOutTradeNo("tradepay14682204756429961535");
-        refundRequest.setRefundAmount("0.01");
+        refundRequest.setAcquirerId("acquire_id_4948248.502670019");
+        refundRequest.setMerchantId("mechant_id_3062919.5403585494");
+        refundRequest.setOutTradeNo("tradepay1468326599343284774");
+        refundRequest.setRefundAmount("0.05");
         refundRequest.setRefundReason("正常退款");
-        refundRequest.setStoreId("store_id_" + Math.random() * 10000000L);
-        refundRequest.setOutRequestNo("out_request_no_" + Math.random() * 10000000L);
+        refundRequest.setStoreId("store_id_" + geneRandomId());
+        refundRequest.setOutRequestNo("out_request_no_" + geneRandomId());
 
         AlipayF2FRefundResult ret = tradeService.refund(refundRequest);
 
@@ -122,5 +125,29 @@ public class TradeServiceTest extends BaseTest {
 
         Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
 
+    }
+
+    /**
+     * 测试订单撤销
+     */
+    @Test
+    public void testCancel() {
+        Assert.assertNotNull(tradeService);
+
+        //组装参数
+        CancelRequest cancelRequest = new CancelRequest();
+        cancelRequest.setAcquirerId("acquire_id_4948248.502670019");
+        cancelRequest.setMerchantId("mechant_id_3062919.5403585494");
+        cancelRequest.setOutTradeNo("tradepay1468326599343284774");
+
+        AlipayTradeCancelResponse ret = tradeService.cancel(cancelRequest);
+
+        LogUtil.info(logger, "订单撤销结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
+
+        Assert.assertTrue(ret.getCode().equals(BizResultEnum.SUCCESS.getCode()));
+    }
+
+    private String geneRandomId() {
+        return (System.currentTimeMillis() + (long) (Math.random() * 10000000L)) + "";
     }
 }

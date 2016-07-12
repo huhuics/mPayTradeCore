@@ -6,6 +6,7 @@ package org.tradecore.alipay.trade.repository;
 
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
@@ -59,6 +60,13 @@ public interface PayRepository {
      * @param refundOrder      退款订单
      */
     void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder);
+
+    /**
+     * 根据撤销业务是否成功更新交易订单中的撤销状态
+     * @param oriOrder
+     * @param cancelOrder
+     */
+    void updateOrderCancelStatus(BizAlipayPayOrder oriOrder, BizAlipayCancelOrder cancelOrder);
 
     /**
      * 根据商户标识号和外部商户号加锁查询订单

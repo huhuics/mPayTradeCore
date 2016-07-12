@@ -28,6 +28,7 @@ import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayPayOrderDAO;
+import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
@@ -143,11 +144,22 @@ public class PayRepositoryImpl implements PayRepository {
     @Override
     public void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder) {
 
-        LogUtil.info(logger, "收到订单状态更新请求");
+        LogUtil.info(logger, "收到订单退款状态更新请求");
 
         oriOrder.setRefundStatus(refundOrder.getRefundStatus());
 
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单退款状态修改失败");
+    }
+
+    @Override
+    public void updateOrderCancelStatus(BizAlipayPayOrder oriOrder, BizAlipayCancelOrder cancelOrder) {
+
+        LogUtil.info(logger, "收到订单撤销状态更新请求");
+
+        oriOrder.setCancelStatus(cancelOrder.getCancelStatus());
+
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单撤销状态修改失败");
+
     }
 
     @Override

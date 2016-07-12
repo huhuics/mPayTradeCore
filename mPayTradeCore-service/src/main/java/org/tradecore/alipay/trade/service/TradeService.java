@@ -59,6 +59,6 @@ public interface TradeService {
      * @param cancelRequest  请求参数，只支持根据商户订单号撤销订单
      * @return
      */
-    AlipayTradeCancelResponse tradeCancel(CancelRequest cancelRequest);
+    AlipayTradeCancelResponse cancel(CancelRequest cancelRequest);
 
 }

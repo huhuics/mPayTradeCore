@@ -7,70 +7,69 @@ import org.tradecore.common.util.Money;
 public class BizAlipayCancelOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = 3457712885962187754L;
-
+    private static final long serialVersionUID = 9171074305029654001L;
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.id
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.ID
      */
     private String            id;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.acquirer_id
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.ACQUIRER_ID
      */
     private String            acquirerId;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.merchant_id
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.MERCHANT_ID
      */
     private String            merchantId;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.alipay_trade_no
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.ALIPAY_TRADE_NO
      */
     private String            alipayTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.out_trade_no
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.OUT_TRADE_NO
      */
     private String            outTradeNo;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.total_amount
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.TOTAL_AMOUNT
      */
     private Money             totalAmount;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.retry_flag
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.RETRY_FLAG
      */
     private String            retryFlag;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.action
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.ACTION
      */
     private String            action;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.cancel_status
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.CANCEL_STATUS
      */
     private String            cancelStatus;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.error_detail
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.RETURN_DETAIL
      */
-    private String            errorDetail;
+    private String            returnDetail;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.create_date
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.CREATE_DATE
      */
     private String            createDate;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.gmt_create
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.GMT_CREATE
      */
     private Date              gmtCreate;
 
     /**
-     *  null, BIZ_ALIPAY_CANCEL_ORDER.gmt_update
+     *  null, BIZ_ALIPAY_CANCEL_ORDER.GMT_UPDATE
      */
     private Date              gmtUpdate;
 
@@ -146,12 +145,12 @@ public class BizAlipayCancelOrder extends BaseDomain {
         this.cancelStatus = cancelStatus == null ? null : cancelStatus.trim();
     }
 
-    public String getErrorDetail() {
-        return errorDetail;
+    public String getReturnDetail() {
+        return returnDetail;
     }
 
-    public void setErrorDetail(String errorDetail) {
-        this.errorDetail = errorDetail == null ? null : errorDetail.trim();
+    public void setReturnDetail(String returnDetail) {
+        this.returnDetail = returnDetail == null ? null : returnDetail.trim();
     }
 
     public String getCreateDate() {

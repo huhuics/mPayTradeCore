@@ -143,6 +143,8 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
 
         refundOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
+
+        //TODO:时间从配置中读取
         refundOrder.setCheckDate(DateUtil.format(new Date(), DateUtil.shortFormat));
         refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
 
