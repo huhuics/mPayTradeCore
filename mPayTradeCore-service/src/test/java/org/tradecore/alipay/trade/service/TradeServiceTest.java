@@ -114,6 +114,7 @@ public class TradeServiceTest extends BaseTest {
         refundRequest.setRefundAmount("0.01");
         refundRequest.setRefundReason("正常退款");
         refundRequest.setStoreId("store_id");
+        refundRequest.setOutRequestNo("out_request_no_" + Math.random() * 10000000L);
 
         AlipayF2FRefundResult ret = tradeService.refund(refundRequest);
 

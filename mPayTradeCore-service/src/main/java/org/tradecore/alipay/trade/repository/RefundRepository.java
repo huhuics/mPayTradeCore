@@ -37,10 +37,11 @@ public interface RefundRepository {
     void updateRefundOrder(BizAlipayRefundOrder refundOrder, AlipayF2FRefundResult alipayF2FRefundResult);
 
     /**
-     * 通过商户订单号获取所有退款订单
-     * @param outTradeNo  商户订单号
+     * 通过商户订单号、退款订单状态获取所有退款订单<br>
+     * @param outTradeNo    商户订单号
+     * @param refundStatus  退款状态
      * @return
      */
-    List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo);
+    List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo, String refundStatus);
 
 }

@@ -294,11 +294,18 @@
   </update>
 
 	<!-- 根据商户订单号查询所有退款订单 -->
-	<select id="selectRefundOrdersByOutTradeNo" parameterType="java.lang.String"
+	<select id="selectRefundOrders" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
-		from BIZ_ALIPAY_REFUND_ORDER where out_trade_no = #{outTradeNo}
+		from BIZ_ALIPAY_REFUND_ORDER where 
+		1 = 1
+		<if test="_parameter.containsKey('outTradeNo')">
+			AND OUT_TRADE_NO = #{outTradeNo}
+		</if>
+		<if test="_parameter.containsKey('refundStatus')">
+			AND REFUND_STATUS = #{refundStatus}
+		</if>
 	</select>
   
 </mapper>

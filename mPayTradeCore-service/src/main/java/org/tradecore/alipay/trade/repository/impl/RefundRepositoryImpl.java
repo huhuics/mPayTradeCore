@@ -14,9 +14,11 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
+import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.AssertUtil;
@@ -38,6 +40,7 @@ import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
  * @author HuHui
  * @version $Id: RefundRepositoryImpl.java, v 0.1 2016年7月11日 下午7:49:34 HuHui Exp $
  */
+@Repository
 public class RefundRepositoryImpl implements RefundRepository {
 
     /** 日志 */
@@ -95,11 +98,16 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo) {
+    public List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo, String refundStatus) {
 
-        LogUtil.info(logger, "收到查询退款订单请求,outTradeNo={0}", outTradeNo);
+        LogUtil.info(logger, "收到查询退款订单请求,outTradeNo={0},refundStatus={1}", outTradeNo, refundStatus);
 
-        List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrdersByOutTradeNo(outTradeNo);
+        //封装查询参数。根据商户订单号和退款状态查询所有退款订单
+        Map<String, Object> paraMap = new HashMap<String, Object>();
+        paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        paraMap.put(QueryFieldConstant.REFUND_STATUS, refundStatus);
+
+        List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
 
         LogUtil.info(logger, "退款订单查询结果,refundOrders={0}", refundOrders);
 

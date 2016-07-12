@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -241,7 +242,8 @@ public class TradeServiceImpl implements TradeService {
      */
     private boolean checkTotalRufundFee(String outTradeNo, Money totalAmount, Money refundAmount) {
 
-        List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrdersByOutTradeNo(outTradeNo);
+        //根据商户订单号获取该订单下所有退款成功的退款订单
+        List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrdersByOutTradeNo(outTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
         if (CollectionUtils.isNotEmpty(refundOrders)) {
             Money totalRefundAmount = new Money(refundAmount.getAmount());
