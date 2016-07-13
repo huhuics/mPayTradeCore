@@ -18,11 +18,6 @@ public enum AlipayTradeStatusEnum {
      */
     INIT("INIT", "已创建"),
 
-    /**
-     * 扫码支付初始状态
-     */
-    WAIT_CREATE_CODE("WAIT_CREATE_CODE", "等待创建支付条码"),
-
     /** 
      * 条码支付初始状态 
      */
@@ -36,7 +31,7 @@ public enum AlipayTradeStatusEnum {
     /**
      * 交易支付成功
      */
-    TRADE_SUCCESS("TRADE_SUCCESS", "支付成功"),
+    TRADE_SUCCESS("TRADE_SUCCESS", "交易成功"),
 
     /**
      * 交易支付失败

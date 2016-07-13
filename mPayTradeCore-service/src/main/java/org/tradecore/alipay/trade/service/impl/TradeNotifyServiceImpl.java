@@ -6,9 +6,11 @@ package org.tradecore.alipay.trade.service.impl;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
@@ -45,6 +47,12 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(null, notifyRequest.getOutTradeNo());
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
+
+        //幂等
+        if (StringUtils.equals(oriOrder.getOrderStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())) {
+            LogUtil.info(logger, "异步通知修改原始订单幂等,outTradeNo={0}", notifyRequest.getOutTradeNo());
+            return;
+        }
 
         //3.修改原始订单
         payRepository.updatePayOrder(oriOrder, notifyRequest);

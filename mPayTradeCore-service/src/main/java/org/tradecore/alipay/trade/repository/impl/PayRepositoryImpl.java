@@ -204,7 +204,7 @@ public class PayRepositoryImpl implements PayRepository {
         Map<String, Object> returnDetailMap = new HashMap<String, Object>();
         returnDetailMap.put(JSONFieldConstant.RESPONSE, oriOrder.getReturnDetail());
         returnDetailMap.put(JSONFieldConstant.NOTIFY_RESPONSE, notifyRequest);
-        oriOrder.setReturnDetail(JSON.toJSONString(returnDetailMap));
+        oriOrder.setReturnDetail(JSON.toJSONString(returnDetailMap, SerializerFeature.UseSingleQuotes));
 
         oriOrder.setGmtUpdate(new Date());
 
