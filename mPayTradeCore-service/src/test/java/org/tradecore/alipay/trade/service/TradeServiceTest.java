@@ -113,7 +113,7 @@ public class TradeServiceTest extends BaseTest {
         goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
-        payRequest.setNotifyUrl("http://www.notify.url");
+        payRequest.setNotifyUrl("http://183.62.226.168:8088/mPay/tradeNotify/receive");
         payRequest.setOutNotifyUrl("http://www.notify.url.out");
 
         AlipayF2FPrecreateResult ret = tradeService.precreate(payRequest);

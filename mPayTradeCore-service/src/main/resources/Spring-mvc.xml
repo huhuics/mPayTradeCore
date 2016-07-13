@@ -11,7 +11,7 @@
                         http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
                         
 	<!-- 自动扫描该包，Spring MVC会认为该包中使用了@Controller注解的类是控制器 -->
-	<context:component-scan base-package="org.tradecore.mvc.web" />
+	<context:component-scan base-package="org.tradecore.mvc" />
 	
 	<!-- 定义跳转的文件前后缀，视图模式配置 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

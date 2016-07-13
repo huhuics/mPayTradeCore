@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
@@ -36,6 +37,7 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
  * @author HuHui
  * @version $Id: PrecreateRepositoryImpl.java, v 0.1 2016年7月12日 下午11:20:05 HuHui Exp $
  */
+@Repository
 public class PrecreateRepositoryImpl implements PrecreateRepository {
 
     /** 日志 */
