@@ -13,7 +13,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
+import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 
 /**
@@ -29,6 +31,9 @@ public class AlipayTradeNotifyController {
 
     private static final String SUCCESS = "success";
 
+    /**
+     * 交易通知服务接口
+     */
     @Resource
     private TradeNotifyService  tradeNotifyService;
 
@@ -37,8 +42,51 @@ public class AlipayTradeNotifyController {
 
         LogUtil.info(logger, "收到支付宝扫码支付异步通知");
 
-        //TODO
+        NotifyRequest notifyRequest = convert2NotifyRequest(request);
+
+        tradeNotifyService.receiveAndSend(notifyRequest);
 
         return SUCCESS;
+    }
+
+    /**
+     * 将webRequest转换成NotifyRequest
+     * @param request
+     * @return
+     */
+    private NotifyRequest convert2NotifyRequest(WebRequest request) {
+
+        NotifyRequest notifyRequest = new NotifyRequest();
+
+        notifyRequest.setNotifyTime(request.getParameter("notify_time"));
+        notifyRequest.setNotifyType(request.getParameter("notify_type"));
+        notifyRequest.setNotifyTd(request.getParameter("notify_id"));
+        notifyRequest.setSignType(request.getParameter("sign_type"));
+        notifyRequest.setSign(request.getParameter("sign"));
+        notifyRequest.setTradeNo(request.getParameter("trade_no"));
+        notifyRequest.setAppId(request.getParameter("app_id"));
+        notifyRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        notifyRequest.setOutBizNo(request.getParameter("out_biz_no"));
+        notifyRequest.setBuyerId(request.getParameter("buyer_id"));
+        notifyRequest.setBuyerLogonId(request.getParameter("buyer_logon_id"));
+        notifyRequest.setSellerId(request.getParameter("seller_id"));
+        notifyRequest.setSellerEmail(request.getParameter("seller_email"));
+        notifyRequest.setTradeStatus(request.getParameter("trade_status"));
+        notifyRequest.setTotalAmount(request.getParameter("total_amount"));
+        notifyRequest.setReceiptAmount(request.getParameter("receipt_amount"));
+        notifyRequest.setInvoiceAmount(request.getParameter("invoice_amount"));
+        notifyRequest.setBuyerPayAmount(request.getParameter("buyer_pay_amount"));
+        notifyRequest.setPointAmount(request.getParameter("point_amount"));
+        notifyRequest.setRefundFee(request.getParameter("refund_fee"));
+        notifyRequest.setSendBackFee(request.getParameter("send_back_fee"));
+        notifyRequest.setSubject(request.getParameter("subject"));
+        notifyRequest.setBody(request.getParameter("body"));
+        notifyRequest.setGmtCreate(DateUtil.parseDateNewFormat(request.getParameter("gmt_create")));
+        notifyRequest.setGmtPayment(DateUtil.parseDateNewFormat(request.getParameter("gmt_payment")));
+        notifyRequest.setGmtRefund(DateUtil.parseDateNewFormat(request.getParameter("gmt_refund")));
+        notifyRequest.setGmtClose(DateUtil.parseDateNewFormat(request.getParameter("gmt_close")));
+        notifyRequest.setFundBillList(request.getParameter("fund_bill_list"));
+
+        return notifyRequest;
     }
 }

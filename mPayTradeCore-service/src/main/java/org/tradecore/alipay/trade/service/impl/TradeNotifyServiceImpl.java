@@ -49,7 +49,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //3.修改原始订单
         payRepository.updatePayOrder(oriOrder, notifyRequest);
 
-        //4.发送给收单机构
+        //TODO:4.发送给收单机构
 
     }
 
