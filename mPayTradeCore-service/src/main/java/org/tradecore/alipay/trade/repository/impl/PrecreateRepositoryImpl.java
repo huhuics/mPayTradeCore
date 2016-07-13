@@ -57,7 +57,7 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
         if (alipayF2FPrecreateResult.isTradeSuccess()) {
             LogUtil.info(logger, "支付宝扫码支付业务成功");
 
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setQrCode(response.getQrCode());
 
         } else {

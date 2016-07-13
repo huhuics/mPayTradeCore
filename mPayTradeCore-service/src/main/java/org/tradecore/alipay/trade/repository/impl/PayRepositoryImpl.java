@@ -20,6 +20,7 @@ import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
+import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.common.util.AssertUtil;
@@ -133,7 +134,7 @@ public class PayRepositoryImpl implements PayRepository {
                     order.setGmtUpdate(new Date());
 
                     //更新订单
-                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "修改订单失败");
+                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "支付订单更新失败");
                 }
 
             }
@@ -168,14 +169,47 @@ public class PayRepositoryImpl implements PayRepository {
         LogUtil.info(logger, "收到订单加锁查询请求,merchantId={0},outTradeNo={1}", merchantId, outTradeNo);
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
-        paramMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+
+        if (StringUtils.isNotEmpty(merchantId)) {
+            paramMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
+        }
+
+        if (StringUtils.isNotEmpty(outTradeNo)) {
+            paramMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        }
 
         BizAlipayPayOrder order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
 
         LogUtil.info(logger, "订单加锁查询结果,order={0}", order);
 
         return order;
+    }
+
+    @Override
+    public void updatePayOrder(BizAlipayPayOrder oriOrder, NotifyRequest notifyRequest) {
+
+        LogUtil.info(logger, "收到订单更新请求");
+
+        oriOrder.setOrderStatus(notifyRequest.getTradeStatus());
+
+        if (StringUtils.isNotBlank(notifyRequest.getReceiptAmount())) {
+            oriOrder.setReceiptAmount(new Money(notifyRequest.getReceiptAmount()));
+        }
+
+        oriOrder.setAlipayTradeNo(notifyRequest.getTradeNo());
+        oriOrder.setGmtPayment(notifyRequest.getGmtPayment());
+        oriOrder.setFundBillList(notifyRequest.getFundBillList());
+
+        //封装return_detail
+        Map<String, Object> returnDetailMap = new HashMap<String, Object>();
+        returnDetailMap.put(JSONFieldConstant.RESPONSE, oriOrder.getReturnDetail());
+        returnDetailMap.put(JSONFieldConstant.NOTIFY_RESPONSE, notifyRequest);
+        oriOrder.setReturnDetail(JSON.toJSONString(returnDetailMap));
+
+        oriOrder.setGmtUpdate(new Date());
+
+        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单更新失败");
+
     }
 
     /**

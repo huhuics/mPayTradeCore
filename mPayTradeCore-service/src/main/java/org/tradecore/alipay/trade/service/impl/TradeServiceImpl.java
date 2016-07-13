@@ -74,7 +74,7 @@ public class TradeServiceImpl implements TradeService {
     private static AlipayClient       alipayClient;
 
     /**
-     * 条码支付仓储服务
+     * 支付仓储服务
      */
     @Resource
     private PayRepository             payRepository;

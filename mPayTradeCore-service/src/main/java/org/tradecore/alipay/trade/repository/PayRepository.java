@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository;
 
+import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
@@ -75,5 +76,12 @@ public interface PayRepository {
      * @return            订单对象
      */
     BizAlipayPayOrder selectPayOrderForUpdate(String merchantId, String outTradeNo);
+
+    /**
+     * 根据支付宝异步通知参数更新本地支付订单
+     * @param oriOrder       原订单
+     * @param notifyRequest  异步通知参数
+     */
+    void updatePayOrder(BizAlipayPayOrder oriOrder, NotifyRequest notifyRequest);
 
 }
