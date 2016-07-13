@@ -21,4 +21,10 @@ public class QueryFieldConstant {
     /** 退款状态 */
     public static final String REFUND_STATUS = "refundStatus";
 
+    /** 收单机构号 */
+    public static final String ACQUIRER_ID   = "acquirerId";
+
+    /** 商户外部编号 */
+    public static final String EXTERNAL_ID   = "externalId";
+
 }

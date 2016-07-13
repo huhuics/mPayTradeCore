@@ -245,4 +245,21 @@
       GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+
+	<!-- 加锁查询 -->
+	<select id="selectForUpdate" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_MERCHANT_INFO
+		where 1 = 1
+		<if test="_parameter.containsKey('acquirerId')">
+			AND ACQUIRER_ID = #{acquirerId}
+		</if>
+		<if test="_parameter.containsKey('externalId')">
+			AND EXTERNAL_ID = #{externalId}
+		</if>
+		for update
+	</select>
+  
 </mapper>

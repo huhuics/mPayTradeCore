@@ -462,6 +462,7 @@
 		<if test="_parameter.containsKey('outTradeNo')">
 			AND OUT_TRADE_NO = #{outTradeNo}
 		</if>
+		for update
 	</select>
 
 

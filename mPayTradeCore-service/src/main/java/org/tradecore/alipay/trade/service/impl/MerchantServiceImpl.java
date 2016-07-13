@@ -4,11 +4,19 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
+import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
@@ -17,7 +25,12 @@ import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.BizMerchantInfoDAO;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
+import com.alipay.api.request.AlipayBossProdSubmerchantCreateRequest;
+import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
 
 /**
  * 商户服务接口实现类
@@ -55,8 +68,104 @@ public class MerchantServiceImpl implements MerchantService {
         AssertUtil.assertTrue(merchantCreateRequest.validate(), "商户入驻请求参数不合法");
 
         //2.根据受理机构号和商户外部编号查询
+        BizMerchantInfo oriBizMerchantInfo = selectMerchantInfo(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
+
+        //  2.1.幂等控制
+        if (oriBizMerchantInfo != null) {
+            return oriBizMerchantInfo;
+        }
+
+        //3.将请求转化为支付宝商户入驻请求
+        AlipayBossProdSubmerchantCreateRequest alipayCreateRequest = convert2AlipayCreateRequest(merchantCreateRequest);
+
+        //4.调用支付宝商户入驻接口
+        AlipayBossProdSubmerchantCreateResponse alipayResponse = null;
+        try {
+            alipayResponse = alipayClient.execute(alipayCreateRequest);
+        } catch (AlipayApiException e) {
+            LogUtil.error(e, logger, "调用支付宝商户入驻接口异常,alipayCreateRequest={0}", JSON.toJSONString(alipayCreateRequest, SerializerFeature.UseSingleQuotes));
+            throw new RuntimeException("调用支付宝商户入驻接口异常", e);
+        }
+
+        LogUtil.info(logger, "调用支付宝商户入驻接口响应alipayResponse={0}", JSON.toJSONString(alipayResponse, SerializerFeature.UseSingleQuotes));
+
+        //5.将支付宝响应转化成BizMerchantInfo
+        BizMerchantInfo bizMerchantInfo = convert2BizMerchantInfo(merchantCreateRequest, alipayResponse);
+
+        //6.持久化商户信息
+        AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
+
+        return bizMerchantInfo;
+    }
+
+    //持久化
+    private boolean insert(BizMerchantInfo bizMerchantInfo) {
+        if (bizMerchantInfo != null) {
+            return bizMerchantInfoDAO.insert(bizMerchantInfo) > 0;
+        }
+        return true;
+    }
+
+    /**
+     * 将支付宝响应转换为BizMerchantInfo
+     * @param merchantCreateRequest
+     * @param alipayResponse
+     * @return
+     */
+    private BizMerchantInfo convert2BizMerchantInfo(MerchantCreateRequest merchantCreateRequest, AlipayBossProdSubmerchantCreateResponse alipayResponse) {
+
+        //如果业务失败，则返回null
+        if (!StringUtils.equals(alipayResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
+            return null;
+        }
+        //业务成功，封装参数
+        BizMerchantInfo merchantInfo = new BizMerchantInfo();
+        merchantInfo.setExternalId(merchantCreateRequest.getExternal_id());
+        merchantInfo.setAcquirerId(merchantCreateRequest.getAcquirer_id());
+        merchantInfo.setMerchantId(alipayResponse.getSubMerchantId());
+        merchantInfo.setName(merchantCreateRequest.getName());
+        merchantInfo.setAliasName(merchantCreateRequest.getAlias_name());
+        merchantInfo.setServicePhone(merchantCreateRequest.getService_phone());
+        merchantInfo.setContactName(merchantCreateRequest.getContact_name());
+        merchantInfo.setContactPhone(merchantCreateRequest.getContact_phone());
+        merchantInfo.setContactMobile(merchantCreateRequest.getContact_mobile());
+        merchantInfo.setContactEmail(merchantCreateRequest.getContact_email());
+        merchantInfo.setCategoryId(merchantCreateRequest.getCategory_id());
+        merchantInfo.setSource(merchantCreateRequest.getSource());
+        merchantInfo.setMemo(merchantCreateRequest.getMemo());
+        merchantInfo.setStatus(SubMerchantBizStatusEnum.NORMAL.getCode());
+        merchantInfo.setReturnDetail(JSON.toJSONString(alipayResponse.getBody(), SerializerFeature.UseSingleQuotes));
+        merchantInfo.setGmtCreate(new Date());
+        merchantInfo.setGmtUpdate(new Date());
+
+        return merchantInfo;
+    }
+
+    /**
+     * 请求转换
+     * @param merchantCreateRequest
+     * @return
+     */
+    private AlipayBossProdSubmerchantCreateRequest convert2AlipayCreateRequest(MerchantCreateRequest merchantCreateRequest) {
+        AlipayBossProdSubmerchantCreateRequest alipayCreateRequest = new AlipayBossProdSubmerchantCreateRequest();
+        alipayCreateRequest.setBizContent(JSON.toJSONString(merchantCreateRequest));
 
         return null;
     }
 
+    /**
+     * 加锁查询
+     * @param acquirerId
+     * @param externalId
+     * @return
+     */
+    private BizMerchantInfo selectMerchantInfo(String acquirerId, String externalId) {
+
+        Map<String, Object> paraMap = new HashMap<String, Object>();
+        paraMap.put(QueryFieldConstant.ACQUIRER_ID, acquirerId);
+        paraMap.put(QueryFieldConstant.EXTERNAL_ID, externalId);
+
+        return bizMerchantInfoDAO.selectForUpdate(paraMap);
+
+    }
 }
