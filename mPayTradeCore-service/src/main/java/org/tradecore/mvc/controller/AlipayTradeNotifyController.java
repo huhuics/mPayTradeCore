@@ -4,6 +4,8 @@
  */
 package org.tradecore.mvc.controller;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+import org.tradecore.alipay.trade.service.TradeNotifyService;
 import org.tradecore.common.util.LogUtil;
 
 /**
@@ -25,6 +28,9 @@ public class AlipayTradeNotifyController {
     private static final Logger logger  = LoggerFactory.getLogger(AlipayTradeNotifyController.class);
 
     private static final String SUCCESS = "success";
+
+    @Resource
+    private TradeNotifyService  tradeNotifyService;
 
     @RequestMapping(value = "/receive", method = RequestMethod.POST)
     public String receive(WebRequest request, ModelMap map) {

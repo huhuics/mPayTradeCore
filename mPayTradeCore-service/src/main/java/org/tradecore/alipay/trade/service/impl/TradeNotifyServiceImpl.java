@@ -2,7 +2,7 @@
  * Beijing Jiaotong University
  * Copyright (c) 1896-2016 All Rights Reserved.
  */
-package org.tradecore.alipay.trade.service;
+package org.tradecore.alipay.trade.service.impl;
 
 import javax.annotation.Resource;
 
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.request.NotifyRequest;
+import org.tradecore.alipay.trade.service.TradeNotifyService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
