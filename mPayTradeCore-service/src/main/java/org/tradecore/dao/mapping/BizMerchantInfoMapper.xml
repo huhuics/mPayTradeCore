@@ -2,51 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.tradecore.dao.BizMerchantInfoDAO">
   <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizMerchantInfo">
-    <id column="ID" jdbcType="DECIMAL" property="id" />
-    <result column="external_id" jdbcType="VARCHAR" property="externalId" />
-    <result column="acquirer_id" jdbcType="VARCHAR" property="acquirerId" />
-    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="alias_name" jdbcType="VARCHAR" property="aliasName" />
-    <result column="service_phone" jdbcType="VARCHAR" property="servicePhone" />
-    <result column="contact_name" jdbcType="VARCHAR" property="contactName" />
-    <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
-    <result column="contact_mobile" jdbcType="VARCHAR" property="contactMobile" />
-    <result column="contact_email" jdbcType="VARCHAR" property="contactEmail" />
-    <result column="category_id" jdbcType="VARCHAR" property="categoryId" />
-    <result column="memo" jdbcType="VARCHAR" property="memo" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
-    <result column="gmt_update" jdbcType="TIMESTAMP" property="gmtUpdate" />
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="EXTERNAL_ID" jdbcType="VARCHAR" property="externalId" />
+    <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="ALIAS_NAME" jdbcType="VARCHAR" property="aliasName" />
+    <result column="SERVICE_PHONE" jdbcType="VARCHAR" property="servicePhone" />
+    <result column="CONTACT_NAME" jdbcType="VARCHAR" property="contactName" />
+    <result column="CONTACT_PHONE" jdbcType="VARCHAR" property="contactPhone" />
+    <result column="CONTACT_MOBILE" jdbcType="VARCHAR" property="contactMobile" />
+    <result column="CONTACT_EMAIL" jdbcType="VARCHAR" property="contactEmail" />
+    <result column="CATEGORY_ID" jdbcType="VARCHAR" property="categoryId" />
+    <result column="SOURCE" jdbcType="VARCHAR" property="source" />
+    <result column="MEMO" jdbcType="VARCHAR" property="memo" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="RETURN_DETAIL" jdbcType="VARCHAR" property="returnDetail" />
+    <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, external_id, acquirer_id, merchant_id, name, alias_name, service_phone, contact_name, 
-    contact_phone, contact_mobile, contact_email, category_id, memo, status, gmt_create, 
-    gmt_update
+    ID, EXTERNAL_ID, ACQUIRER_ID, MERCHANT_ID, NAME, ALIAS_NAME, SERVICE_PHONE, CONTACT_NAME, 
+    CONTACT_PHONE, CONTACT_MOBILE, CONTACT_EMAIL, CATEGORY_ID, SOURCE, MEMO, STATUS, 
+    RETURN_DETAIL, GMT_CREATE, GMT_UPDATE
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from BIZ_MERCHANT_INFO
-    where ID = #{id,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from BIZ_MERCHANT_INFO
-    where ID = #{id,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
-    insert into BIZ_MERCHANT_INFO (ID, external_id, acquirer_id, 
-      merchant_id, name, alias_name, 
-      service_phone, contact_name, contact_phone, 
-      contact_mobile, contact_email, category_id, 
-      memo, status, gmt_create, 
-      gmt_update)
-    values (#{id,jdbcType=DECIMAL}, #{externalId,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, 
+    insert into BIZ_MERCHANT_INFO (ID, EXTERNAL_ID, ACQUIRER_ID, 
+      MERCHANT_ID, NAME, ALIAS_NAME, 
+      SERVICE_PHONE, CONTACT_NAME, CONTACT_PHONE, 
+      CONTACT_MOBILE, CONTACT_EMAIL, CATEGORY_ID, 
+      SOURCE, MEMO, STATUS, 
+      RETURN_DETAIL, GMT_CREATE, GMT_UPDATE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{externalId,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, 
       #{merchantId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{aliasName,jdbcType=VARCHAR}, 
       #{servicePhone,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, #{contactPhone,jdbcType=VARCHAR}, 
       #{contactMobile,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, #{categoryId,jdbcType=VARCHAR}, 
-      #{memo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, 
-      #{gmtUpdate,jdbcType=TIMESTAMP})
+      #{source,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{returnDetail,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
     insert into BIZ_MERCHANT_INFO
@@ -55,54 +59,60 @@
         ID,
       </if>
       <if test="externalId != null">
-        external_id,
+        EXTERNAL_ID,
       </if>
       <if test="acquirerId != null">
-        acquirer_id,
+        ACQUIRER_ID,
       </if>
       <if test="merchantId != null">
-        merchant_id,
+        MERCHANT_ID,
       </if>
       <if test="name != null">
-        name,
+        NAME,
       </if>
       <if test="aliasName != null">
-        alias_name,
+        ALIAS_NAME,
       </if>
       <if test="servicePhone != null">
-        service_phone,
+        SERVICE_PHONE,
       </if>
       <if test="contactName != null">
-        contact_name,
+        CONTACT_NAME,
       </if>
       <if test="contactPhone != null">
-        contact_phone,
+        CONTACT_PHONE,
       </if>
       <if test="contactMobile != null">
-        contact_mobile,
+        CONTACT_MOBILE,
       </if>
       <if test="contactEmail != null">
-        contact_email,
+        CONTACT_EMAIL,
       </if>
       <if test="categoryId != null">
-        category_id,
+        CATEGORY_ID,
+      </if>
+      <if test="source != null">
+        SOURCE,
       </if>
       <if test="memo != null">
-        memo,
+        MEMO,
       </if>
       <if test="status != null">
-        status,
+        STATUS,
+      </if>
+      <if test="returnDetail != null">
+        RETURN_DETAIL,
       </if>
       <if test="gmtCreate != null">
-        gmt_create,
+        GMT_CREATE,
       </if>
       <if test="gmtUpdate != null">
-        gmt_update,
+        GMT_UPDATE,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=DECIMAL},
+        #{id,jdbcType=VARCHAR},
       </if>
       <if test="externalId != null">
         #{externalId,jdbcType=VARCHAR},
@@ -137,11 +147,17 @@
       <if test="categoryId != null">
         #{categoryId,jdbcType=VARCHAR},
       </if>
+      <if test="source != null">
+        #{source,jdbcType=VARCHAR},
+      </if>
       <if test="memo != null">
         #{memo,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="returnDetail != null">
+        #{returnDetail,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -155,70 +171,78 @@
     update BIZ_MERCHANT_INFO
     <set>
       <if test="externalId != null">
-        external_id = #{externalId,jdbcType=VARCHAR},
+        EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
       </if>
       <if test="acquirerId != null">
-        acquirer_id = #{acquirerId,jdbcType=VARCHAR},
+        ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       </if>
       <if test="merchantId != null">
-        merchant_id = #{merchantId,jdbcType=VARCHAR},
+        MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        NAME = #{name,jdbcType=VARCHAR},
       </if>
       <if test="aliasName != null">
-        alias_name = #{aliasName,jdbcType=VARCHAR},
+        ALIAS_NAME = #{aliasName,jdbcType=VARCHAR},
       </if>
       <if test="servicePhone != null">
-        service_phone = #{servicePhone,jdbcType=VARCHAR},
+        SERVICE_PHONE = #{servicePhone,jdbcType=VARCHAR},
       </if>
       <if test="contactName != null">
-        contact_name = #{contactName,jdbcType=VARCHAR},
+        CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
       </if>
       <if test="contactPhone != null">
-        contact_phone = #{contactPhone,jdbcType=VARCHAR},
+        CONTACT_PHONE = #{contactPhone,jdbcType=VARCHAR},
       </if>
       <if test="contactMobile != null">
-        contact_mobile = #{contactMobile,jdbcType=VARCHAR},
+        CONTACT_MOBILE = #{contactMobile,jdbcType=VARCHAR},
       </if>
       <if test="contactEmail != null">
-        contact_email = #{contactEmail,jdbcType=VARCHAR},
+        CONTACT_EMAIL = #{contactEmail,jdbcType=VARCHAR},
       </if>
       <if test="categoryId != null">
-        category_id = #{categoryId,jdbcType=VARCHAR},
+        CATEGORY_ID = #{categoryId,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        SOURCE = #{source,jdbcType=VARCHAR},
       </if>
       <if test="memo != null">
-        memo = #{memo,jdbcType=VARCHAR},
+        MEMO = #{memo,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="returnDetail != null">
+        RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtUpdate != null">
-        gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP},
+        GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where ID = #{id,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
     update BIZ_MERCHANT_INFO
-    set external_id = #{externalId,jdbcType=VARCHAR},
-      acquirer_id = #{acquirerId,jdbcType=VARCHAR},
-      merchant_id = #{merchantId,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      alias_name = #{aliasName,jdbcType=VARCHAR},
-      service_phone = #{servicePhone,jdbcType=VARCHAR},
-      contact_name = #{contactName,jdbcType=VARCHAR},
-      contact_phone = #{contactPhone,jdbcType=VARCHAR},
-      contact_mobile = #{contactMobile,jdbcType=VARCHAR},
-      contact_email = #{contactEmail,jdbcType=VARCHAR},
-      category_id = #{categoryId,jdbcType=VARCHAR},
-      memo = #{memo,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
-      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
-      gmt_update = #{gmtUpdate,jdbcType=TIMESTAMP}
-    where ID = #{id,jdbcType=DECIMAL}
+    set EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
+      ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      ALIAS_NAME = #{aliasName,jdbcType=VARCHAR},
+      SERVICE_PHONE = #{servicePhone,jdbcType=VARCHAR},
+      CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
+      CONTACT_PHONE = #{contactPhone,jdbcType=VARCHAR},
+      CONTACT_MOBILE = #{contactMobile,jdbcType=VARCHAR},
+      CONTACT_EMAIL = #{contactEmail,jdbcType=VARCHAR},
+      CATEGORY_ID = #{categoryId,jdbcType=VARCHAR},
+      SOURCE = #{source,jdbcType=VARCHAR},
+      MEMO = #{memo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      RETURN_DETAIL = #{returnDetail,jdbcType=VARCHAR},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

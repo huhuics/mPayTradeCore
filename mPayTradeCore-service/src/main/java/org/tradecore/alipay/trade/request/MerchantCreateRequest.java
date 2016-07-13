@@ -1,108 +1,120 @@
-package org.tradecore.dao.domain;
+/**
+ * Beijing Jiaotong University
+ * Copyright (c) 1896-2016 All Rights Reserved.
+ */
+package org.tradecore.alipay.trade.request;
 
-import java.util.Date;
+import org.tradecore.common.util.AssertUtil;
 
-public class BizMerchantInfo extends BaseDomain {
+/**
+ * 商户入驻请求接口
+ * @author HuHui
+ * @version $Id: MerchantCreateRequest.java, v 0.1 2016年7月13日 下午7:59:35 HuHui Exp $
+ */
+public class MerchantCreateRequest extends BaseRequest {
 
     /**  */
-    private static final long serialVersionUID = -876229239902743339L;
+    private static final long serialVersionUID = 3018493046457767617L;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.ID
-     */
-    private String            id;
-
-    /**
-     *  null, BIZ_MERCHANT_INFO.EXTERNAL_ID
+     * (必填)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
      */
     private String            externalId;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.ACQUIRER_ID
+     *  (必填)收单机构号
      */
     private String            acquirerId;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.MERCHANT_ID
+     *  商户识别号
      */
     private String            merchantId;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.NAME
+     *  (必填)商户名称
      */
     private String            name;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.ALIAS_NAME
+     *  (必填)商户简称
      */
     private String            aliasName;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.SERVICE_PHONE
+     *  (必填)客服电话
      */
     private String            servicePhone;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.CONTACT_NAME
+     * 联系人名称
      */
     private String            contactName;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.CONTACT_PHONE
+     * 联系人电话
      */
     private String            contactPhone;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.CONTACT_MOBILE
+     *  联系人手机号
      */
     private String            contactMobile;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.CONTACT_EMAIL
+     *  联系人邮箱
      */
     private String            contactEmail;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.CATEGORY_ID
+     *  (必填)经营类目id
      */
     private String            categoryId;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.SOURCE
+     *  商户来源标识
      */
     private String            source;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.MEMO
+     *  商户备注
      */
     private String            memo;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.STATUS
+     *  商户状态
      */
     private String            status;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.RETURN_DETAIL
+     *  支付宝返回数据详情
      */
     private String            returnDetail;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.GMT_CREATE
+     * 应用授权令牌
      */
-    private Date              gmtCreate;
+    private String            appAuthToken;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.GMT_UPDATE
+     * 非空参数校验
+     * @return
      */
-    private Date              gmtUpdate;
+    public boolean validate() {
 
-    public String getId() {
-        return id;
-    }
+        AssertUtil.assertNotEmpty(externalId, "商户外部编号不能为空");
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+        AssertUtil.assertNotEmpty(acquirerId, "收单机构号不能为空");
+
+        AssertUtil.assertNotEmpty(name, "商户名称不能为空");
+
+        AssertUtil.assertNotEmpty(aliasName, "商户简称不能为空");
+
+        AssertUtil.assertNotEmpty(servicePhone, "客服电话不能为空");
+
+        AssertUtil.assertNotEmpty(categoryId, "经营类目编号不能为空");
+
+        return true;
     }
 
     public String getExternalId() {
@@ -110,7 +122,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setExternalId(String externalId) {
-        this.externalId = externalId == null ? null : externalId.trim();
+        this.externalId = externalId;
     }
 
     public String getAcquirerId() {
@@ -118,7 +130,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setAcquirerId(String acquirerId) {
-        this.acquirerId = acquirerId == null ? null : acquirerId.trim();
+        this.acquirerId = acquirerId;
     }
 
     public String getMerchantId() {
@@ -126,7 +138,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId == null ? null : merchantId.trim();
+        this.merchantId = merchantId;
     }
 
     public String getName() {
@@ -134,7 +146,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getAliasName() {
@@ -142,7 +154,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setAliasName(String aliasName) {
-        this.aliasName = aliasName == null ? null : aliasName.trim();
+        this.aliasName = aliasName;
     }
 
     public String getServicePhone() {
@@ -150,7 +162,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setServicePhone(String servicePhone) {
-        this.servicePhone = servicePhone == null ? null : servicePhone.trim();
+        this.servicePhone = servicePhone;
     }
 
     public String getContactName() {
@@ -158,7 +170,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setContactName(String contactName) {
-        this.contactName = contactName == null ? null : contactName.trim();
+        this.contactName = contactName;
     }
 
     public String getContactPhone() {
@@ -166,7 +178,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone == null ? null : contactPhone.trim();
+        this.contactPhone = contactPhone;
     }
 
     public String getContactMobile() {
@@ -174,7 +186,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setContactMobile(String contactMobile) {
-        this.contactMobile = contactMobile == null ? null : contactMobile.trim();
+        this.contactMobile = contactMobile;
     }
 
     public String getContactEmail() {
@@ -182,7 +194,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail == null ? null : contactEmail.trim();
+        this.contactEmail = contactEmail;
     }
 
     public String getCategoryId() {
@@ -190,7 +202,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId == null ? null : categoryId.trim();
+        this.categoryId = categoryId;
     }
 
     public String getSource() {
@@ -198,7 +210,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setSource(String source) {
-        this.source = source == null ? null : source.trim();
+        this.source = source;
     }
 
     public String getMemo() {
@@ -206,7 +218,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
+        this.memo = memo;
     }
 
     public String getStatus() {
@@ -214,7 +226,7 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setStatus(String status) {
-        this.status = status == null ? null : status.trim();
+        this.status = status;
     }
 
     public String getReturnDetail() {
@@ -222,22 +234,15 @@ public class BizMerchantInfo extends BaseDomain {
     }
 
     public void setReturnDetail(String returnDetail) {
-        this.returnDetail = returnDetail == null ? null : returnDetail.trim();
+        this.returnDetail = returnDetail;
     }
 
-    public Date getGmtCreate() {
-        return gmtCreate;
+    public String getAppAuthToken() {
+        return appAuthToken;
     }
 
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
+    public void setAppAuthToken(String appAuthToken) {
+        this.appAuthToken = appAuthToken;
     }
 
-    public Date getGmtUpdate() {
-        return gmtUpdate;
-    }
-
-    public void setGmtUpdate(Date gmtUpdate) {
-        this.gmtUpdate = gmtUpdate;
-    }
 }

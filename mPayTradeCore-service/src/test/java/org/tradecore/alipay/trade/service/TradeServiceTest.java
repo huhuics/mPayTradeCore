@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -146,7 +147,7 @@ public class TradeServiceTest extends BaseTest {
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+        Assert.assertTrue(ret.getResponse().getTradeStatus().equals(AlipayTradeStatusEnum.TRADE_CLOSED.getCode()));
     }
 
     /**

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.PrecreateRepository;
@@ -41,10 +42,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
-import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
-import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
@@ -54,7 +53,6 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
-import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 
 /**
  * 支付宝交易服务类
@@ -97,16 +95,16 @@ public class TradeServiceImpl implements TradeService {
     @Resource
     private CancelRepository          cancelRepository;
 
-    static {
-        //1.读取配置文件
-        Configs.init("config/zfbinfo.properties");
+    /**
+     * 构造函数，初始化支付宝服务类
+     */
+    public TradeServiceImpl() {
 
-        //2.工厂方法创建静态支付服务类
-        alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
+        //工厂方法创建静态支付服务类
+        alipayTradeService = AlipayClientFactory.getAlipayTradeServiceInstance();
 
-        //3.实例化AlipayClient
-        alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain(), Configs.getAppid(), Configs.getPrivateKey(), ParamConstant.ALIPAY_CONFIG_FORMAT,
-            ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
+        //实例化AlipayClient
+        alipayClient = AlipayClientFactory.getAlipayClientInstance();
     }
 
     @Override

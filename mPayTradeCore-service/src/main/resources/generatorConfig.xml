@@ -29,9 +29,11 @@
         </javaClientGenerator>  
 		
 		<!-- 生成表 -->
-		<table tableName="BIZ_ALIPAY_CANCEL_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		<!-- <table tableName="BIZ_ALIPAY_CANCEL_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<columnOverride column="TOTAL_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
-		</table>
+		</table> -->
+		
+		<table tableName="BIZ_MERCHANT_INFO" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
 		
     </context>  
 </generatorConfiguration>
