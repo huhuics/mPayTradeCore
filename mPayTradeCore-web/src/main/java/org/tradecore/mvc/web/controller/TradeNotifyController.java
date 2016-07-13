@@ -26,14 +26,14 @@ public class TradeNotifyController {
 
     private static final String SUCCESS = "success";
 
-    private static final String RESULT  = "result";
-
-    @RequestMapping(value = "/receive", method = RequestMethod.POST)
-    public void receive(WebRequest request, ModelMap map) {
+    @RequestMapping(value = "/receive", method = RequestMethod.GET)
+    public String receive(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到支付宝扫码支付异步通知");
 
-        map.put(RESULT, SUCCESS);
+        //TODO
+
+        return SUCCESS;
     }
 
 }
