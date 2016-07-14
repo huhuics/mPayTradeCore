@@ -43,7 +43,7 @@ public class MerchantServiceTest extends BaseTest {
 
         //封装测试请求参数
         MerchantCreateRequest merchantCreateRequest = new MerchantCreateRequest();
-        merchantCreateRequest.setExternal_id("externalId" + geneRandomId());
+        merchantCreateRequest.setExternal_id(geneRandomId());
         merchantCreateRequest.setAcquirer_id("acquirerId" + geneRandomId());
         merchantCreateRequest.setName("测试商户");
         merchantCreateRequest.setAlias_name("测试别名");
@@ -71,8 +71,8 @@ public class MerchantServiceTest extends BaseTest {
 
         //封装测试请求参数
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
-        queryRequest.setAcquirer_id("");
-        queryRequest.setExternal_id("");
+        queryRequest.setAcquirer_id("acquirerId1468487593003");
+        queryRequest.setExternal_id("1468486584701");
         queryRequest.setSub_merchant_id("");
 
         BizMerchantInfo merchantInfo = merchantService.query(queryRequest);
