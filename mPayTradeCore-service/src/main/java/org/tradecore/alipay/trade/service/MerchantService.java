@@ -5,6 +5,7 @@
 package org.tradecore.alipay.trade.service;
 
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
+import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
 /**
@@ -21,4 +22,11 @@ public interface MerchantService {
      * @return                        商户Domain对象
      */
     BizMerchantInfo create(MerchantCreateRequest merchantCreateRequest);
+
+    /**
+     * 商户信息查询接口<br>
+     * @param merchantQueryRequest
+     * @return
+     */
+    BizMerchantInfo query(MerchantQueryRequest merchantQueryRequest);
 }

@@ -259,6 +259,9 @@
 		<if test="_parameter.containsKey('externalId')">
 			AND EXTERNAL_ID = #{externalId}
 		</if>
+		<if test="_parameter.containsKey('merchantId')">
+			AND MERCHANT_ID = #{merchantId}
+		</if>
 		for update
 	</select>
   
