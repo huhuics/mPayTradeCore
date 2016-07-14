@@ -96,7 +96,7 @@ public class TradeServiceImpl implements TradeService {
     private CancelRepository          cancelRepository;
 
     /**
-     * 构造函数，初始化支付宝服务类
+     * 构造方法，初始化支付宝服务类
      */
     public TradeServiceImpl() {
 
