@@ -179,7 +179,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         //业务成功，封装参数
         BizMerchantInfo merchantInfo = new BizMerchantInfo();
-        merchantInfo.setExternalId(alipayResponse.getExternalId());
+        merchantInfo.setExternalId(merchantQueryRequest.getExternal_id());
         merchantInfo.setAcquirerId(merchantQueryRequest.getAcquirer_id());
         merchantInfo.setMerchantId(alipayResponse.getSubMerchantId());
         merchantInfo.setName(alipayResponse.getName());

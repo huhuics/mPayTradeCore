@@ -73,7 +73,7 @@ public class MerchantServiceTest extends BaseTest {
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
         queryRequest.setAcquirer_id("acquirerId1468487593003");
         queryRequest.setExternal_id("1468486584701");
-        queryRequest.setSub_merchant_id("");
+        queryRequest.setSub_merchant_id("23");
 
         BizMerchantInfo merchantInfo = merchantService.query(queryRequest);
 
