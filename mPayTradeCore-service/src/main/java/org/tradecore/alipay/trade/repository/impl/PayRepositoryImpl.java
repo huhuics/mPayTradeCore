@@ -183,7 +183,7 @@ public class PayRepositoryImpl implements PayRepository {
     @Override
     public void updatePayOrder(BizAlipayPayOrder oriOrder, NotifyRequest notifyRequest) {
 
-        LogUtil.info(logger, "收到订单更新请求");
+        LogUtil.info(logger, "收到异步响应订单更新请求");
 
         oriOrder.setOrderStatus(notifyRequest.getTradeStatus());
 
@@ -204,6 +204,8 @@ public class PayRepositoryImpl implements PayRepository {
         oriOrder.setGmtUpdate(new Date());
 
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单更新失败");
+
+        LogUtil.info(logger, "异步响应订单更新请求成功");
 
     }
 

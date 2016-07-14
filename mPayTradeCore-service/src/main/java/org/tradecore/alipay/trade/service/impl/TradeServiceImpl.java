@@ -217,7 +217,7 @@ public class TradeServiceImpl implements TradeService {
         LogUtil.info(logger, "支付宝返回退款业务结果alipayF2FRefundResult={0}", JSON.toJSONString(alipayF2FRefundResult, SerializerFeature.UseSingleQuotes));
 
         //6.根据支付宝返回结果更新本地数据
-        refundRepository.updateRefundOrder(refundOrder, alipayF2FRefundResult);
+        refundRepository.updateRefundAndTradeOrder(refundOrder, oriOrder, alipayF2FRefundResult);
 
         //7.根据退款订单状态更新本地交易订单的退款状态数据
         payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
@@ -329,11 +329,13 @@ public class TradeServiceImpl implements TradeService {
      * @return
      */
     private AlipayTradePrecreateRequestBuilder convert2Builder(PrecreateRequest precreateRequest) {
-        return new AlipayTradePrecreateRequestBuilder().setSubject(precreateRequest.getSubject()).setTotalAmount(precreateRequest.getTotalAmount())
-            .setOutTradeNo(precreateRequest.getOutTradeNo()).setUndiscountableAmount(precreateRequest.getUndiscountableAmount())
-            .setSellerId(precreateRequest.getSellerId()).setBody(precreateRequest.getBody()).setOperatorId(precreateRequest.getOperatorId())
-            .setStoreId(precreateRequest.getStoreId()).setExtendParams(precreateRequest.getExtendParams())
-            .setTimeoutExpress(precreateRequest.getTimeoutExpress()).setGoodsDetailList(precreateRequest.getGoodsDetailList())
+        return new AlipayTradePrecreateRequestBuilder().setSubMerchantId(precreateRequest.getMerchantId()).setOutTradeNo(precreateRequest.getOutTradeNo())
+            .setSellerId(precreateRequest.getSellerId()).setTotalAmount(precreateRequest.getTotalAmount())
+            .setDiscountableAmount(precreateRequest.getDiscountableAmount()).setUndiscountableAmount(precreateRequest.getUndiscountableAmount())
+            .setSubject(precreateRequest.getSubject()).setBody(precreateRequest.getBody()).setAppAuthToken(precreateRequest.getAppAuthToken())
+            .setGoodsDetailList(precreateRequest.getGoodsDetailList()).setOperatorId(precreateRequest.getOperatorId())
+            .setStoreId(precreateRequest.getStoreId()).setAlipayStoreId(precreateRequest.getAlipayStoreId()).setTerminalId(precreateRequest.getTerminalId())
+            .setExtendParams(precreateRequest.getExtendParams()).setTimeoutExpress(precreateRequest.getTimeoutExpress())
             .setNotifyUrl(precreateRequest.getNotifyUrl());
     }
 

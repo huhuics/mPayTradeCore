@@ -68,7 +68,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public void updateRefundOrder(BizAlipayRefundOrder refundOrder, AlipayF2FRefundResult alipayF2FRefundResult) {
+    public void updateRefundAndTradeOrder(BizAlipayRefundOrder refundOrder, BizAlipayPayOrder payOrder, AlipayF2FRefundResult alipayF2FRefundResult) {
 
         LogUtil.info(logger, "收到退款订单更新请求");
 
@@ -86,6 +86,11 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setRefundDetailItemList(JSON.toJSONString(response.getRefundDetailItemList()));
             refundOrder.setBuyerUserId(response.getBuyerUserId());
             refundOrder.setGmtRefundPay(response.getGmtRefundPay());
+
+            //如果是全额退款，修改交易订单状态
+            if (payOrder.getTotalAmount().equals(refundOrder.getRefundAmount())) {
+                payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+            }
 
         } else {
             LogUtil.info(logger, "支付宝退款失败");

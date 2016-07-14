@@ -29,12 +29,14 @@ public interface RefundRepository {
     BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest);
 
     /**
-     * 根据支付宝返回的退款结果，修改本地退款订单表
+     * 根据支付宝返回的退款结果，修改本地退款订单表和支付订<br>
+     * 如果是全额退款成功，则交易订单的状态改为TRADE_CLOSED
      * @param refundOrder
+     * @param parOrder
      * @param alipayF2FRefundResult
      * @return
      */
-    void updateRefundOrder(BizAlipayRefundOrder refundOrder, AlipayF2FRefundResult alipayF2FRefundResult);
+    void updateRefundAndTradeOrder(BizAlipayRefundOrder refundOrder, BizAlipayPayOrder payOrder, AlipayF2FRefundResult alipayF2FRefundResult);
 
     /**
      * 通过商户订单号、退款订单状态获取所有退款订单<br>
