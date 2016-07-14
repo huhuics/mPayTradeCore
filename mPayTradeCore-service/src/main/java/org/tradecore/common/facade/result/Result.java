@@ -5,7 +5,6 @@
 package org.tradecore.common.facade.result;
 
 import java.io.Serializable;
-import java.util.Map;
 
 /**
  * 结果类
@@ -15,24 +14,25 @@ import java.util.Map;
 public class Result<T> implements Serializable {
 
     /** uid */
-    private static final long   serialVersionUID = -7226506032494666664L;
-
-    /** 业务是否成功 */
-    private boolean             success          = false;
+    private static final long serialVersionUID = -7226506032494666664L;
 
     /** 结果对象 */
-    private T                   resultObj;
+    private T                 resultObj;
 
-    /** 错误扩展信息 */
-    private Map<String, Object> errorInfo;
+    /** 结果码 */
+    private String            code;
 
-    public boolean isSuccess() {
-        return success;
-    }
+    /** 结果信息 */
+    private String            msg;
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
+    /** 子结果码 */
+    private String            subCode;
+
+    /** 子信息 */
+    private String            subMsg;
+
+    /** 响应消息体 */
+    private String            body;
 
     public T getResultObj() {
         return resultObj;
@@ -42,12 +42,48 @@ public class Result<T> implements Serializable {
         this.resultObj = resultObj;
     }
 
-    public Map<String, Object> getErrorInfo() {
-        return errorInfo;
+    public String getCode() {
+        return code;
     }
 
-    public void setErrorInfo(Map<String, Object> errorInfo) {
-        this.errorInfo = errorInfo;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getSubCode() {
+        return subCode;
+    }
+
+    public void setSubCode(String subCode) {
+        this.subCode = subCode;
+    }
+
+    public String getSubMsg() {
+        return subMsg;
+    }
+
+    public void setSubMsg(String subMsg) {
+        this.subMsg = subMsg;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
 }
