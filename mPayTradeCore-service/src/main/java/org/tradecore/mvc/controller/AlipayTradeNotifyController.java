@@ -33,16 +33,20 @@ public class AlipayTradeNotifyController {
     /** 给支付宝返回字符 */
     private static final String SUCCESS = "success";
 
-    /**
-     * 交易通知服务接口
-     */
+    /** 交易通知服务接口 */
     @Resource
     private TradeNotifyService  tradeNotifyService;
 
+    /**
+     * 接收支付宝扫码支付结果通知
+     * @param request
+     * @param map
+     * @return
+     */
     @RequestMapping(value = "/receive", method = RequestMethod.POST)
     public String receive(WebRequest request, ModelMap map) {
 
-        LogUtil.info(logger, "收到支付宝扫码支付异步通知");
+        LogUtil.info(logger, "收到支付宝扫码支付HTTP异步通知");
 
         NotifyRequest notifyRequest = convert2NotifyRequest(request);
 
@@ -52,7 +56,7 @@ public class AlipayTradeNotifyController {
     }
 
     /**
-     * 将webRequest转换成NotifyRequest
+     * 将webRequest中的参数转换成NotifyRequest
      * @param request
      * @return
      */
