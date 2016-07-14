@@ -104,6 +104,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
+    @Transactional
     public BizMerchantInfo query(MerchantQueryRequest merchantQueryRequest) {
 
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
