@@ -64,7 +64,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public BizMerchantInfo create(MerchantCreateRequest merchantCreateRequest) {
+    public AlipayBossProdSubmerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) {
 
         LogUtil.info(logger, "收到商户入驻请求参数,merchantCreateRequest={0}", merchantCreateRequest);
 
@@ -76,9 +76,7 @@ public class MerchantServiceImpl implements MerchantService {
         BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
 
         //  2.1.幂等控制
-        if (oriBizMerchantInfo != null) {
-            return oriBizMerchantInfo;
-        }
+        AssertUtil.assertNull(oriBizMerchantInfo, "商户重复入驻");
 
         //3.将请求转化为支付宝商户入驻请求
         AlipayBossProdSubmerchantCreateRequest alipayCreateRequest = convert2AlipayCreateRequest(merchantCreateRequest);
@@ -100,7 +98,7 @@ public class MerchantServiceImpl implements MerchantService {
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return bizMerchantInfo;
+        return alipayResponse;
     }
 
     @Override

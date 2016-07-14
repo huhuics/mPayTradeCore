@@ -8,6 +8,8 @@ import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
+import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
+
 /**
  * 商户服务接口
  * @author HuHui
@@ -19,9 +21,9 @@ public interface MerchantService {
      * 商户入驻接口<br>
      * 商户发交易前必须调用此方法，调用此方法，支付宝将给商户分配商户编号merchantId。此商户编号将在支付宝备案
      * @param merchantCreateRequest   请求参数
-     * @return                        商户Domain对象
+     * @return                        支付宝返回对象
      */
-    BizMerchantInfo create(MerchantCreateRequest merchantCreateRequest);
+    AlipayBossProdSubmerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest);
 
     /**
      * 商户信息查询接口<br>

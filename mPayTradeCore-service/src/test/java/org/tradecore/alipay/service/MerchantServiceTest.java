@@ -17,6 +17,8 @@ import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.domain.BizMerchantInfo;
 import org.tradecore.service.test.BaseTest;
 
+import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
+
 /**
  * 
  * @author HuHui
@@ -56,11 +58,11 @@ public class MerchantServiceTest extends BaseTest {
         merchantCreateRequest.setSource("2016070723781231");
         merchantCreateRequest.setMemo("测试备注信息");
 
-        BizMerchantInfo merchantInfo = merchantService.create(merchantCreateRequest);
+        AlipayBossProdSubmerchantCreateResponse createResponse = merchantService.create(merchantCreateRequest);
 
-        LogUtil.info(logger, "商户入驻结果merchantInfo={0}:", merchantInfo);
+        LogUtil.info(logger, "商户入驻结果createResponse={0}:", createResponse);
 
-        Assert.assertNotNull(merchantInfo);
+        Assert.assertNotNull(createResponse);
 
     }
 

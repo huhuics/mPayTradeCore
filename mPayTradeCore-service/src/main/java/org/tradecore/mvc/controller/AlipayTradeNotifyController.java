@@ -19,7 +19,7 @@ import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 
 /**
- * 
+ * 接收支付宝扫码支付结果通知
  * @author HuHui
  * @version $Id: AlipayNotifyController.java, v 0.1 2016年7月13日 下午2:27:48 HuHui Exp $
  */
@@ -27,8 +27,10 @@ import org.tradecore.common.util.LogUtil;
 @RequestMapping("/tradeNotify")
 public class AlipayTradeNotifyController {
 
+    /** 日志 */
     private static final Logger logger  = LoggerFactory.getLogger(AlipayTradeNotifyController.class);
 
+    /** 给支付宝返回字符 */
     private static final String SUCCESS = "success";
 
     /**
