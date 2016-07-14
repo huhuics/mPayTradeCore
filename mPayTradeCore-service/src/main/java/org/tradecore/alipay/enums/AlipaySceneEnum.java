@@ -13,11 +13,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum AlipaySceneEnum {
 
-    BAR_CODE("BAR_CODE", "条码支付"),
+    BAR_CODE("bar_code", "条码支付"),
 
-    SCAN_CODE("SCAN_CODE", "扫码支付"),
+    SCAN_CODE("scan_code", "扫码支付"),
 
-    WAVE_CODE("WAVE_CODE", "声波支付")
+    WAVE_CODE("wave_code", "声波支付")
 
     ;
 

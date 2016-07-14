@@ -11,7 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,30 +118,6 @@ public class RefundRepositoryImpl implements RefundRepository {
         LogUtil.info(logger, "退款订单查询结果,refundOrders={0}", refundOrders);
 
         return refundOrders;
-    }
-
-    @Override
-    public BizAlipayRefundOrder selectIdemRefundOrder(String outTradeNo, String refundStatus, Long sendBackFee) {
-
-        LogUtil.info(logger, "收到查询幂等退款订单请求,outTradeNo={0},refundStatus={1},sendBackFee={2}", outTradeNo, refundStatus, sendBackFee);
-
-        Map<String, Object> paraMap = new HashMap<String, Object>();
-        paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
-        paraMap.put(QueryFieldConstant.REFUND_STATUS, refundStatus);
-        paraMap.put(QueryFieldConstant.SEND_BACK_FEE, sendBackFee);
-
-        List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
-
-        LogUtil.info(logger, "退款订单查询结果,refundOrders={0}", refundOrders);
-
-        //查询结果要么没有，要么只有一条
-        AssertUtil.assertTrue(refundOrders.size() <= QUERY_SIZE, "全额退款订单查询多余1条");
-
-        if (CollectionUtils.isNotEmpty(refundOrders)) {
-            return refundOrders.get(0);
-        }
-
-        return null;
     }
 
     /**

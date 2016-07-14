@@ -205,14 +205,6 @@ public class TradeServiceImpl implements TradeService {
         //  2.1原始订单和退款请求参数校验
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误，退款失败");
 
-        //  2.2全额退款订单幂等控制
-        BizAlipayRefundOrder nativeRefundOrder = refundRepository.selectIdemRefundOrder(refundRequest.getOutTradeNo(),
-            AlipayTradeStatusEnum.REFUND_SUCCESS.getCode(), oriOrder.getTotalAmount().getCent());
-
-        if (nativeRefundOrder != null) {
-            //TODO:构造返回参数
-        }
-
         //3.本地持久化退款信息
         BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest);
 

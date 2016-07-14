@@ -63,7 +63,7 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setMerchantId("27");
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("284603567524993555");
+        payRequest.setAuthCode("282789805600701189");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("胡辉条码交易测试" + geneRandomId());
@@ -160,10 +160,10 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         RefundRequest refundRequest = new RefundRequest();
-        refundRequest.setAcquirerId("acquire_id_4948248.502670019");
-        refundRequest.setMerchantId("mechant_id_3062919.5403585494");
-        refundRequest.setOutTradeNo("tradepay1468326599343284774");
-        refundRequest.setRefundAmount("0.05");
+        refundRequest.setAcquirerId("acquire_id_1468498963549");
+        refundRequest.setMerchantId("27");
+        refundRequest.setOutTradeNo("tradepay1468504919701");
+        refundRequest.setRefundAmount("0.01");
         refundRequest.setRefundReason("正常退款");
         refundRequest.setStoreId("store_id_" + geneRandomId());
         refundRequest.setOutRequestNo("out_request_no_" + geneRandomId());
