@@ -2,7 +2,7 @@
  * Beijing Jiaotong University
  * Copyright (c) 1896-2016 All Rights Reserved.
  */
-package org.tradecore.alipay.trade.service;
+package org.tradecore.alipay.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
+import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
 
