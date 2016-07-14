@@ -44,8 +44,8 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         AssertUtil.assertNotNull(notifyRequest, "异步通知请求不能为空");
         AssertUtil.assertTrue(notifyRequest.validate(), "异步通知请求参数不合法");
 
-        //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(null, notifyRequest.getOutTradeNo());
+        //2.加锁查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, notifyRequest.getOutTradeNo(), Boolean.TRUE);
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //幂等

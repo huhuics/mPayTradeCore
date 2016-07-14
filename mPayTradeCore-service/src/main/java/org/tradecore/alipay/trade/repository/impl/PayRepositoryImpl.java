@@ -38,7 +38,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.TradeStatus;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
@@ -59,57 +58,48 @@ public class PayRepositoryImpl implements PayRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public BizAlipayPayOrder savePayOrder(PayRequest payRequest) {
+    public BizAlipayPayOrder savePayOrder(PayRequest payRequest, AlipayF2FPayResult alipayF2FPayResult) {
 
-        LogUtil.info(logger, "收到条码支付持久化请求,payRequest={0}", payRequest);
+        LogUtil.info(logger, "收到条码支付持久化请求");
 
+        AlipayTradePayResponse response = alipayF2FPayResult.getResponse();
+
+        //将公共参数封装成Domain对象
         BizAlipayPayOrder payOrder = convert2PayOrder(payRequest);
 
         LogUtil.info(logger, "条码支付请求payRequest转化为domian对象成功,payOrder={0}", payOrder);
 
+        if (alipayF2FPayResult.isTradeSuccess()) {
+            LogUtil.info(logger, "支付宝条码支付成功");
+
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
+            payOrder.setAlipayTradeNo(response.getTradeNo());
+
+            //增加PayDetail字段数据
+            Map<String, Object> payDetailMap = JSON.parseObject(payOrder.getPayDetail(), new TypeReference<Map<String, Object>>() {
+            });
+            payDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, response.getBuyerLogonId());
+            payOrder.setPayDetail(JSON.toJSONString(payDetailMap));
+
+            payOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
+            payOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
+            payOrder.setGmtPayment(response.getGmtPayment());
+        } else {
+            LogUtil.info(logger, "支付宝条码支付失败");
+
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+        }
+
+        if (response != null) {
+            //支付宝返回信息
+            payOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+
+        payOrder.setGmtUpdate(new Date());
+
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "条码支付订单持久化失败");
 
         return payOrder;
-
-    }
-
-    @Override
-    public void updatePayOrder(BizAlipayPayOrder bizAlipayPayOrder, AlipayF2FPayResult alipayF2FPayResult) {
-
-        LogUtil.info(logger, "收到条码支付更新请求");
-
-        TradeStatus tradeStatus = alipayF2FPayResult.getTradeStatus();
-        AlipayTradePayResponse response = alipayF2FPayResult.getResponse();
-
-        if (tradeStatus == TradeStatus.SUCCESS) {
-            LogUtil.info(logger, "支付宝条码支付成功");
-
-            bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
-            bizAlipayPayOrder.setAlipayTradeNo(response.getTradeNo());
-
-            //增加PayDetail字段数据
-            Map<String, Object> payDetailMap = JSON.parseObject(bizAlipayPayOrder.getPayDetail(), new TypeReference<Map<String, Object>>() {
-            });
-            payDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, response.getBuyerLogonId());
-            bizAlipayPayOrder.setPayDetail(JSON.toJSONString(payDetailMap));
-
-            bizAlipayPayOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
-            bizAlipayPayOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
-            bizAlipayPayOrder.setGmtPayment(response.getGmtPayment());
-
-        } else {
-            LogUtil.error(logger, "支付宝条码支付失败");
-
-            bizAlipayPayOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
-        }
-
-        //支付宝返回信息
-        bizAlipayPayOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
-
-        bizAlipayPayOrder.setGmtUpdate(new Date());
-
-        //修改本地订单数据
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(bizAlipayPayOrder) > 0, "条码支付修改订单失败");
 
     }
 
@@ -124,7 +114,7 @@ public class PayRepositoryImpl implements PayRepository {
             //判断业务是否业务成功
             if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
                 //1.加锁查询本地订单数据
-                BizAlipayPayOrder order = selectPayOrderForUpdate(queryRequest.getMerchantId(), queryRequest.getOutTradeNo());
+                BizAlipayPayOrder order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), Boolean.TRUE);
 
                 AssertUtil.assertNotNull(order, "原订单查询为空");
 
@@ -164,9 +154,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrderForUpdate(String merchantId, String outTradeNo) {
+    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, boolean isLock) {
 
-        LogUtil.info(logger, "收到订单加锁查询请求,merchantId={0},outTradeNo={1}", merchantId, outTradeNo);
+        LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},isLock={2}", merchantId, outTradeNo, isLock);
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -178,9 +168,14 @@ public class PayRepositoryImpl implements PayRepository {
             paramMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
         }
 
-        BizAlipayPayOrder order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
+        BizAlipayPayOrder order;
+        if (Boolean.valueOf(isLock)) {
+            order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
+        } else {
+            order = bizAlipayPayOrderDAO.selectOrder(paramMap);
+        }
 
-        LogUtil.info(logger, "订单加锁查询结果,order={0}", order);
+        LogUtil.info(logger, "订单查询结果,order={0}", order);
 
         return order;
     }
@@ -224,7 +219,6 @@ public class PayRepositoryImpl implements PayRepository {
         payOrder.setAcquirerId(payRequest.getAcquirerId());
         payOrder.setMerchantId(payRequest.getMerchantId());
         payOrder.setOutTradeNo(payRequest.getOutTradeNo());
-        payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
 
         //封装payDetail
         Map<String, Object> payDetailMap = new HashMap<String, Object>();
@@ -264,12 +258,10 @@ public class PayRepositoryImpl implements PayRepository {
         payOrder.setTimeoutExpress(payRequest.getTimeoutExpress());
         payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
 
-        // TODO: 对账日期和创建日期要改成从配置参数中读取
-        payOrder.setCheckDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        // TODO: 创建日期要改成从配置参数中读取
         payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
 
         payOrder.setGmtCreate(new Date());
-        payOrder.setGmtUpdate(new Date());
 
         return payOrder;
     }

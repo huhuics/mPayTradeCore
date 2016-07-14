@@ -27,4 +27,7 @@ public class QueryFieldConstant {
     /** 商户外部编号 */
     public static final String EXTERNAL_ID   = "externalId";
 
+    /** 某次退款实际退款金额 */
+    public static final String SEND_BACK_FEE = "sendBackFee";
+
 }

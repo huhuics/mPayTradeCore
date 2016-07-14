@@ -54,6 +54,7 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
 
         AlipayTradePrecreateResponse response = alipayF2FPrecreateResult.getResponse();
 
+        //将公共参数封装成Domain对象
         BizAlipayPayOrder payOrder = convert2PayOrder(precreateRequest);
 
         if (alipayF2FPrecreateResult.isTradeSuccess()) {
@@ -68,7 +69,10 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        payOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
+        if (response != null) {
+            payOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+
         payOrder.setGmtUpdate(new Date());
 
         //持久化本地数据
@@ -122,8 +126,7 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
         payOrder.setTimeoutExpress(precreateRequest.getTimeoutExpress());
         payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
 
-        // TODO: 对账日期和创建日期要改成从配置参数中读取
-        payOrder.setCheckDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        // TODO: 创建日期要改成从配置参数中读取
         payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
 
         payOrder.setGmtCreate(new Date());

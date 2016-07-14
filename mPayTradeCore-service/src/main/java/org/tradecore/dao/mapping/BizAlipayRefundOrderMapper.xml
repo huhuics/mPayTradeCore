@@ -293,7 +293,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 
-	<!-- 根据商户订单号查询所有退款订单 -->
+	<!-- 根据条件查询退款订单 -->
 	<select id="selectRefundOrders" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select
@@ -305,6 +305,9 @@
 		</if>
 		<if test="_parameter.containsKey('refundStatus')">
 			AND REFUND_STATUS = #{refundStatus}
+		</if>
+		<if test="_parameter.containsKey('sendBackFee')">
+			AND SEND_BACK_FEE = #{sendBackFee}
 		</if>
 	</select>
   

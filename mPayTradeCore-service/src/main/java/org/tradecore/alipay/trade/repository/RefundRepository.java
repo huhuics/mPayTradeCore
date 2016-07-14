@@ -44,4 +44,15 @@ public interface RefundRepository {
      */
     List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo, String refundStatus);
 
+    /**
+     * 查询全额退款幂等订单<br>
+     * 退款状态要传REFUND_SUCCESS<br>
+     * sendBackFee要传原订单金额，从而排除多次退款的订单
+     * @param outTradeNo    商户订单号
+     * @param refundStatus  退款状态
+     * @param sendBackFee   某次退款实际退款金额
+     * @return
+     */
+    BizAlipayRefundOrder selectIdemRefundOrder(String outTradeNo, String refundStatus, Long sendBackFee);
+
 }

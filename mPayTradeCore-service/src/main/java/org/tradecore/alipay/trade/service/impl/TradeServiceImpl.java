@@ -117,8 +117,9 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
         AssertUtil.assertTrue(payRequest.validate(), "支付支付请求参数不合法");
 
-        //2.本地持久化
-        BizAlipayPayOrder bizAlipayPayOrder = payRepository.savePayOrder(payRequest);
+        //2.幂等判断
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), Boolean.FALSE);
+        AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
@@ -130,8 +131,8 @@ public class TradeServiceImpl implements TradeService {
 
         AssertUtil.assertNotNull(alipayF2FPayResult, "支付宝返回条码支付结果为空");
 
-        //5.根据支付宝返回结果更新本地数据
-        payRepository.updatePayOrder(bizAlipayPayOrder, alipayF2FPayResult);
+        //5.根据支付宝返回结果保存本地数据
+        payRepository.savePayOrder(payRequest, alipayF2FPayResult);
 
         return alipayF2FPayResult;
     }
@@ -196,15 +197,21 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(refundRequest, "退款请求参数不能为空");
         AssertUtil.assertTrue(refundRequest.validate(), "退款请求参数不合法");
 
-        //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(refundRequest.getMerchantId(), refundRequest.getOutTradeNo());
+        //2.加锁查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), Boolean.TRUE);
 
-        AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
+        AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
         //  2.1原始订单和退款请求参数校验
-        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误");
+        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误，退款失败");
 
-        //TODO:退款订单幂等控制
+        //  2.2全额退款订单幂等控制
+        BizAlipayRefundOrder nativeRefundOrder = refundRepository.selectIdemRefundOrder(refundRequest.getOutTradeNo(),
+            AlipayTradeStatusEnum.REFUND_SUCCESS.getCode(), oriOrder.getTotalAmount().getCent());
+
+        if (nativeRefundOrder != null) {
+            //TODO:构造返回参数
+        }
 
         //3.本地持久化退款信息
         BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest);
@@ -236,8 +243,8 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(cancelRequest, "撤销请求参数不能为空");
         AssertUtil.assertTrue(cancelRequest.validate(), "撤销请求参数不合法");
 
-        //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderForUpdate(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo());
+        //2.加锁查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), Boolean.TRUE);
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -315,11 +322,13 @@ public class TradeServiceImpl implements TradeService {
      * @return
      */
     private AlipayTradePayRequestBuilder convert2Builder(PayRequest payRequest) {
-        return new AlipayTradePayRequestBuilder().setOutTradeNo(payRequest.getOutTradeNo()).setSubject(payRequest.getSubject())
-            .setAuthCode(payRequest.getAuthCode()).setTotalAmount(payRequest.getTotalAmount()).setStoreId(payRequest.getStoreId())
-            .setUndiscountableAmount(payRequest.getUndiscountableAmount()).setBody(payRequest.getBody()).setOperatorId(payRequest.getOperatorId())
-            .setExtendParams(payRequest.getExtendParams()).setSellerId(payRequest.getSellerId()).setGoodsDetailList(payRequest.getGoodsDetailList())
-            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAppAuthToken(payRequest.getAppAuthToken());
+        return new AlipayTradePayRequestBuilder().setSubMerchantId(payRequest.getMerchantId()).setScene(payRequest.getScene())
+            .setOutTradeNo(payRequest.getOutTradeNo()).setSellerId(payRequest.getSellerId()).setTotalAmount(payRequest.getTotalAmount())
+            .setDiscountableAmount(payRequest.getDiscountableAmount()).setUndiscountableAmount(payRequest.getUndiscountableAmount())
+            .setSubject(payRequest.getSubject()).setBody(payRequest.getBody()).setAppAuthToken(payRequest.getAppAuthToken())
+            .setGoodsDetailList(payRequest.getGoodsDetailList()).setOperatorId(payRequest.getOperatorId()).setStoreId(payRequest.getStoreId())
+            .setAlipayStoreId(payRequest.getAlipayStoreId()).setTerminalId(payRequest.getTerminalId()).setExtendParams(payRequest.getExtendParams())
+            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAuthCode(payRequest.getAuthCode());
     }
 
     /**
