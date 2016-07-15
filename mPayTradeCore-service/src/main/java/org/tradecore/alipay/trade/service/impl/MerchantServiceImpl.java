@@ -79,7 +79,8 @@ public class MerchantServiceImpl implements MerchantService {
 
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
-            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId());
+            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), BizResultEnum.SUCCESS.getCode(),
+                BizResultEnum.SUCCESS.getDesc());
         }
 
         //3.将请求转化为支付宝商户入驻请求
@@ -102,7 +103,7 @@ public class MerchantServiceImpl implements MerchantService {
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId());
+        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg());
     }
 
     @Override
@@ -144,11 +145,11 @@ public class MerchantServiceImpl implements MerchantService {
             //3.4持久化商户信息
             AssertUtil.assertTrue(insert(merchantInfo), "商户信息持久化失败");
 
-            return buildResponse(merchantInfo);
+            return buildResponse(merchantInfo, alipayResponse.getCode(), alipayResponse.getMsg());
 
         } else {
             //本次查询不为空则直接返回
-            return buildResponse(nativeMerchantInfo);
+            return buildResponse(nativeMerchantInfo, BizResultEnum.SUCCESS.getCode(), BizResultEnum.SUCCESS.getDesc());
         }
 
     }
@@ -308,17 +309,19 @@ public class MerchantServiceImpl implements MerchantService {
      * @param merchantId
      * @return
      */
-    private MerchantCreateResponse buildResponse(String acquirerId, String merchantId) {
+    private MerchantCreateResponse buildResponse(String acquirerId, String merchantId, String code, String msg) {
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
         createResponse.setAcquirerId(acquirerId);
         createResponse.setMerchantId(merchantId);
+        createResponse.setCode(code);
+        createResponse.setMsg(msg);
 
         return createResponse;
     }
 
-    private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo) {
+    private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo, String code, String msg) {
 
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
 
@@ -335,6 +338,8 @@ public class MerchantServiceImpl implements MerchantService {
         queryResponse.setCategory_id(merchantInfo.getCategoryId());
         queryResponse.setSource(merchantInfo.getSource());
         queryResponse.setMemo(merchantInfo.getMemo());
+        queryResponse.setCode(code);
+        queryResponse.setMsg(msg);
 
         return queryResponse;
 

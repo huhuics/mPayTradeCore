@@ -17,7 +17,7 @@ public class MerchantQueryRequest extends BaseRequest {
     private static final long serialVersionUID = -1718235311954569610L;
 
     /**
-     * 收单机构编号
+     * (必填)收单机构编号
      */
     private String            acquirer_id;
 
