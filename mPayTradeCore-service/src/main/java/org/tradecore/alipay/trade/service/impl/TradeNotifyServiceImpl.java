@@ -4,19 +4,26 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.util.Arrays;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
 import org.tradecore.common.util.AssertUtil;
+import org.tradecore.common.util.HttpUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * 支付宝扫码支付异步通知服务接口实现类
@@ -57,11 +64,28 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //3.修改原始订单
         payRepository.updatePayOrder(oriOrder, notifyRequest);
 
-        //TODO:4.发送给收单机构
+        //4.发送给收单机构
+        send(notifyRequest, oriOrder.getOutNotifyUrl());
 
     }
 
-    public void send() {
-    }
+    /**
+     * 发送扫码支付响应到收单机构
+     * @param notifyRequest  支付宝异步通知请求参数
+     * @param outNotifyUrl   收单机构异步通知地址
+     */
+    public void send(NotifyRequest notifyRequest, String outNotifyUrl) {
 
+        LogUtil.info(logger, "开始发送扫码支付响应到收单机构,outNotifyUrl={0}", outNotifyUrl);
+
+        AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空");
+
+        //组装参数
+        NameValuePair nameValuePair = new NameValuePair(ParamConstant.NOTIFY_RESPONSE, JSON.toJSONString(notifyRequest));
+
+        //发送
+        String response = HttpUtil.httpClientPost(outNotifyUrl, Arrays.asList(nameValuePair));
+
+        LogUtil.info(logger, "完成发送扫码支付响应到收单机构,response={0}", response);
+    }
 }

@@ -22,4 +22,7 @@ public class ParamConstant {
     /** 扫码支付结果回调地址(结算中心端) */
     public static final String NOTIFY_URL            = "http://183.62.226.168:8080/mPay/tradeNotify/receive";
 
+    /** 给收单机构的异步通知响应参数名 */
+    public static final String NOTIFY_RESPONSE       = "notify_response";
+
 }
