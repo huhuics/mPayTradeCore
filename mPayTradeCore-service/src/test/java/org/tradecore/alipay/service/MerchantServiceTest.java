@@ -10,14 +10,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.LogUtil;
-import org.tradecore.dao.domain.BizMerchantInfo;
 import org.tradecore.service.test.BaseTest;
-
-import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
 
 /**
  * 
@@ -58,7 +57,7 @@ public class MerchantServiceTest extends BaseTest {
         merchantCreateRequest.setSource("2016070723781231");
         merchantCreateRequest.setMemo("测试备注信息");
 
-        AlipayBossProdSubmerchantCreateResponse createResponse = merchantService.create(merchantCreateRequest);
+        MerchantCreateResponse createResponse = merchantService.create(merchantCreateRequest);
 
         LogUtil.info(logger, "商户入驻结果createResponse={0}:", createResponse);
 
@@ -77,9 +76,9 @@ public class MerchantServiceTest extends BaseTest {
         queryRequest.setExternal_id("1468486584701");
         queryRequest.setSub_merchant_id("27");
 
-        BizMerchantInfo merchantInfo = merchantService.query(queryRequest);
+        MerchantQueryResponse queryResponse = merchantService.query(queryRequest);
 
-        LogUtil.info(logger, "商户查询结果,merchantInfo={0}", merchantInfo);
+        LogUtil.info(logger, "商户查询结果,queryResponse={0}", queryResponse);
 
     }
 

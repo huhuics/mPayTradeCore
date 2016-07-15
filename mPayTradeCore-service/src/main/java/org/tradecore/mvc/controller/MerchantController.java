@@ -52,7 +52,7 @@ public class MerchantController {
 
         AlipayBossProdSubmerchantCreateResponse response = null;
         try {
-            response = merchantService.create(merchantCreateRequest);
+            //            response = merchantService.create(merchantCreateRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户入驻调用异常,merchantCreateRequest={0}", merchantCreateRequest);
         }

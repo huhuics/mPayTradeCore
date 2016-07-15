@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
+import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
@@ -64,7 +66,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public AlipayBossProdSubmerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) {
+    public MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) {
 
         LogUtil.info(logger, "收到商户入驻请求参数,merchantCreateRequest={0}", merchantCreateRequest);
 
@@ -76,7 +78,9 @@ public class MerchantServiceImpl implements MerchantService {
         BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
 
         //  2.1.幂等控制
-        AssertUtil.assertNull(oriBizMerchantInfo, "商户重复入驻");
+        if (oriBizMerchantInfo != null) {
+            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId());
+        }
 
         //3.将请求转化为支付宝商户入驻请求
         AlipayBossProdSubmerchantCreateRequest alipayCreateRequest = convert2AlipayCreateRequest(merchantCreateRequest);
@@ -98,12 +102,12 @@ public class MerchantServiceImpl implements MerchantService {
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return alipayResponse;
+        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId());
     }
 
     @Override
     @Transactional
-    public BizMerchantInfo query(MerchantQueryRequest merchantQueryRequest) {
+    public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) {
 
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
 
@@ -140,11 +144,11 @@ public class MerchantServiceImpl implements MerchantService {
             //3.4持久化商户信息
             AssertUtil.assertTrue(insert(merchantInfo), "商户信息持久化失败");
 
-            return merchantInfo;
+            return buildResponse(merchantInfo);
 
         } else {
             //本次查询不为空则直接返回
-            return nativeMerchantInfo;
+            return buildResponse(nativeMerchantInfo);
         }
 
     }
@@ -295,6 +299,44 @@ public class MerchantServiceImpl implements MerchantService {
         }
 
         return bizMerchantInfoDAO.selectForUpdate(paraMap);
+
+    }
+
+    /**
+     * 创建商户入驻响应
+     * @param acquirerId
+     * @param merchantId
+     * @return
+     */
+    private MerchantCreateResponse buildResponse(String acquirerId, String merchantId) {
+
+        MerchantCreateResponse createResponse = new MerchantCreateResponse();
+
+        createResponse.setAcquirerId(acquirerId);
+        createResponse.setMerchantId(merchantId);
+
+        return createResponse;
+    }
+
+    private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo) {
+
+        MerchantQueryResponse queryResponse = new MerchantQueryResponse();
+
+        queryResponse.setAcquirer_id(merchantInfo.getAcquirerId());
+        queryResponse.setSub_merchant_id(merchantInfo.getMerchantId());
+        queryResponse.setExternal_id(merchantInfo.getExternalId());
+        queryResponse.setName(merchantInfo.getName());
+        queryResponse.setAlias_name(merchantInfo.getAliasName());
+        queryResponse.setService_phone(merchantInfo.getServicePhone());
+        queryResponse.setContact_name(merchantInfo.getContactName());
+        queryResponse.setContact_phone(merchantInfo.getContactPhone());
+        queryResponse.setContact_mobile(merchantInfo.getContactMobile());
+        queryResponse.setContact_email(merchantInfo.getContactEmail());
+        queryResponse.setCategory_id(merchantInfo.getCategoryId());
+        queryResponse.setSource(merchantInfo.getSource());
+        queryResponse.setMemo(merchantInfo.getMemo());
+
+        return queryResponse;
 
     }
 
