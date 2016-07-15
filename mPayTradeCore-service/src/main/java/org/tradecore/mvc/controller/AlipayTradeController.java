@@ -107,7 +107,7 @@ public class AlipayTradeController {
 
     }
 
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/refund", method = RequestMethod.POST)
     public String refund(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到退款HTTP请求");

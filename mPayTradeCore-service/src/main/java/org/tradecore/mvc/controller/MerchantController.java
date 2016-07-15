@@ -96,7 +96,7 @@ public class MerchantController {
 
         queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
         queryRequest.setExternal_id(request.getParameter("external_id"));
-        queryRequest.setSub_merchant_id(request.getParameter("sub_merchant_id"));
+        queryRequest.setSub_merchant_id(request.getParameter("merchant_id"));
 
         return queryRequest;
 
