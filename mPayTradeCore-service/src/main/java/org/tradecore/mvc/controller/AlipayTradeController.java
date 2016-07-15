@@ -128,6 +128,7 @@ public class AlipayTradeController {
 
     }
 
+    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
     public String cancel(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到撤销HTTP请求");

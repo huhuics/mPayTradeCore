@@ -44,14 +44,11 @@ import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 public class RefundRepositoryImpl implements RefundRepository {
 
     /** 日志 */
-    private static final Logger     logger     = LoggerFactory.getLogger(RefundRepositoryImpl.class);
+    private static final Logger     logger = LoggerFactory.getLogger(RefundRepositoryImpl.class);
 
     /** 退款DAO */
     @Resource
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
-
-    /** 查询结果数量 */
-    private static final int        QUERY_SIZE = 1;
 
     @Override
     public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest) {
@@ -87,7 +84,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setBuyerUserId(response.getBuyerUserId());
             refundOrder.setGmtRefundPay(response.getGmtRefundPay());
 
-            //如果是全额退款，修改交易订单状态
+            //如果是全额退款，修改交易订单状态为TRADE_CLOSED
             if (payOrder.getTotalAmount().equals(refundOrder.getRefundAmount())) {
                 payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             }

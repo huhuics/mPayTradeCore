@@ -9,12 +9,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
@@ -64,10 +64,10 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setMerchantId("27");
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("282547515468787950");
+        payRequest.setAuthCode("28310013393377091");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
         payRequest.setTotalAmount("0.01");
-        payRequest.setSubject("胡辉条码交易测试" + geneRandomId());
+        payRequest.setSubject("结算中心条码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
         payRequest.setBody("购买商品3件共20.00元");
         payRequest.setOperatorId("test_operator_id");
@@ -102,7 +102,7 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
         payRequest.setTotalAmount("0.01");
-        payRequest.setSubject("胡辉扫码交易测试" + geneRandomId());
+        payRequest.setSubject("结算中心扫码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
         payRequest.setBody("购买商品3件共20.00元");
         payRequest.setOperatorId("test_operator_id");
@@ -140,16 +140,16 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         QueryRequest queryRequest = new QueryRequest();
-        queryRequest.setAcquirerId("acquire_id_8831476.635618655");
-        queryRequest.setMerchantId("mechant_id_1876214.1478672957");
-        queryRequest.setOutTradeNo("tradepay14682204756429961535");
+        queryRequest.setAcquirerId("acquire_id_1468506224394");
+        queryRequest.setMerchantId("27");
+        queryRequest.setOutTradeNo("tradepay1468509260030");
         queryRequest.setAlipayTradeNo("");
 
         AlipayF2FQueryResult ret = tradeService.query(queryRequest);
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(ret.getResponse().getTradeStatus().equals(AlipayTradeStatusEnum.TRADE_CLOSED.getCode()));
+        Assert.assertTrue(StringUtils.equals(ret.getResponse().getCode(), BizResultEnum.SUCCESS.getCode()));
     }
 
     /**
@@ -161,9 +161,9 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         RefundRequest refundRequest = new RefundRequest();
-        refundRequest.setAcquirerId("acquire_id_1468499192169");
+        refundRequest.setAcquirerId("acquire_id_1468506224394");
         refundRequest.setMerchantId("27");
-        refundRequest.setOutTradeNo("tradepay1468500895608");
+        refundRequest.setOutTradeNo("tradepay1468509260030");
         refundRequest.setRefundAmount("0.01");
         refundRequest.setRefundReason("正常退款");
         refundRequest.setStoreId("store_id_" + geneRandomId());
@@ -186,9 +186,9 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         CancelRequest cancelRequest = new CancelRequest();
-        cancelRequest.setAcquirerId("acquire_id_1468334082337");
-        cancelRequest.setMerchantId("mechant_id_1468334911719");
-        cancelRequest.setOutTradeNo("tradepay1468329244485");
+        cancelRequest.setAcquirerId("acquire_id_1468506224394");
+        cancelRequest.setMerchantId("27");
+        cancelRequest.setOutTradeNo("tradepay1468509260030");
 
         AlipayTradeCancelResponse ret = tradeService.cancel(cancelRequest);
 

@@ -55,6 +55,10 @@ public class CancelRepositoryImpl implements CancelRepository {
             cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
             cancelOrder.setRetryFlag(cancelResponse.getRetryFlag());
             cancelOrder.setAction(cancelResponse.getAction());
+
+            //撤销完成，交易状态改为TRADE_CLOSED
+            oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+
         } else {//业务失败
             LogUtil.info(logger, "支付宝撤销失败");
             cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_FAILED.getCode());
