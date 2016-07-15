@@ -5,7 +5,7 @@
 
 	<groupId>com.fesc.mPayTradeCore</groupId>
 	<artifactId>mPayTradeCore</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>20160715</version>
 	<packaging>pom</packaging>
 
 	<name>mPayTradeCore</name>
@@ -18,8 +18,6 @@
 	<properties>
 		<!-- Spring版本 -->
 		<spring.version>4.0.2.RELEASE</spring.version>
-		<!-- mPayTradeCore版本 -->
-		<mPayTradeCore.version>0.0.1-SNAPSHOT</mPayTradeCore.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
