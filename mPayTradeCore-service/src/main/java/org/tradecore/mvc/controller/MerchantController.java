@@ -52,12 +52,14 @@ public class MerchantController {
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
         //参数转换
-        MerchantCreateRequest merchantCreateRequest = convert2CreateRequest(request);
+        MerchantCreateRequest merchantCreateRequest = buildCreateRequest(request);
+
+        LogUtil.info(logger, "商户入驻参数转换结果:merchantCreateRequest={0}", merchantCreateRequest);
 
         try {
             createResponse = merchantService.create(merchantCreateRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "商户入驻调用异常,merchantCreateRequest={0}", merchantCreateRequest);
+            LogUtil.error(e, logger, "商户入驻HTTP调用异常,merchantCreateRequest={0}", merchantCreateRequest);
             createResponse.setBizFailed();
         }
 
@@ -74,12 +76,12 @@ public class MerchantController {
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
 
         //参数转换
-        MerchantQueryRequest merchantQueryRequest = convert2QueryRequest(request);
+        MerchantQueryRequest merchantQueryRequest = buildQueryRequest(request);
 
         try {
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "商户信息查询调用异常,merchantQueryRequest={0}", merchantQueryRequest);
+            LogUtil.error(e, logger, "商户信息查询HTTP调用异常,merchantQueryRequest={0}", merchantQueryRequest);
             queryResponse.setBizFailed();
         }
 
@@ -88,7 +90,7 @@ public class MerchantController {
         return JSON.toJSONString(queryResponse);
     }
 
-    private MerchantQueryRequest convert2QueryRequest(WebRequest request) {
+    private MerchantQueryRequest buildQueryRequest(WebRequest request) {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
 
@@ -105,7 +107,7 @@ public class MerchantController {
      * @param request
      * @return
      */
-    private MerchantCreateRequest convert2CreateRequest(WebRequest request) {
+    private MerchantCreateRequest buildCreateRequest(WebRequest request) {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 

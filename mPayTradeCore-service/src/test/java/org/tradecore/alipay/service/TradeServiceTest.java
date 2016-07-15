@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
@@ -115,7 +116,7 @@ public class TradeServiceTest extends BaseTest {
         goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
-        payRequest.setNotifyUrl("http://183.62.226.168:8088/mPay/tradeNotify/receive");
+        payRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
         payRequest.setOutNotifyUrl("http://www.notify.url.out");
 
         AlipayF2FPrecreateResult ret = tradeService.precreate(payRequest);
