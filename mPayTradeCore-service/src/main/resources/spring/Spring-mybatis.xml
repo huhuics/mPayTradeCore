@@ -13,7 +13,7 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:mybatis/mybatis-pagehelper-config.xml" />
-		<property name="mapperLocations" value="classpath:org/tradecore/dao/mapping/*.xml" />
+		<property name="mapperLocations" value="classpath:mapping/*.xml" />
 	</bean>
 
 	<!-- 配置Dao接口所在包名 -->
