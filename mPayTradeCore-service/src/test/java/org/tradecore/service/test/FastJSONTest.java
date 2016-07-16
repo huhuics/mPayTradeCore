@@ -10,6 +10,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.common.util.LogUtil;
 
 import com.alibaba.fastjson.JSON;
@@ -40,5 +41,24 @@ public class FastJSONTest {
         jsonStr = JSON.toJSONString(parseObject);
         LogUtil.info(logger, "jsonStr:{0}", jsonStr);
 
+    }
+
+    @Test
+    public void testParse() {
+        MerchantCreateRequest createRequest = new MerchantCreateRequest();
+        createRequest.setService_phone("95534");
+        createRequest.setContact_name("张三");
+
+        String jsonStr = JSON.toJSONString(createRequest);
+        LogUtil.info(logger, "jsonStr:{0}", jsonStr);
+
+        MerchantCreateRequest parseObject = JSON.parseObject(jsonStr, MerchantCreateRequest.class);
+
+        LogUtil.info(logger, "parseObject:{0}", parseObject);
+
+        Map<String, Object> paraMap = JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {
+        });
+
+        LogUtil.info(logger, "paraMap={0}", paraMap);
     }
 }

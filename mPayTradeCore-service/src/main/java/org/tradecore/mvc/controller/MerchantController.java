@@ -54,8 +54,6 @@ public class MerchantController {
         //参数转换
         MerchantCreateRequest merchantCreateRequest = buildCreateRequest(request);
 
-        LogUtil.info(logger, "商户入驻参数转换结果:merchantCreateRequest={0}", merchantCreateRequest);
-
         try {
             createResponse = merchantService.create(merchantCreateRequest);
         } catch (Exception e) {
@@ -94,9 +92,17 @@ public class MerchantController {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
 
-        queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
+        String bizContentJsonStr = request.getParameter("biz_content");
+
+        LogUtil.info(logger, "报文原始业务参数,biz_content={0}", bizContentJsonStr);
+
+        queryRequest = JSON.parseObject(bizContentJsonStr, MerchantQueryRequest.class);
+
+        LogUtil.info(logger, "商户查询参数转换结果:queryRequest={0}", queryRequest);
+
+        /*queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
         queryRequest.setExternal_id(request.getParameter("external_id"));
-        queryRequest.setSub_merchant_id(request.getParameter("merchant_id"));
+        queryRequest.setSub_merchant_id(request.getParameter("merchant_id"));*/
 
         return queryRequest;
 
@@ -111,18 +117,26 @@ public class MerchantController {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 
-        createRequest.setExternal_id(request.getParameter("external_id"));
-        createRequest.setAcquirer_id(request.getParameter("acquirer_id"));
-        createRequest.setName(request.getParameter("name"));
-        createRequest.setAlias_name(request.getParameter("alias_name"));
-        createRequest.setService_phone(request.getParameter("service_phone"));
-        createRequest.setContact_name(request.getParameter("contact_name"));
-        createRequest.setContact_phone(request.getParameter("contact_phone"));
-        createRequest.setContact_mobile(request.getParameter("contact_mobile"));
-        createRequest.setContact_email(request.getParameter("contact_email"));
-        createRequest.setCategory_id(request.getParameter("category_id"));
-        createRequest.setSource(request.getParameter("source"));
-        createRequest.setMemo(request.getParameter("memo"));
+        String bizContentJsonStr = request.getParameter("biz_content");
+
+        LogUtil.info(logger, "报文原始业务参数,biz_content={0}", bizContentJsonStr);
+
+        createRequest = JSON.parseObject(bizContentJsonStr, MerchantCreateRequest.class);
+
+        LogUtil.info(logger, "商户入驻参数转换结果:createRequest={0}", createRequest);
+
+        /*  createRequest.setExternal_id(request.getParameter("external_id"));
+          createRequest.setAcquirer_id(request.getParameter("acquirer_id"));
+          createRequest.setName(request.getParameter("name"));
+          createRequest.setAlias_name(request.getParameter("alias_name"));
+          createRequest.setService_phone(request.getParameter("service_phone"));
+          createRequest.setContact_name(request.getParameter("contact_name"));
+          createRequest.setContact_phone(request.getParameter("contact_phone"));
+          createRequest.setContact_mobile(request.getParameter("contact_mobile"));
+          createRequest.setContact_email(request.getParameter("contact_email"));
+          createRequest.setCategory_id(request.getParameter("category_id"));
+          createRequest.setSource(request.getParameter("source"));
+          createRequest.setMemo(request.getParameter("memo"));*/
 
         return createRequest;
     }
