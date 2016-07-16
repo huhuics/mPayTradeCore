@@ -4,6 +4,9 @@
  */
 package org.tradecore.mvc.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
@@ -32,11 +36,17 @@ import com.alibaba.fastjson.JSON;
 public class MerchantController {
 
     /** 日志 */
-    private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
+    private static final Logger logger                   = LoggerFactory.getLogger(MerchantController.class);
 
     /** 商户服务接口 */
     @Resource
     private MerchantService     merchantService;
+
+    /** 商户创建返回json字段名 */
+    private static final String MERCHANT_CREATE_RESPONSE = "merchant_create_response";
+
+    /** 商户查询返回json字段名 */
+    private static final String MERCHANT_QUERY_RESPONSE  = "merchant_query_response";
 
     /**
      * 商户入驻
@@ -44,6 +54,7 @@ public class MerchantController {
      * @param map
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(WebRequest request, ModelMap map) {
 
@@ -63,9 +74,16 @@ public class MerchantController {
 
         LogUtil.info(logger, "返回商户入驻响应,createResponse={0}", createResponse);
 
-        return JSON.toJSONString(createResponse);
+        return buildResponse(MERCHANT_CREATE_RESPONSE, createResponse);
     }
 
+    /**
+     * 商户查询
+     * @param request
+     * @param map
+     * @return
+     */
+    @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public String query(WebRequest request, ModelMap map) {
 
@@ -85,7 +103,20 @@ public class MerchantController {
 
         LogUtil.info(logger, "返回商户查询响应,queryResponse={0}", queryResponse);
 
-        return JSON.toJSONString(queryResponse);
+        return buildResponse(MERCHANT_QUERY_RESPONSE, queryResponse);
+    }
+
+    /**
+     * 创建json返回数据
+     * @param responseName
+     * @param object
+     * @return
+     */
+    private String buildResponse(String responseName, Object object) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put(responseName, object);
+
+        return JSON.toJSONString(resultMap);
     }
 
     private MerchantQueryRequest buildQueryRequest(WebRequest request) {
@@ -99,10 +130,6 @@ public class MerchantController {
         queryRequest = JSON.parseObject(bizContentJsonStr, MerchantQueryRequest.class);
 
         LogUtil.info(logger, "商户查询参数转换结果:queryRequest={0}", queryRequest);
-
-        /*queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
-        queryRequest.setExternal_id(request.getParameter("external_id"));
-        queryRequest.setSub_merchant_id(request.getParameter("merchant_id"));*/
 
         return queryRequest;
 
@@ -124,19 +151,6 @@ public class MerchantController {
         createRequest = JSON.parseObject(bizContentJsonStr, MerchantCreateRequest.class);
 
         LogUtil.info(logger, "商户入驻参数转换结果:createRequest={0}", createRequest);
-
-        /*  createRequest.setExternal_id(request.getParameter("external_id"));
-          createRequest.setAcquirer_id(request.getParameter("acquirer_id"));
-          createRequest.setName(request.getParameter("name"));
-          createRequest.setAlias_name(request.getParameter("alias_name"));
-          createRequest.setService_phone(request.getParameter("service_phone"));
-          createRequest.setContact_name(request.getParameter("contact_name"));
-          createRequest.setContact_phone(request.getParameter("contact_phone"));
-          createRequest.setContact_mobile(request.getParameter("contact_mobile"));
-          createRequest.setContact_email(request.getParameter("contact_email"));
-          createRequest.setCategory_id(request.getParameter("category_id"));
-          createRequest.setSource(request.getParameter("source"));
-          createRequest.setMemo(request.getParameter("memo"));*/
 
         return createRequest;
     }
