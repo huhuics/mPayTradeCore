@@ -6,16 +6,22 @@
 <title>模拟器</title>
 <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
 <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+<style type="text/css">
+	body {TEXT-ALIGN: center;}
+</style>
 </head>
-<body>
+<body >
 <div class="demo-content">
   <div class="doc-content">
-    <div class="well">
-      <h1>条码支付</h1>
-      <h1>扫码支付</h1>
-      <h1>订单查询</h1>
-      <h1>订单撤销</h1>
-      <h1>订单退款</h1>
+  	<div>
+  		<h1>支付宝线下面对面支付模拟器</h1>
+  	</div>
+    <div class="well" >
+      <h1><a href="toBarCode">条码支付</a></h1>
+      <h1><a href="">扫码支付</a></h1>
+      <h1><a href="">订单查询</a></h1>
+      <h1><a href="">订单撤销</a></h1>
+      <h1><a href="">订单退款</a></h1>
     </div>
   </div>
   </div>
