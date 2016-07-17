@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
@@ -123,9 +124,9 @@ public class MerchantController {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
 
-        String bizContentJsonStr = request.getParameter("biz_content");
+        String bizContentJsonStr = request.getParameter(ParamConstant.BIZ_CONTENT);
 
-        LogUtil.info(logger, "报文原始业务参数,biz_content={0}", bizContentJsonStr);
+        LogUtil.info(logger, "商户查询报文原始业务参数,biz_content={0}", bizContentJsonStr);
 
         queryRequest = JSON.parseObject(bizContentJsonStr, MerchantQueryRequest.class);
 
@@ -144,9 +145,9 @@ public class MerchantController {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 
-        String bizContentJsonStr = request.getParameter("biz_content");
+        String bizContentJsonStr = request.getParameter(ParamConstant.BIZ_CONTENT);
 
-        LogUtil.info(logger, "报文原始业务参数,biz_content={0}", bizContentJsonStr);
+        LogUtil.info(logger, "商户入驻报文原始业务参数,biz_content={0}", bizContentJsonStr);
 
         createRequest = JSON.parseObject(bizContentJsonStr, MerchantCreateRequest.class);
 

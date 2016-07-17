@@ -10,7 +10,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.common.util.LogUtil;
 
@@ -62,14 +61,5 @@ public class FastJSONTest {
 
         LogUtil.info(logger, "paraMap={0}", paraMap);
 
-        final MerchantQueryResponse response = new MerchantQueryResponse();
-        response.setAcquirer_id("111");
-        response.setMemo("222");
-        String merchantQueryResponseJsonStr = JSON.toJSONString(new HashMap<String, Object>() {
-            {
-                put("", response);
-            }
-        });
-        LogUtil.info(logger, "merchantQueryResponseJsonStr={0}", merchantQueryResponseJsonStr);
     }
 }

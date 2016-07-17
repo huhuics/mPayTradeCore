@@ -25,4 +25,7 @@ public class ParamConstant {
     /** 给收单机构的异步通知响应参数名 */
     public static final String NOTIFY_RESPONSE       = "notify_response";
 
+    /** 接收收单机构业务参数JSON大字段名 */
+    public static final String BIZ_CONTENT           = "biz_content";
+
 }

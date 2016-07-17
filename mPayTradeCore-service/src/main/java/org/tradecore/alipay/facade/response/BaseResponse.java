@@ -27,10 +27,10 @@ public class BaseResponse implements Serializable {
     private String            msg;
 
     /** 子结果码 */
-    private String            subCode;
+    private String            sub_code;
 
     /** 子信息 */
-    private String            subMsg;
+    private String            sub_msg;
 
     /** 响应消息体 */
     private String            body;
@@ -51,20 +51,20 @@ public class BaseResponse implements Serializable {
         this.msg = msg;
     }
 
-    public String getSubCode() {
-        return subCode;
+    public String getSub_code() {
+        return sub_code;
     }
 
-    public void setSubCode(String subCode) {
-        this.subCode = subCode;
+    public void setSub_code(String sub_code) {
+        this.sub_code = sub_code;
     }
 
-    public String getSubMsg() {
-        return subMsg;
+    public String getSub_msg() {
+        return sub_msg;
     }
 
-    public void setSubMsg(String subMsg) {
-        this.subMsg = subMsg;
+    public void setSub_msg(String sub_msg) {
+        this.sub_msg = sub_msg;
     }
 
     public String getBody() {
