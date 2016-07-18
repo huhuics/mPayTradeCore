@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>简单表单页</title>
+<title>条码支付</title>
  
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
@@ -17,7 +17,7 @@
   <div class="demo-content">
 	<div class="span16 doc-content" id="formDiv">  
 	<h1>条码支付</h1>
-	  <form id="J_Form" action="" class="form-horizontal">
+	  <form id="J_Form" action="/mPay/simulator/pay" method="post" class="form-horizontal">
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>
 		  <div class="controls">

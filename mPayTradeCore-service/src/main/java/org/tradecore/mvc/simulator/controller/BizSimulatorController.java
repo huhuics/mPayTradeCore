@@ -48,13 +48,17 @@ import com.alipay.demo.trade.utils.ZxingUtils;
 public class BizSimulatorController {
 
     /** 日志 */
-    private static final Logger logger   = LoggerFactory.getLogger(BizSimulatorController.class);
+    private static final Logger logger       = LoggerFactory.getLogger(BizSimulatorController.class);
 
-    private static final String MENU     = "menu";
+    private static final String MENU         = "menu";
 
-    private static final String BAR_CODE = "barCode";
+    private static final String TO_BAR_CODE  = "toBarCode";
 
-    private static final String RESULT   = "result";
+    private static final String TO_SCAN_CODE = "toScanCode";
+
+    private static final String RESULT       = "result";
+
+    private static final String QUERY_RESULT = "queryResult";
 
     /** 交易服务接口 */
     @Resource
@@ -82,7 +86,22 @@ public class BizSimulatorController {
         map.put("body", "购买商品3件共20.00元");
         map.put("store_id", "store_id_" + geneRandomId());
 
-        return BAR_CODE;
+        return TO_BAR_CODE;
+    }
+
+    @RequestMapping(value = "/toScanCode", method = RequestMethod.GET)
+    public String toScanCode(WebRequest request, ModelMap map) {
+
+        //组织参数
+        map.put("acquirer_id", "acquire_id_" + geneRandomId());
+        map.put("merchant_id", "27");
+        map.put("out_trade_no", "out_trade_no_" + geneRandomId());
+        map.put("subject", "结算中心条码交易测试_" + geneRandomId());
+        map.put("body", "购买商品3件共20.00元");
+        map.put("store_id", "store_id_" + geneRandomId());
+        map.put("notify_url", ParamConstant.NOTIFY_URL);
+
+        return TO_SCAN_CODE;
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
@@ -148,7 +167,7 @@ public class BizSimulatorController {
             map.put("merchantId", precreateRequest.getMerchantId());
             map.put("outTradeNo", precreateRequest.getOutTradeNo());
 
-            String qrFilePath = String.format("qr/%s.png", response.getOutTradeNo());
+            String qrFilePath = String.format("F:/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器qrFilePath={0}", qrFilePath);
 
@@ -190,7 +209,7 @@ public class BizSimulatorController {
             setErrorResult(map);
         }
 
-        return RESULT;
+        return QUERY_RESULT;
 
     }
 
@@ -353,7 +372,9 @@ public class BizSimulatorController {
         precreateRequest.setTimeoutExpress(request.getParameter("timeout_express"));
 
         //支付宝通知结算中心地址
-        precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
+        precreateRequest.setNotifyUrl(request.getParameter("notify_url"));
+
+        precreateRequest.setOutNotifyUrl("http://www.notify.url.out");
 
         LogUtil.info(logger, "创建扫码支付请求成功,precreateRequest={0}", precreateRequest);
 
