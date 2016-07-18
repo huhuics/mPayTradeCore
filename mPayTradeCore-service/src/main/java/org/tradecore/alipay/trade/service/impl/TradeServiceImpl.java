@@ -110,7 +110,7 @@ public class TradeServiceImpl implements TradeService {
         //工厂方法创建静态支付服务类
         alipayTradeService = AlipayClientFactory.getAlipayTradeServiceInstance();
 
-        //实例化AlipayClient
+        //工厂方法创建静态AlipayClient
         alipayClient = AlipayClientFactory.getAlipayClientInstance();
     }
 

@@ -3,7 +3,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta charset="utf-8">
 <title>订单撤销</title>
  
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
@@ -21,19 +20,19 @@
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="acquirer_id" data-rules="{required:true}">
+			<input type="text" class="input-large" name="acquirer_id">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户标识号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="merchant_id" data-rules="{required:true}">
+			<input type="text" class="input-large" name="merchant_id">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户订单号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="out_trade_no" data-rules="{required:true}">
+			<input type="text" class="input-large" name="out_trade_no">
 		  </div>
 		</div>
 		<div class="control-group">
@@ -65,7 +64,6 @@
 	</script>
 <!-- script end -->
 	</div>
-<!-- script end -->
   </div>
 </body>
 </html>  

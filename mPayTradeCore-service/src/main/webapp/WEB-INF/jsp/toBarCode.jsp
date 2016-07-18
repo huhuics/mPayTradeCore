@@ -3,7 +3,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta charset="utf-8">
 <title>条码支付</title>
  
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
@@ -21,55 +20,55 @@
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="acquirer_id" value="${acquirer_id}" readonly="">
+			<input type="text" class="input-large" name="acquirer_id" value="${acquirer_id}">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户标识号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="merchant_id" value="${merchant_id}" readonly="">
+			<input type="text" class="input-large" name="merchant_id" value="${merchant_id}">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>支付场景：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="scene" value="bar_code" readonly="">
+			<input type="text" class="input-large" name="scene" value="bar_code">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户订单号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="out_trade_no" value="${out_trade_no}" readonly="">
+			<input type="text" class="input-large" name="out_trade_no" value="${out_trade_no}">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>订单标题：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="subject" value="${subject}" readonly="">
+			<input type="text" class="input-large" name="subject" value="${subject}">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>订单总金额(元)：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="total_amount" data-rules="{required:true}">
+			<input type="text" class="input-large" name="total_amount">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>付款条码：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="auth_code" data-rules="{required:true}">
+			<input type="text" class="input-large" name="auth_code">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label">订单描述：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="body"  value="购买商品3件共20.00元" readonly="">
+			<input type="text" class="input-large" name="body"  value="购买商品3件共20.00元">
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户门店编号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="store_id" value="${store_id }" readonly="">
+			<input type="text" class="input-large" name="store_id" value="${store_id }">
 		  </div>
 		</div>
 		<div class="row actions-bar">       
