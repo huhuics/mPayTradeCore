@@ -49,23 +49,27 @@ import com.alipay.demo.trade.utils.ZxingUtils;
 public class BizSimulatorController {
 
     /** 日志 */
-    private static final Logger logger       = LoggerFactory.getLogger(BizSimulatorController.class);
+    private static final Logger logger         = LoggerFactory.getLogger(BizSimulatorController.class);
 
-    private static final String MENU         = "menu";
+    private static final String MENU           = "menu";
 
-    private static final String TO_BAR_CODE  = "toBarCode";
+    private static final String TO_BAR_CODE    = "toBarCode";
 
-    private static final String TO_SCAN_CODE = "toScanCode";
+    private static final String TO_SCAN_CODE   = "toScanCode";
 
-    private static final String TO_QUERY     = "toQuery";
+    private static final String TO_QUERY       = "toQuery";
 
-    private static final String TO_REFUND    = "toRefund";
+    private static final String TO_REFUND      = "toRefund";
 
-    private static final String TO_CANCEL    = "toCancel";
+    private static final String TO_CANCEL      = "toCancel";
 
-    private static final String RESULT       = "result";
+    private static final String TO_MECH_CREATE = "toMechCreate";
 
-    private static final String QUERY_RESULT = "queryResult";
+    private static final String TO_MECH_QUERY  = "toMechQuery";
+
+    private static final String RESULT         = "result";
+
+    private static final String QUERY_RESULT   = "queryResult";
 
     /** 交易服务接口 */
     @Resource
@@ -137,6 +141,18 @@ public class BizSimulatorController {
     public String toCancel(WebRequest request, ModelMap map) {
 
         return TO_CANCEL;
+    }
+
+    @RequestMapping(value = "/toMechCreate", method = RequestMethod.GET)
+    public String toMechCreate(WebRequest request, ModelMap map) {
+
+        return TO_MECH_CREATE;
+    }
+
+    @RequestMapping(value = "/toMechQuery", method = RequestMethod.GET)
+    public String toMechQuery(WebRequest request, ModelMap map) {
+
+        return TO_MECH_QUERY;
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
@@ -320,6 +336,18 @@ public class BizSimulatorController {
         } else {
             setErrorResult(map);
         }
+
+        return RESULT;
+    }
+
+    @RequestMapping(value = "/mechCreate", method = RequestMethod.POST)
+    public String mechCreate(WebRequest request, ModelMap map) {
+
+        return RESULT;
+    }
+
+    @RequestMapping(value = "/mechQuery", method = RequestMethod.POST)
+    public String mechQuery(WebRequest request, ModelMap map) {
 
         return RESULT;
     }

@@ -22,6 +22,8 @@
       <h1><a href="toQuery" target="_blank">订单查询</a></h1>
       <h1><a href="toCancel" target="_blank">订单撤销</a></h1>
       <h1><a href="toRefund" target="_blank">订单退款</a></h1>
+      <h1><a href="toMechCreate" target="_blank">商户入驻</a></h1>
+      <h1><a href="toMechQuery" target="_blank">商户查询</a></h1>
     </div>
   </div>
   </div>
