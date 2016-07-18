@@ -18,25 +18,49 @@
 		<div class="control-group">
 		  <label class="control-label">买家支付宝账号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" value="${buyerLogonId}" readonly="">
+			<span class="control-text">${buyerLogonId}</span>
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label">商家订单号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" value="${outTradeNo}" readonly="">
+			<span class="control-text">${outTradeNo}</span>
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label">交易状态：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" value="${tradeStatus}" readonly="">
+			<span class="control-text">${tradeStatus}</span>
 		  </div>
 		</div>
 		<div class="control-group">
 		  <label class="control-label">订单金额：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" value="${totalAmount}" readonly="">
+			<span class="control-text">${totalAmount}</span>
+		  </div>
+		</div>  
+		<div class="control-group">
+		  <label class="control-label">结果码：</label>
+		  <div class="controls">
+			<span class="control-text">${code}</span>
+		  </div>
+		</div>  
+		<div class="control-group">
+		  <label class="control-label">结果信息：</label>
+		  <div class="controls">
+			<span class="control-text">${msg}</span>
+		  </div>
+		</div>  
+		<div class="control-group">
+		  <label class="control-label">子结果码：</label>
+		  <div class="controls">
+			<span class="control-text">${subCode}</span>
+		  </div>
+		</div>  
+		<div class="control-group">
+		  <label class="control-label">子信息：</label>
+		  <div class="controls">
+			<span class="control-text">${subMsg}</span>
 		  </div>
 		</div>    
 	  </form>

@@ -6,6 +6,7 @@ package org.tradecore.mvc.simulator.controller;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -56,6 +57,8 @@ public class BizSimulatorController {
 
     private static final String TO_SCAN_CODE = "toScanCode";
 
+    private static final String TO_QUERY     = "toQuery";
+
     private static final String RESULT       = "result";
 
     private static final String QUERY_RESULT = "queryResult";
@@ -102,6 +105,12 @@ public class BizSimulatorController {
         map.put("notify_url", ParamConstant.NOTIFY_URL);
 
         return TO_SCAN_CODE;
+    }
+
+    @RequestMapping(value = "/toQuery", method = RequestMethod.GET)
+    public String toQuery(WebRequest request, ModelMap map) {
+
+        return TO_QUERY;
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
@@ -203,8 +212,14 @@ public class BizSimulatorController {
             AlipayTradeQueryResponse response = queryResult.getResponse();
             map.put("buyerLogonId", response.getBuyerLogonId());
             map.put("outTradeNo", response.getOutTradeNo());
-            map.put("tradeStatus", AlipayTradeStatusEnum.getByCode(response.getTradeStatus()).getDesc());
+            if (StringUtils.isNotBlank(response.getTradeStatus())) {
+                map.put("tradeStatus", AlipayTradeStatusEnum.getByCode(response.getTradeStatus()).getDesc());
+            }
             map.put("totalAmount", response.getTotalAmount());
+            map.put("code", response.getCode());
+            map.put("msg", response.getMsg());
+            map.put("subCode", response.getSubCode());
+            map.put("subMsg", response.getSubMsg());
         } else {
             setErrorResult(map);
         }
