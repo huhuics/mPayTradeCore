@@ -18,7 +18,7 @@
   	</div>
     <div class="well" >
       <h1><a href="toBarCode" target="_blank">条码支付</a></h1>
-      <h1><a href="">扫码支付</a></h1>
+      <h1><a href="toScanCode">扫码支付</a></h1>
       <h1><a href="toQuery" target="_blank">订单查询</a></h1>
       <h1><a href="toCancel" target="_blank">订单撤销</a></h1>
       <h1><a href="toRefund" target="_blank">订单退款</a></h1>

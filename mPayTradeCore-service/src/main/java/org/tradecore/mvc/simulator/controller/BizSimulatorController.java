@@ -82,6 +82,11 @@ public class BizSimulatorController {
         return MENU;
     }
 
+    @RequestMapping(value = "/result", method = RequestMethod.GET)
+    public String result(WebRequest request, ModelMap map) {
+        return RESULT;
+    }
+
     @RequestMapping(value = "/toBarCode", method = RequestMethod.GET)
     public String toBarCode(WebRequest request, ModelMap map) {
 

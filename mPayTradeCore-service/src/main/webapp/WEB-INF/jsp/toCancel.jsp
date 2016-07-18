@@ -16,7 +16,7 @@
 <body>
   <div class="demo-content" id="contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
-	<h1>条码支付</h1>
+	<h1>订单撤销</h1>
 	  <form id="J_Form" action="/mPay/simulator/cancel" method="post" class="form-horizontal">
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>

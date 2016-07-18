@@ -55,7 +55,7 @@
 		  </div>
 		  <div class="row detail-row">
 	        <div class="span8">
-	          <label class="control-label">外部订单号：</label>
+	          <label class="control-label">商户订单号：</label>
 	          <div class="controls">
 	          <span class="control-text">${outTradeNo}</span>
 	          </div>
@@ -107,7 +107,7 @@
 		  </div>
 		  <div class="row detail-row">
 	        <div class="span8">
-	          <label class="control-label">外部订单号：</label>
+	          <label class="control-label">商户订单号：</label>
 	          <div class="controls">
 	          <span class="control-text">${outTradeNo}</span>
 	          </div>

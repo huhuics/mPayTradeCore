@@ -31,7 +31,7 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>外部商户号：</label>
+		  <label class="control-label"><s>*</s>商户订单号：</label>
 		  <div class="controls">
 			<input type="text" class="input-large" name="out_trade_no" data-rules="{required:true}">
 		  </div>
