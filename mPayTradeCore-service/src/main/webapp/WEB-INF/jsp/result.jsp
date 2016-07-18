@@ -22,7 +22,7 @@
 			<div class="tips tips-large tips-success">
 			  <span class="x-icon x-icon-success"><i class="icon icon-ok icon-white"></i></span>
 			  <div class="tips-content">
-				<h2>成功信息</h2>
+				<h2>业务成功</h2>
 				<p class="auxiliary-text">
 				  你可以继续操作以下内容：
 				</p>
@@ -68,7 +68,7 @@
 				<div class="tips tips-large tips-warning">
 				  <span class="x-icon x-icon-error">×</span>
 				  <div class="tips-content">
-					<h2>失败信息</h2>
+					<h2>业务失败</h2>
 					<p class="auxiliary-text">
 					  你可以继续操作以下内容：
 					</p>
