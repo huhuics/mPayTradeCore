@@ -23,6 +23,7 @@ import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
+import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
@@ -55,6 +56,10 @@ public class MerchantServiceImpl implements MerchantService {
     @Resource
     private BizMerchantInfoDAO  bizMerchantInfoDAO;
 
+    /** 收单机构服务接口 */
+    @Resource
+    private AcquirerService     acquirerService;
+
     /**
      * 构造方法
      */
@@ -73,6 +78,9 @@ public class MerchantServiceImpl implements MerchantService {
         //1.参数校验
         AssertUtil.assertNotNull(merchantCreateRequest, "商户入驻请求不能为空");
         AssertUtil.assertTrue(merchantCreateRequest.validate(), "商户入驻请求参数不合法");
+
+        //  1.1判断收单机构是否存在
+        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantCreateRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.根据受理机构号和商户外部编号查询
         BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
@@ -115,6 +123,9 @@ public class MerchantServiceImpl implements MerchantService {
         //1.参数校验
         AssertUtil.assertNotNull(merchantQueryRequest, "商户查询请求不能为空");
         AssertUtil.assertTrue(merchantQueryRequest.validate(), "商户查询请求参数不合法");
+
+        //  1.1判断收单机构是否存在
+        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
         BizMerchantInfo nativeMerchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantQueryRequest.getAcquirer_id(),

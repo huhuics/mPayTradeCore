@@ -29,6 +29,7 @@ import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
+import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
@@ -96,6 +97,12 @@ public class TradeServiceImpl implements TradeService {
     private CancelRepository          cancelRepository;
 
     /**
+     * 收单机构服务接口
+     */
+    @Resource
+    private AcquirerService           acquirerService;
+
+    /**
      * 构造方法，初始化支付宝服务类
      */
     public TradeServiceImpl() {
@@ -116,6 +123,9 @@ public class TradeServiceImpl implements TradeService {
         //1.校验参数
         AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
         AssertUtil.assertTrue(payRequest.validate(), "支付支付请求参数不合法");
+
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), Boolean.FALSE);
@@ -147,6 +157,9 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(precreateRequest, "扫码支付请求不能为空");
         AssertUtil.assertTrue(precreateRequest.validate(), "扫码支付请求参数不合法");
 
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
+
         //2.请求参数转换成支付宝支付请求参数
         AlipayTradePrecreateRequestBuilder builder = convert2Builder(precreateRequest);
 
@@ -173,6 +186,9 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(queryRequest, "查询请求不能为空");
         AssertUtil.assertTrue(queryRequest.validate(), "查询请求参数不合法");
 
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(queryRequest.getAcquirerId(), queryRequest.getMerchantId()), "商户不存在或状态非法");
+
         //2.转换成支付宝查询请求参数
         AlipayTradeQueryRequestBuilder builder = convert2Builder(queryRequest);
 
@@ -196,6 +212,9 @@ public class TradeServiceImpl implements TradeService {
         //1.校验参数
         AssertUtil.assertNotNull(refundRequest, "退款请求参数不能为空");
         AssertUtil.assertTrue(refundRequest.validate(), "退款请求参数不合法");
+
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), Boolean.TRUE);
@@ -234,6 +253,9 @@ public class TradeServiceImpl implements TradeService {
         //1.参数校验
         AssertUtil.assertNotNull(cancelRequest, "撤销请求参数不能为空");
         AssertUtil.assertTrue(cancelRequest.validate(), "撤销请求参数不合法");
+
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), Boolean.TRUE);
