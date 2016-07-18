@@ -16,7 +16,11 @@
       <h1>业务结果</h1>
       <hr>
       <div class="form-horizontal form-horizontal-simple">
-	  <!-- 业务成功 -->
+      <%
+      		String code = request.getParameter("code");
+      		if(code.equals("10000")){
+      %>
+      <!-- 业务成功 -->
 	  <div class="row">
 		<div class="span10">
 			<div class="tips tips-large tips-success">
@@ -37,13 +41,13 @@
         <div class="span8">
           <label class="control-label">收单机构编号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${acquirerId}</span>
           </div>
         </div>
         <div class="span8">
           <label class="control-label">商户标识号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${merchantId}</span>
           </div>
         </div>
 	  </div>
@@ -51,18 +55,30 @@
         <div class="span8">
           <label class="control-label">外部订单号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${outTradeNo}</span>
           </div>
         </div>
         <div class="span8">
           <label class="control-label">支付宝订单号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${tradeNo}</span>
           </div>
         </div>
 	   </div>
-	   
-		<!-- 业务失败 -->
+	   <!-- end 业务成功 -->
+      <%
+      	//如果是条码支付，则显示二维码
+      	String qrFilePath = request.getParameter("qrFilePath");
+      	if(qrFilePath!=null && !qrFilePath.equals("")){
+      %>
+      	<div class="row detail-row">
+      		<img src="${qrFilePath}">
+      	</div>
+      <%
+      	}
+      		}else{
+      %>
+      <!-- 业务失败 -->
 		<div class="row">
 			<div class="span10">
 				<div class="tips tips-large tips-warning">
@@ -84,13 +100,13 @@
         <div class="span8">
           <label class="control-label">收单机构编号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${acquirerId}</span>
           </div>
         </div>
         <div class="span8">
           <label class="control-label">商户标识号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${merchantId}</span>
           </div>
         </div>
 	  </div>
@@ -98,13 +114,13 @@
         <div class="span8">
           <label class="control-label">外部订单号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${outTradeNo}</span>
           </div>
         </div>
         <div class="span8">
           <label class="control-label">支付宝订单号：</label>
           <div class="controls">
-          <span class="control-text"></span>
+          <span class="control-text">${tradeNo}</span>
           </div>
         </div>
 	   </div>
@@ -112,13 +128,13 @@
 			<div class="span8">
 			  <label class="control-label">结果码：</label>
 			  <div class="controls">
-			  <span class="control-text"></span>
+			  <span class="control-text">${code}</span>
 			  </div>
 			</div>
 			<div class="span8">
 			  <label class="control-label">结果信息：</label>
 			  <div class="controls">
-			  <span class="control-text"></span>
+			  <span class="control-text">${msg}</span>
 			  </div>
 			</div>
 		</div>
@@ -126,17 +142,21 @@
 			<div class="span8">
 			  <label class="control-label">子结果码：</label>
 			  <div class="controls">
-			  <span class="control-text"></span>
+			  <span class="control-text">${subCode}</span>
 			  </div>
 			</div>
 			<div class="span8">
 			  <label class="control-label">子信息：</label>
 			  <div class="controls">
-			  <span class="control-text"></span>
+			  <span class="control-text">${subMsg}</span>
 			  </div>
 			</div>
 		</div>
-		
+		<!-- end 业务失败 -->
+      <%
+      		}
+      %>
+	  
       </div>
     </div>
       

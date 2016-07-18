@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
@@ -181,6 +182,10 @@ public class BizSimulatorController {
 
         if (queryResult != null && queryResult.getResponse() != null) {
             AlipayTradeQueryResponse response = queryResult.getResponse();
+            map.put("buyerLogonId", response.getBuyerLogonId());
+            map.put("outTradeNo", response.getOutTradeNo());
+            map.put("tradeStatus", AlipayTradeStatusEnum.getByCode(response.getTradeStatus()).getDesc());
+            map.put("totalAmount", response.getTotalAmount());
         } else {
             setErrorResult(map);
         }
@@ -347,8 +352,6 @@ public class BizSimulatorController {
         precreateRequest.setTerminalId(request.getParameter("terminal_id"));
         precreateRequest.setTimeoutExpress(request.getParameter("timeout_express"));
 
-        //结算中心通知商户地址
-        precreateRequest.setOutNotifyUrl(request.getParameter("notify_url"));
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
