@@ -5,7 +5,7 @@ import java.util.Date;
 public class BizAcquirerInfo extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -1280844492344061320L;
+    private static final long serialVersionUID = -8955744965361166952L;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ID
@@ -13,47 +13,47 @@ public class BizAcquirerInfo extends BaseDomain {
     private Short             id;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acquirer_id
+     *  null, BIZ_ACQUIRER_INFO.ACQUIRER_ID
      */
     private String            acquirerId;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acquirer_name
+     *  null, BIZ_ACQUIRER_INFO.ACQUIRER_NAME
      */
     private String            acquirerName;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acc_no
+     *  null, BIZ_ACQUIRER_INFO.ACC_NO
      */
     private String            accNo;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acc_name
+     *  null, BIZ_ACQUIRER_INFO.ACC_NAME
      */
     private String            accName;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acc_bank_no
+     *  null, BIZ_ACQUIRER_INFO.ACC_BANK_NO
      */
     private String            accBankNo;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.acquirer_state
+     *  null, BIZ_ACQUIRER_INFO.STATUS
      */
-    private String            acquirerState;
+    private String            status;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.gmt_create
+     *  null, BIZ_ACQUIRER_INFO.GMT_CREATE
      */
     private Date              gmtCreate;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.gmt_update
+     *  null, BIZ_ACQUIRER_INFO.GMT_UPDATE
      */
     private Date              gmtUpdate;
 
     /**
-     *  null, BIZ_ACQUIRER_INFO.check_cert
+     *  null, BIZ_ACQUIRER_INFO.CHECK_CERT
      */
     private byte[]            checkCert;
 
@@ -105,12 +105,12 @@ public class BizAcquirerInfo extends BaseDomain {
         this.accBankNo = accBankNo == null ? null : accBankNo.trim();
     }
 
-    public String getAcquirerState() {
-        return acquirerState;
+    public String getStatus() {
+        return status;
     }
 
-    public void setAcquirerState(String acquirerState) {
-        this.acquirerState = acquirerState == null ? null : acquirerState.trim();
+    public void setStatus(String status) {
+        this.status = status == null ? null : status.trim();
     }
 
     public Date getGmtCreate() {
