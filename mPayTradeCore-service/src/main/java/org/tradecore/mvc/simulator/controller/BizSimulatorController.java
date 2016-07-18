@@ -59,6 +59,10 @@ public class BizSimulatorController {
 
     private static final String TO_QUERY     = "toQuery";
 
+    private static final String TO_REFUND    = "toRefund";
+
+    private static final String TO_CANCEL    = "toCancel";
+
     private static final String RESULT       = "result";
 
     private static final String QUERY_RESULT = "queryResult";
@@ -111,6 +115,23 @@ public class BizSimulatorController {
     public String toQuery(WebRequest request, ModelMap map) {
 
         return TO_QUERY;
+    }
+
+    @RequestMapping(value = "/toRefund", method = RequestMethod.GET)
+    public String toRefund(WebRequest request, ModelMap map) {
+
+        //组织参数
+        map.put("refund_reason", "正常退款");
+        map.put("out_request_no", "out_request_no_" + geneRandomId());
+        map.put("store_id", "store_id_" + geneRandomId());
+
+        return TO_REFUND;
+    }
+
+    @RequestMapping(value = "/toCancel", method = RequestMethod.GET)
+    public String toCancel(WebRequest request, ModelMap map) {
+
+        return TO_CANCEL;
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)

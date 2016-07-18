@@ -30,7 +30,7 @@
 					  你可以继续操作以下内容：
 					</p>
 					<p>
-					  <a class="direct-lnk" title="返回菜单" href="/mPay/menu">返回菜单</a>
+					  <a class="direct-lnk" title="返回菜单" href="/mPay/simulator/menu">返回菜单</a>
 					</p>
 				  </div>
 				</div>
@@ -81,7 +81,7 @@
 						  你可以继续操作以下内容：
 						</p>
 						<p>
-						  <a class="direct-lnk" title="返回菜单" href="userManage.html">返回菜单</a>
+						  <a class="direct-lnk" title="返回菜单" href="/mPay/simulator/menu">返回菜单</a>
 						</p>
 					  </div>
 					</div>
