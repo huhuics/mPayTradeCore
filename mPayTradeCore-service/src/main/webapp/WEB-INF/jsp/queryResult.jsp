@@ -8,10 +8,12 @@
  
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
-  
+<style type="text/css">
+	#contentDiv{ margin:0 auto; width:800px; height:1000px} 
+</style>
 </head>
 <body>
-  <div class="demo-content">
+  <div class="demo-content" id="#contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
 	<h1>订单查询结果</h1>
 	  <form id="J_Form" action="" class="form-horizontal">
