@@ -1,5 +1,6 @@
 package org.tradecore.dao;
 
+import java.util.List;
 import java.util.Map;
 
 import org.tradecore.dao.domain.BizMerchantInfo;
@@ -24,4 +25,12 @@ public interface BizMerchantInfoDAO {
      * @return
      */
     BizMerchantInfo selectForUpdate(Map<String, Object> paraMap);
+
+    /**
+     * 查询商户信息<br>
+     * 如果需要增加查询条件，需要在对应的mapper文件中增加
+     * @param paraMap
+     * @return
+     */
+    List<BizMerchantInfo> selectMerchant(Map<String, Object> paraMap);
 }

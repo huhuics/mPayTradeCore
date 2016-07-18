@@ -1,5 +1,8 @@
 package org.tradecore.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import org.tradecore.dao.domain.BizAcquirerInfo;
 
 public interface BizAcquirerInfoDAO {
@@ -16,4 +19,14 @@ public interface BizAcquirerInfoDAO {
     int updateByPrimaryKeyWithBLOBs(BizAcquirerInfo record);
 
     int updateByPrimaryKey(BizAcquirerInfo record);
+
+    /**
+     * 查询收单机构信息<br>
+     * 如果需要添加查询参数，需要在对应的Mapper文件中进行参数拼装<br>
+     * 注意：如果paraMap为空，将查询表中所有数据
+     * @param paraMap
+     * @return
+     */
+    List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap);
+
 }

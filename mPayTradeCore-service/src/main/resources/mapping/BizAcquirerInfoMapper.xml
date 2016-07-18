@@ -169,4 +169,20 @@
       GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=DECIMAL}
   </update>
+  
+  <!-- 查询受理机构信息 -->
+  <select id="selectBizAcquirerInfo" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_ACQUIRER_INFO
+		where 1 = 1
+		<if test="_parameter.containsKey('acquirerId')">
+			AND ACQUIRER_ID = #{acquirerId}
+		</if>
+		<if test="_parameter.containsKey('status')">
+			AND STATUS = #{status}
+		</if>
+  </select>
+  
 </mapper>
