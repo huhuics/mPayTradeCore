@@ -4,6 +4,8 @@
  */
 package org.tradecore.alipay.trade.service;
 
+import java.util.Map;
+
 /**
  * 收单机构服务接口
  * @author HuHui
@@ -28,5 +30,14 @@ public interface AcquirerService {
      * @return
      */
     boolean isMerchantNormal(String acquirerId, String merchantId);
+
+    /**
+     * 验签
+     * @param acquirerId
+     * @param paraMap
+     * @param oriSign
+     * @return
+     */
+    boolean verify(String acquirerId, Map<String, String> paraMap, String oriSign);
 
 }
