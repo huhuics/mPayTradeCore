@@ -27,5 +27,7 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+	
+	<mvc:resources location="/WEB-INF/qr/" mapping="/resources/**"/>
 
 </beans>

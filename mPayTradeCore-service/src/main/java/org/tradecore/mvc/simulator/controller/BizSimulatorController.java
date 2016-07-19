@@ -243,13 +243,14 @@ public class BizSimulatorController {
             map.put("merchantId", precreateRequest.getMerchantId());
             map.put("outTradeNo", precreateRequest.getOutTradeNo());
 
-            String qrFilePath = String.format("F:/qr/%s.png", response.getOutTradeNo());
+            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器qrFilePath={0}", qrFilePath);
 
             //生成二维码图片
             ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
-            map.put("qrFilePath", qrFilePath);
+            map.put("qrFilePath", response.getOutTradeNo() + ".png");
+
         } else {
             setErrorResult(map);
         }
