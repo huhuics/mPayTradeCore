@@ -245,11 +245,11 @@ public class BizSimulatorController {
 
             String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
-            LogUtil.info(logger, "模拟器qrFilePath={0}", qrFilePath);
+            LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
             //生成二维码图片
             ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
-            map.put("qrFilePath", response.getOutTradeNo() + ".png");
+            map.put("qrFileName", response.getOutTradeNo() + ".png");
 
         } else {
             setErrorResult(map);

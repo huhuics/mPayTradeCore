@@ -2,9 +2,6 @@
     pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%
-    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
-%>
 <html>
 <head>
 <title>业务结果</title>
@@ -70,8 +67,8 @@
 	        </div>
 		   </div>
 		   <!-- end 业务成功 -->
-      	<c:if test="${not empty qrFilePath}">
-	      	<img src="<%=basePath %>/resources/${qrFilePath}">
+      	<c:if test="${not empty qrFileName}">
+	      	<img alt="" src="<c:url value="/resources/${qrFileName}" />">
       	</c:if>
       	</c:when>
       	<c:otherwise>
