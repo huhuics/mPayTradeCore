@@ -16,29 +16,77 @@
   <div class="demo-content" id="contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
 	<h1>条码支付</h1>
-	  <form id="J_Form" action="/mPay/simulator/query" method="post" class="form-horizontal">
+	  <form id="J_Form" action="/mPay/simulator/mechCreate" method="post" class="form-horizontal">
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>收单机构号：</label>
+		  <label class="control-label"><s>*</s>商户外部编号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="acquirer_id">
+			<input type="text" class="input-large" name="external_id" value="${external_id}">
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>商户标识号：</label>
+		  <label class="control-label"><s>*</s>收单机构编号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="merchant_id">
+			<input type="text" class="input-large" name="acquirer_id" value="${acquirer_id}">
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>商户订单号：</label>
+		  <label class="control-label"><s>*</s>商户名称：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="out_trade_no">
+			<input type="text" class="input-large" name="name" value="${name}">
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label">支付宝订单号：</label>
+		  <label class="control-label"><s>*</s>商户简称：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="subject">
+			<input type="text" class="input-large" name="alias_name" value="${alias_name}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label"><s>*</s>客服电话：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="service_phone" value="${service_phone}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">联系人名称：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="contact_name" value="${contact_name}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">联系人电话：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="contact_phone" value="${contact_phone}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">联系人手机：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="contact_mobile" value="${contact_mobile}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">联系人邮箱：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="contact_email" value="${contact_email}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label"><s>*</s>经营类目：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="category_id" value="${category_id}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">商户来源标识：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="source" value="${source}">
+		  </div>
+		</div>
+		<div class="control-group">
+		  <label class="control-label">商户备注：</label>
+		  <div class="controls">
+			<input type="text" class="input-large" name="memo" value="${memo}">
 		  </div>
 		</div>
 		<div class="row actions-bar">       

@@ -16,7 +16,7 @@
   <div class="demo-content" id="contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
 	<h1>条码支付</h1>
-	  <form id="J_Form" action="/mPay/simulator/query" method="post" class="form-horizontal">
+	  <form id="J_Form" action="/mPay/simulator/mechQuery" method="post" class="form-horizontal">
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>
 		  <div class="controls">
@@ -30,15 +30,9 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>商户订单号：</label>
+		  <label class="control-label"><s>*</s>商户外部编号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="out_trade_no">
-		  </div>
-		</div>
-		<div class="control-group">
-		  <label class="control-label">支付宝订单号：</label>
-		  <div class="controls">
-			<input type="text" class="input-large" name="subject">
+			<input type="text" class="input-large" name="external_id">
 		  </div>
 		</div>
 		<div class="row actions-bar">       
