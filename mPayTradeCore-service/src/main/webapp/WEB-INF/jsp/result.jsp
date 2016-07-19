@@ -9,7 +9,7 @@
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
   <style type="text/css">
-	#contentDiv{ margin:0 auto; width:800px; height:1000px} 
+	#contentDiv{margin:15px auto auto auto;} 
 </style>
 </head>
 <body>

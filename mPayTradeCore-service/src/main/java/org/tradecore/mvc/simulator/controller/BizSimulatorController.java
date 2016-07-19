@@ -107,7 +107,7 @@ public class BizSimulatorController {
     public String toBarCode(WebRequest request, ModelMap map) {
 
         //组织参数
-        map.put("acquirer_id", "acquire_id_" + geneRandomId());
+        map.put("acquirer_id", "10880010001");
         map.put("merchant_id", "27");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
@@ -121,7 +121,7 @@ public class BizSimulatorController {
     public String toScanCode(WebRequest request, ModelMap map) {
 
         //组织参数
-        map.put("acquirer_id", "acquire_id_" + geneRandomId());
+        map.put("acquirer_id", "10880010001");
         map.put("merchant_id", "27");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
@@ -159,7 +159,7 @@ public class BizSimulatorController {
     public String toMechCreate(WebRequest request, ModelMap map) {
 
         map.put("external_id", geneRandomId());
-        map.put("acquirer_id", "acquirerId" + geneRandomId());
+        map.put("acquirer_id", "10880010001");
         map.put("name", "测试商户");
         map.put("alias_name", "测试别名");
         map.put("service_phone", "95188");

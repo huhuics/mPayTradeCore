@@ -9,13 +9,13 @@
   <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
   
 	<style type="text/css">
-		#contentDiv{ margin:0 auto; width:800px; height:1000px} 
+		#contentDiv{margin:15px auto auto auto;} 
 	</style>
 </head>
 <body>
   <div class="demo-content" id="contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
-	<h1>条码支付</h1>
+	<h1>订单查询</h1>
 	  <form id="J_Form" action="/mPay/simulator/query" method="post" class="form-horizontal">
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构号：</label>

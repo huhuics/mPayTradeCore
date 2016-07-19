@@ -8,10 +8,11 @@
 <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
 <style type="text/css">
 	body {TEXT-ALIGN: center;}
+	#contentDiv{ margin:15px auto auto auto;} 
 </style>
 </head>
 <body >
-<div class="demo-content">
+<div class="demo-content" id="contentDiv">
   <div class="doc-content">
   	<div>
   		<h1>支付宝线下面对面支付模拟器</h1>
@@ -20,7 +21,7 @@
       <h1><a href="toMechCreate" target="_blank">商户入驻</a></h1>
       <h1><a href="toMechQuery" target="_blank">商户查询</a></h1>
       <h1><a href="toBarCode" target="_blank">条码支付</a></h1>
-      <h1><a href="toScanCode">扫码支付</a></h1>
+      <h1><a href="toScanCode" target="_blank">扫码支付</a></h1>
       <h1><a href="toQuery" target="_blank">订单查询</a></h1>
       <h1><a href="toCancel" target="_blank">订单撤销</a></h1>
       <h1><a href="toRefund" target="_blank">订单退款</a></h1>
