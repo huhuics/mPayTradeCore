@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -115,8 +116,10 @@ public class AcquirerServiceImpl implements AcquirerService {
 
         //3.验签
         boolean verifyRet = false;
+        String alipayPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB";
         try {
-            verifyRet = SecureUtil.verifySign(acquirerInfo.getCheckCert(), paraStr, oriSign);
+            //            verifyRet = SecureUtil.verifySign(acquirerInfo.getCheckCert(), paraStr, oriSign);
+            verifyRet = SecureUtil.verifySign(alipayPublicKey.getBytes(StandardCharsets.UTF_8), paraStr, oriSign);
         } catch (Exception e) {
             LogUtil.error(e, logger, "验签发生异常,paraStr={0}", paraStr);
         }
