@@ -4,6 +4,8 @@
  */
 package org.tradecore.mvc.simulator.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -578,6 +580,10 @@ public class BizSimulatorController {
      * @return
      */
     private PayRequest buildPayRequest(WebRequest request) {
+
+        Map<String, String[]> parameterMap = request.getParameterMap();
+
+        LogUtil.info(logger, "parameterMap={0}", JSON.toJSONString(parameterMap));
 
         PayRequest payRequest = new PayRequest();
         payRequest.setAcquirerId(request.getParameter("acquirer_id"));
