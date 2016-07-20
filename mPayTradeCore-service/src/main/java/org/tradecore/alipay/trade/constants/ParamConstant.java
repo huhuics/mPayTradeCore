@@ -29,12 +29,12 @@ public class ParamConstant {
     public static final String BIZ_CONTENT           = "biz_content";
 
     /** 收单机构编号 */
-    public static final String ACQUIRER_ID           = "acquirer_id";
+    public static final String ACQUIRER_ID           = "acquirerId";
 
     /** 装填 */
     public static final String STATUS                = "status";
 
     /** 商户标识号 */
-    public static final String MERCHANT_ID           = "merchant_id";
+    public static final String MERCHANT_ID           = "merchantId";
 
 }
