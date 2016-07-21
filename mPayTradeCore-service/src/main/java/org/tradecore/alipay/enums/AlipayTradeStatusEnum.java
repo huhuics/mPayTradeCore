@@ -13,13 +13,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public enum AlipayTradeStatusEnum {
 
-    /**
-     * 退款或者撤销初始状态
-     */
-    INIT("INIT", "已创建"),
-
     /** 
-     * 条码支付初始状态 
+     * 支付初始状态 
      */
     WAIT_BUYER_PAY("WAIT_BUYER_PAY", "等待买家付款"),
 

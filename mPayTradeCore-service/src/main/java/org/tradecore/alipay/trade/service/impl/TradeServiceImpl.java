@@ -69,39 +69,27 @@ public class TradeServiceImpl implements TradeService {
     /** 公共请求方法类 */
     private static AlipayClient       alipayClient;
 
-    /**
-     * 支付仓储服务
-     */
+    /** 支付仓储服务 */
     @Resource
     private PayRepository             payRepository;
 
-    /**
-     * 扫码支付仓储服务
-     */
+    /** 扫码支付仓储服务 */
     @Resource
     private PrecreateRepository       precreateRepository;
 
-    /**
-     * 退款仓储服务
-     */
+    /** 退款仓储服务 */
     @Resource
     private RefundRepository          refundRepository;
 
-    /**
-     * 撤销仓储服务
-     */
+    /** 撤销仓储服务 */
     @Resource
     private CancelRepository          cancelRepository;
 
-    /**
-     * 收单机构服务接口
-     */
+    /** 收单机构服务接口 */
     @Resource
     private AcquirerService           acquirerService;
 
-    /**
-     * 构造方法，初始化支付宝服务类
-     */
+    /** 构造方法，初始化支付宝服务类 */
     public TradeServiceImpl() {
 
         //工厂方法创建静态支付服务类
@@ -126,7 +114,7 @@ public class TradeServiceImpl implements TradeService {
 
         //2.幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), Boolean.FALSE);
-        AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
+        AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
         AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
@@ -156,6 +144,10 @@ public class TradeServiceImpl implements TradeService {
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
+
+        //1.2幂等判断
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), Boolean.FALSE);
+        AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
         AlipayTradePrecreateRequestBuilder builder = convert2Builder(precreateRequest);
