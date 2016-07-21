@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,25 +52,16 @@ public class RefundRepositoryImpl implements RefundRepository {
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
 
     @Override
-    public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest) {
+    public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayF2FRefundResult alipayF2FRefundResult) {
 
         LogUtil.info(logger, "收到退款订单持久化请求,refundRequest={0}", refundRequest);
 
+        AlipayTradeRefundResponse response = alipayF2FRefundResult.getResponse();
+
+        //将公共参数封装成Domain对象
         BizAlipayRefundOrder refundOrder = convert2RefundOrder(refundRequest, oriOrder.getTotalAmount());
 
         LogUtil.info(logger, "退款请求对象refundRequest转换成refundOrder对象成功,refundOrder={0}", refundOrder);
-
-        AssertUtil.assertTrue(bizAlipayRefundOrderDAO.insert(refundOrder) > 0, "退款请求数据持久化失败");
-
-        return refundOrder;
-    }
-
-    @Override
-    public void updateRefundAndTradeOrder(BizAlipayRefundOrder refundOrder, BizAlipayPayOrder payOrder, AlipayF2FRefundResult alipayF2FRefundResult) {
-
-        LogUtil.info(logger, "收到退款订单更新请求");
-
-        AlipayTradeRefundResponse response = alipayF2FRefundResult.getResponse();
 
         if (alipayF2FRefundResult.isTradeSuccess()) {
             LogUtil.info(logger, "支付宝退款成功");
@@ -85,8 +77,8 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setGmtRefundPay(response.getGmtRefundPay());
 
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
-            if (payOrder.getTotalAmount().equals(refundOrder.getRefundAmount())) {
-                payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+            if (isTotalRefund(refundRequest.getOutTradeNo(), oriOrder.getTotalAmount(), refundOrder.getRefundAmount())) {
+                oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             }
 
         } else {
@@ -100,9 +92,9 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         refundOrder.setGmtUpdate(new Date());
 
-        //修改本地退款订单数据
-        AssertUtil.assertTrue(bizAlipayRefundOrderDAO.updateByPrimaryKey(refundOrder) > 0, "退款订单更新失败");
+        AssertUtil.assertTrue(bizAlipayRefundOrderDAO.insert(refundOrder) > 0, "退款请求数据持久化失败");
 
+        return refundOrder;
     }
 
     @Override
@@ -120,6 +112,56 @@ public class RefundRepositoryImpl implements RefundRepository {
         LogUtil.info(logger, "退款订单查询结果,refundOrders={0}", refundOrders);
 
         return refundOrders;
+    }
+
+    @Override
+    public Money getRefundedMoney(String outTradeNo) {
+
+        LogUtil.info(logger, "收到查询已成功退款总金额请求,outTradeNo={0}", outTradeNo);
+
+        Money totalRefundedAmount = new Money(0);
+
+        //根据商户订单号获取该订单下所有退款成功的退款订单
+        List<BizAlipayRefundOrder> refundOrders = selectRefundOrdersByOutTradeNo(outTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+
+        if (CollectionUtils.isNotEmpty(refundOrders)) {
+            for (BizAlipayRefundOrder order : refundOrders) {
+                totalRefundedAmount.addTo(order.getRefundAmount());
+            }
+        }
+
+        LogUtil.info(logger, "已成功退款总金额totalRefundedAmount={0}", totalRefundedAmount);
+
+        return totalRefundedAmount;
+    }
+
+    /**
+     * 是否完全退款<br>
+     * 分两种请情况<ul>
+     * <li>本次退款金额=订单总金额</li>
+     * <li>本次退款金额+历史退款成功总金额=订单总金额</li>
+     * </ul>
+     * @param outTradeNo
+     * @param totalAmount
+     * @param refundAmount
+     * @return
+     */
+    private boolean isTotalRefund(String outTradeNo, Money totalAmount, Money refundAmount) {
+
+        if (totalAmount.equals(refundAmount)) {
+            return true;
+        } else {
+            //历史退款成功总金额
+            Money refundedMoney = getRefundedMoney(outTradeNo);
+
+            refundedMoney.addTo(refundAmount);
+
+            if (totalAmount.equals(refundedMoney)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -142,7 +184,6 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         refundOrder.setRefundReason(refundRequest.getRefundReason());
         refundOrder.setOutRequestNo(refundRequest.getOutRequestNo());
-        refundOrder.setRefundStatus(AlipayTradeStatusEnum.INIT.getCode());
 
         //封装merchantDetail参数
         Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
@@ -156,7 +197,6 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
 
         refundOrder.setGmtCreate(new Date());
-        refundOrder.setGmtUpdate(new Date());
 
         return refundOrder;
 

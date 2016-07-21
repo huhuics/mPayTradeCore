@@ -6,17 +6,14 @@ package org.tradecore.alipay.trade.service.impl;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
@@ -224,21 +221,20 @@ public class TradeServiceImpl implements TradeService {
         //  2.1原始订单和退款请求参数校验
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误，退款失败");
 
-        //3.本地持久化退款信息
-        BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest);
-
-        //4.转换成支付宝退款请求参数
+        //3.转换成支付宝退款请求参数
         AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
 
-        //5.调用支付宝接口
+        //4.调用支付宝接口
         AlipayF2FRefundResult alipayF2FRefundResult = alipayTradeService.tradeRefund(builder);
 
         LogUtil.info(logger, "支付宝返回退款业务结果alipayF2FRefundResult={0}", JSON.toJSONString(alipayF2FRefundResult, SerializerFeature.UseSingleQuotes));
 
-        //6.根据支付宝返回结果更新本地数据
-        refundRepository.updateRefundAndTradeOrder(refundOrder, oriOrder, alipayF2FRefundResult);
+        AssertUtil.assertNotNull(alipayF2FRefundResult, "支付宝返回订单退款结果为空");
 
-        //7.根据退款订单状态更新本地交易订单的退款状态数据
+        //5.根据支付宝返回结果持久化退款订单，修改原订单状态
+        BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
+
+        //6.根据退款订单状态更新本地交易订单的退款状态数据
         payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
 
         return alipayF2FRefundResult;
@@ -399,20 +395,13 @@ public class TradeServiceImpl implements TradeService {
      */
     private boolean checkTotalRufundFee(String outTradeNo, Money totalAmount, Money refundAmount) {
 
-        //根据商户订单号获取该订单下所有退款成功的退款订单
-        List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrdersByOutTradeNo(outTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        //根据商户订单号获取该订单下所有退款成功的金额
+        Money refundedAmount = refundRepository.getRefundedMoney(outTradeNo);
 
-        if (CollectionUtils.isNotEmpty(refundOrders)) {
-            Money totalRefundAmount = new Money(refundAmount.getAmount());
-            for (BizAlipayRefundOrder order : refundOrders) {
-                totalRefundAmount.addTo(order.getRefundAmount());
-            }
+        refundedAmount.addTo(refundAmount);
 
-            return totalAmount.compareTo(totalRefundAmount) >= 0;
-        }
+        return totalAmount.compareTo(refundedAmount) >= 0;
 
-        //如果refundOrders为空，则退回到checkTotalFee方法，因此直接返回true
-        return true;
     }
 
     /**
