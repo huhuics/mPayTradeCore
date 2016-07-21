@@ -5,7 +5,7 @@ import java.util.Date;
 public class BizAcquirerInfo extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -8955744965361166952L;
+    private static final long serialVersionUID = 3372019669998964876L;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ID
@@ -38,6 +38,16 @@ public class BizAcquirerInfo extends BaseDomain {
     private String            accBankNo;
 
     /**
+     *  null, BIZ_ACQUIRER_INFO.PUB_KEY
+     */
+    private String            pubKey;
+
+    /**
+     *  null, BIZ_ACQUIRER_INFO.PRI_KEY
+     */
+    private String            priKey;
+
+    /**
      *  null, BIZ_ACQUIRER_INFO.STATUS
      */
     private String            status;
@@ -51,11 +61,6 @@ public class BizAcquirerInfo extends BaseDomain {
      *  null, BIZ_ACQUIRER_INFO.GMT_UPDATE
      */
     private Date              gmtUpdate;
-
-    /**
-     *  null, BIZ_ACQUIRER_INFO.CHECK_CERT
-     */
-    private byte[]            checkCert;
 
     public Short getId() {
         return id;
@@ -105,6 +110,22 @@ public class BizAcquirerInfo extends BaseDomain {
         this.accBankNo = accBankNo == null ? null : accBankNo.trim();
     }
 
+    public String getPubKey() {
+        return pubKey;
+    }
+
+    public void setPubKey(String pubKey) {
+        this.pubKey = pubKey == null ? null : pubKey.trim();
+    }
+
+    public String getPriKey() {
+        return priKey;
+    }
+
+    public void setPriKey(String priKey) {
+        this.priKey = priKey == null ? null : priKey.trim();
+    }
+
     public String getStatus() {
         return status;
     }
@@ -127,13 +148,5 @@ public class BizAcquirerInfo extends BaseDomain {
 
     public void setGmtUpdate(Date gmtUpdate) {
         this.gmtUpdate = gmtUpdate;
-    }
-
-    public byte[] getCheckCert() {
-        return checkCert;
-    }
-
-    public void setCheckCert(byte[] checkCert) {
-        this.checkCert = checkCert;
     }
 }

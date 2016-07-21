@@ -110,7 +110,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "27");
+        map.put("merchant_id", "118");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");
@@ -124,7 +124,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "27");
+        map.put("merchant_id", "118");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");

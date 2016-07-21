@@ -60,11 +60,11 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         PayRequest payRequest = new PayRequest();
-        payRequest.setAcquirerId("acquire_id_" + geneRandomId());
-        payRequest.setMerchantId("27");
+        payRequest.setAcquirerId("10880010001");
+        payRequest.setMerchantId("118");
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("28310013393377091");
+        payRequest.setAuthCode("283354006775818609");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("结算中心条码交易测试" + geneRandomId());

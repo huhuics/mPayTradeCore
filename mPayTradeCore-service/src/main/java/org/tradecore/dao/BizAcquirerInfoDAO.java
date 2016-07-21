@@ -16,8 +16,6 @@ public interface BizAcquirerInfoDAO {
 
     int updateByPrimaryKeySelective(BizAcquirerInfo record);
 
-    int updateByPrimaryKeyWithBLOBs(BizAcquirerInfo record);
-
     int updateByPrimaryKey(BizAcquirerInfo record);
 
     /**
@@ -28,5 +26,4 @@ public interface BizAcquirerInfoDAO {
      * @return
      */
     List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap);
-
 }

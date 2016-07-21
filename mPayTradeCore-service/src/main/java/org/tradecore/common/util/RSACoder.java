@@ -18,8 +18,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-
 /**
  * 
  * @author HuHui
@@ -147,27 +145,27 @@ public class RSACoder {
     public static void main(String[] args) throws Exception {
         //初始化密钥  
         //生成密钥对  
-        Map<String, Object> keyMap = RSACoder.initKey();
-        //公钥  
-        byte[] publicKey = RSACoder.getPublicKey(keyMap);
+        /*    Map<String, Object> keyMap = RSACoder.initKey();
+            //公钥  
+            byte[] publicKey = RSACoder.getPublicKey(keyMap);
 
-        //私钥  
-        byte[] privateKey = RSACoder.getPrivateKey(keyMap);
-        System.out.println("公钥：" + Base64.encodeBase64String(publicKey));
-        System.out.println("私钥：" + Base64.encodeBase64String(privateKey));
+            //私钥  
+            byte[] privateKey = RSACoder.getPrivateKey(keyMap);
+            System.out.println("公钥：" + Base64.encodeBase64String(publicKey));
+            System.out.println("私钥：" + Base64.encodeBase64String(privateKey));
 
-        /* String privateKey = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAleZyc1NpZSeJvm4wxAjZUICr+sI+gWieUYcFWENq1EcYsSRnbP8+JPVHGuYF1HEBvnQug1gZQ684KJ44mpTgHwIDAQABAkBUaU3f5YO/Q7GMe+6YJceCTsMJ1WJvayNkE52N44EAAhkfmbpmhwdcRgo0CnzAsiXdPeB1inynbnv1ornu/AlZAiEA/iTqVvxeYFjaYfvi38OxfNNeqpBMiPjv3XlYzEs4vR0CIQCW/qm+3Lv9YpLlqWGipBBrHGfuyv4spXxiY/mkbh4ZawIhAO14JvOSqsjSHXSS/WHipFSj2H/9h1YxbUf/3AZAf0rNAiA88cTpuIZYG3VXJSq3Tqkh0nFQvLYipxixTdDxQVD8yQIhAIgXKKDfKeEXdmx3untvAo1zh3//MhVoo3JygBsRgSYn";
-         String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJXmcnNTaWUnib5uMMQI2VCAq/rCPoFonlGHBVhDatRHGLEkZ2z/PiT1RxrmBdRxAb50LoNYGUOvOCieOJqU4B8CAwEAAQ==";*/
+             String privateKey = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEAleZyc1NpZSeJvm4wxAjZUICr+sI+gWieUYcFWENq1EcYsSRnbP8+JPVHGuYF1HEBvnQug1gZQ684KJ44mpTgHwIDAQABAkBUaU3f5YO/Q7GMe+6YJceCTsMJ1WJvayNkE52N44EAAhkfmbpmhwdcRgo0CnzAsiXdPeB1inynbnv1ornu/AlZAiEA/iTqVvxeYFjaYfvi38OxfNNeqpBMiPjv3XlYzEs4vR0CIQCW/qm+3Lv9YpLlqWGipBBrHGfuyv4spXxiY/mkbh4ZawIhAO14JvOSqsjSHXSS/WHipFSj2H/9h1YxbUf/3AZAf0rNAiA88cTpuIZYG3VXJSq3Tqkh0nFQvLYipxixTdDxQVD8yQIhAIgXKKDfKeEXdmx3untvAo1zh3//MhVoo3JygBsRgSYn";
+             String publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJXmcnNTaWUnib5uMMQI2VCAq/rCPoFonlGHBVhDatRHGLEkZ2z/PiT1RxrmBdRxAb50LoNYGUOvOCieOJqU4B8CAwEAAQ==";
 
-        System.out.println("================密钥对构造完毕,甲方将公钥公布给乙方，开始进行加密数据的传输=============");
-        String str = "RSA数字签名算法";
-        System.out.println("原文:" + str);
-        //甲方进行数据的加密  
-        byte[] sign = RSACoder.sign(str.getBytes(), privateKey);
-        System.out.println("产生签名：" + Base64.encodeBase64String(sign));
-        //验证签名  
-        boolean status = RSACoder.verify(str.getBytes(), publicKey, sign);
-        System.out.println("状态：" + status);
+            System.out.println("================密钥对构造完毕,甲方将公钥公布给乙方，开始进行加密数据的传输=============");
+            String str = "RSA数字签名算法";
+            System.out.println("原文:" + str);
+            //甲方进行数据的加密  
+            byte[] sign = RSACoder.sign(str.getBytes(), privateKey);
+            System.out.println("产生签名：" + Base64.encodeBase64String(sign));
+            //验证签名  
+            boolean status = RSACoder.verify(str.getBytes(), publicKey, sign);
+            System.out.println("状态：" + status);*/
 
     }
 }

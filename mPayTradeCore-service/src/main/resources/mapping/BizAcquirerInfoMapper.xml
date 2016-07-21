@@ -8,25 +8,19 @@
     <result column="ACC_NO" jdbcType="VARCHAR" property="accNo" />
     <result column="ACC_NAME" jdbcType="VARCHAR" property="accName" />
     <result column="ACC_BANK_NO" jdbcType="VARCHAR" property="accBankNo" />
-    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="PUB_KEY" jdbcType="VARCHAR" property="pubKey" />
+    <result column="PRI_KEY" jdbcType="VARCHAR" property="priKey" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
     <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.tradecore.dao.domain.BizAcquirerInfo">
-    <result column="CHECK_CERT" jdbcType="BLOB" property="checkCert" />
-  </resultMap>
   <sql id="Base_Column_List">
-    ID, ACQUIRER_ID, ACQUIRER_NAME, ACC_NO, ACC_NAME, ACC_BANK_NO, STATUS, GMT_CREATE, 
-    GMT_UPDATE
+    ID, ACQUIRER_ID, ACQUIRER_NAME, ACC_NO, ACC_NAME, ACC_BANK_NO, PUB_KEY, PRI_KEY, 
+    STATUS, GMT_CREATE, GMT_UPDATE
   </sql>
-  <sql id="Blob_Column_List">
-    CHECK_CERT
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from BIZ_ACQUIRER_INFO
     where ID = #{id,jdbcType=DECIMAL}
   </select>
@@ -37,12 +31,12 @@
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
     insert into BIZ_ACQUIRER_INFO (ID, ACQUIRER_ID, ACQUIRER_NAME, 
       ACC_NO, ACC_NAME, ACC_BANK_NO, 
-      STATUS, GMT_CREATE, GMT_UPDATE, 
-      CHECK_CERT)
+      PUB_KEY, PRI_KEY, STATUS, 
+      GMT_CREATE, GMT_UPDATE)
     values (#{id,jdbcType=DECIMAL}, #{acquirerId,jdbcType=VARCHAR}, #{acquirerName,jdbcType=VARCHAR}, 
       #{accNo,jdbcType=VARCHAR}, #{accName,jdbcType=VARCHAR}, #{accBankNo,jdbcType=VARCHAR}, 
-      #{status,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}, 
-      #{checkCert,jdbcType=BLOB})
+      #{pubKey,jdbcType=VARCHAR}, #{priKey,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
     insert into BIZ_ACQUIRER_INFO
@@ -65,6 +59,12 @@
       <if test="accBankNo != null">
         ACC_BANK_NO,
       </if>
+      <if test="pubKey != null">
+        PUB_KEY,
+      </if>
+      <if test="priKey != null">
+        PRI_KEY,
+      </if>
       <if test="status != null">
         STATUS,
       </if>
@@ -73,9 +73,6 @@
       </if>
       <if test="gmtUpdate != null">
         GMT_UPDATE,
-      </if>
-      <if test="checkCert != null">
-        CHECK_CERT,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -97,17 +94,20 @@
       <if test="accBankNo != null">
         #{accBankNo,jdbcType=VARCHAR},
       </if>
+      <if test="pubKey != null">
+        #{pubKey,jdbcType=VARCHAR},
+      </if>
+      <if test="priKey != null">
+        #{priKey,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
-        #{status,jdbcType=VARCHAR},
+        #{status,jdbcType=CHAR},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
       <if test="gmtUpdate != null">
         #{gmtUpdate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="checkCert != null">
-        #{checkCert,jdbcType=BLOB},
       </if>
     </trim>
   </insert>
@@ -129,8 +129,14 @@
       <if test="accBankNo != null">
         ACC_BANK_NO = #{accBankNo,jdbcType=VARCHAR},
       </if>
+      <if test="pubKey != null">
+        PUB_KEY = #{pubKey,jdbcType=VARCHAR},
+      </if>
+      <if test="priKey != null">
+        PRI_KEY = #{priKey,jdbcType=VARCHAR},
+      </if>
       <if test="status != null">
-        STATUS = #{status,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=CHAR},
       </if>
       <if test="gmtCreate != null">
         GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -138,23 +144,7 @@
       <if test="gmtUpdate != null">
         GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
       </if>
-      <if test="checkCert != null">
-        CHECK_CERT = #{checkCert,jdbcType=BLOB},
-      </if>
     </set>
-    where ID = #{id,jdbcType=DECIMAL}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
-    update BIZ_ACQUIRER_INFO
-    set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
-      ACQUIRER_NAME = #{acquirerName,jdbcType=VARCHAR},
-      ACC_NO = #{accNo,jdbcType=VARCHAR},
-      ACC_NAME = #{accName,jdbcType=VARCHAR},
-      ACC_BANK_NO = #{accBankNo,jdbcType=VARCHAR},
-      STATUS = #{status,jdbcType=VARCHAR},
-      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
-      GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
-      CHECK_CERT = #{checkCert,jdbcType=BLOB}
     where ID = #{id,jdbcType=DECIMAL}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
@@ -164,14 +154,16 @@
       ACC_NO = #{accNo,jdbcType=VARCHAR},
       ACC_NAME = #{accName,jdbcType=VARCHAR},
       ACC_BANK_NO = #{accBankNo,jdbcType=VARCHAR},
-      STATUS = #{status,jdbcType=VARCHAR},
+      PUB_KEY = #{pubKey,jdbcType=VARCHAR},
+      PRI_KEY = #{priKey,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
       GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
       GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=DECIMAL}
   </update>
-  
-  <!-- 查询受理机构信息 -->
-  <select id="selectBizAcquirerInfo" parameterType="java.util.Map"
+
+	<!-- 查询受理机构信息 -->
+	<select id="selectBizAcquirerInfo" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
@@ -183,6 +175,6 @@
 		<if test="_parameter.containsKey('status')">
 			AND STATUS = #{status}
 		</if>
-  </select>
+	</select>
   
 </mapper>
