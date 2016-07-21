@@ -101,7 +101,7 @@ public class AcquirerServiceImpl implements AcquirerService {
     }
 
     @Override
-    public boolean verify(String acquirerId, Map<String, String> paraMap, String oriSign) {
+    public boolean verify(String acquirerId, Map<String, String> paraMap) {
 
         LogUtil.info(logger, "收到验签请求参数,acquirerId={0},paraMap={1}", acquirerId, JSON.toJSONString(paraMap));
 
@@ -115,14 +115,18 @@ public class AcquirerServiceImpl implements AcquirerService {
 
         AssertUtil.assertNotNull(acquirerInfo, "查询收单机构为空");
 
-        //2.将参数转化成键值对形式的待验签字符串
+        //2.获取商户签名
+        String sign = paraMap.get(SIGN);
+        AssertUtil.assertNotBlank(sign, "商户签名不能为空");
+
+        //3.将参数转化成键值对形式的待验签字符串
         String paraStr = convert2ParaStr(paraMap);
         AssertUtil.assertTrue(StringUtils.isNotBlank(paraStr), "参数转化成键值对字符串为空");
 
-        //3.验签
+        //4.验签
         boolean verifyRet = false;
         try {
-            verifyRet = AlipaySignature.rsaCheckContent(paraStr, paraMap.get(SIGN), acquirerInfo.getPubKey(), StandardCharsets.UTF_8.displayName());
+            verifyRet = AlipaySignature.rsaCheckContent(paraStr, sign, acquirerInfo.getPubKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
             LogUtil.error(e, logger, "验签发生异常,paraStr={0}", paraStr);
             throw new RuntimeException("验签发生异常");

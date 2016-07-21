@@ -89,7 +89,7 @@ public class AcquirerServiceTest extends BaseTest {
 
         LogUtil.info(logger, "生成签名sign={0}", sign);
 
-        boolean verifyRet = acquirerService.verify(acquirerId, paraMap, sign);
+        boolean verifyRet = acquirerService.verify(acquirerId, paraMap);
 
         Assert.assertTrue(verifyRet);
 

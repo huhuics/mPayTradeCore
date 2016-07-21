@@ -88,4 +88,9 @@ public class BaseResponse implements Serializable {
         this.msg = BizResultEnum.FAILED.getDesc();
     }
 
+    public void setBizFailed(String msg) {
+        this.code = BizResultEnum.FAILED.getCode();
+        this.msg = msg;
+    }
+
 }

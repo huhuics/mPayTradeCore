@@ -63,6 +63,8 @@ public class MerchantController {
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
+        //验签
+
         //参数转换
         MerchantCreateRequest merchantCreateRequest = buildCreateRequest(request);
 

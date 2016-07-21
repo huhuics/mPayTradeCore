@@ -33,11 +33,10 @@ public interface AcquirerService {
 
     /**
      * 验签
-     * @param acquirerId
-     * @param paraMap
-     * @param oriSign
+     * @param acquirerId  收单机构编号
+     * @param paraMap     收单机构传过来所有参数，使用TreeMap存储
      * @return
      */
-    boolean verify(String acquirerId, Map<String, String> paraMap, String oriSign);
+    boolean verify(String acquirerId, Map<String, String> paraMap);
 
 }
