@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,13 +22,13 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
-import org.tradecore.common.util.SecureUtil;
 import org.tradecore.dao.BizAcquirerInfoDAO;
 import org.tradecore.dao.BizMerchantInfoDAO;
 import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.internal.util.AlipaySignature;
 
 /**
  * 收单机构服务接口实现类
@@ -57,6 +57,9 @@ public class AcquirerServiceImpl implements AcquirerService {
 
     /** =分隔符 */
     private static final String EQU_CHAR = "=";
+
+    /** 过滤参数名 */
+    private static final String SIGN     = "sign";
 
     @Override
     public boolean isAcquirerNormal(String acquirerId) {
@@ -110,18 +113,19 @@ public class AcquirerServiceImpl implements AcquirerService {
             acquirerInfo = acquirerInfos.get(ZERO_INX);
         }
 
-        //2.将参数转化成键值对形式的字符串
+        AssertUtil.assertNotNull(acquirerInfo, "查询收单机构为空");
+
+        //2.将参数转化成键值对形式的待验签字符串
         String paraStr = convert2ParaStr(paraMap);
         AssertUtil.assertTrue(StringUtils.isNotBlank(paraStr), "参数转化成键值对字符串为空");
 
         //3.验签
         boolean verifyRet = false;
-        String alipayPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB";
         try {
-            //            verifyRet = SecureUtil.verifySign(acquirerInfo.getCheckCert(), paraStr, oriSign);
-            verifyRet = SecureUtil.verifySign(Base64.decodeBase64(alipayPublicKey), paraStr, oriSign);
+            verifyRet = AlipaySignature.rsaCheckContent(paraStr, paraMap.get(SIGN), acquirerInfo.getPubKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
             LogUtil.error(e, logger, "验签发生异常,paraStr={0}", paraStr);
+            throw new RuntimeException("验签发生异常");
         }
 
         return verifyRet;
@@ -140,6 +144,12 @@ public class AcquirerServiceImpl implements AcquirerService {
         Iterator<String> iterator = map.keySet().iterator();
         while (iterator.hasNext()) {
             String key = iterator.next();
+
+            //过滤sign参数
+            if (StringUtils.equals(key, SIGN)) {
+                continue;
+            }
+
             String value = map.get(key);
             if (StringUtils.isBlank(value)) {
                 continue;
