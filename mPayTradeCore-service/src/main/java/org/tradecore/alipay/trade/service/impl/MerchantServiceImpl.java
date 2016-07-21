@@ -129,7 +129,7 @@ public class MerchantServiceImpl implements MerchantService {
 
         //2.查询本地商户数据
         BizMerchantInfo nativeMerchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantQueryRequest.getAcquirer_id(),
-            merchantQueryRequest.getSub_merchant_id(), merchantQueryRequest.getExternal_id());
+            merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getExternal_id());
 
         LogUtil.info(logger, "本地查询商户信息结果nativeMerchantInfo={0}", nativeMerchantInfo);
 

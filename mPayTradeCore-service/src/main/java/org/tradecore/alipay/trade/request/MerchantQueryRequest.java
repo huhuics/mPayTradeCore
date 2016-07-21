@@ -30,7 +30,7 @@ public class MerchantQueryRequest extends BaseRequest {
      * (必填)商户标识号<br>
      * 含义和merchantId相同，此处使用sub_merchant_id而不是merchant_id是为了方便转换为支付宝请求参数
      */
-    private String            sub_merchant_id;
+    private String            merchant_id;
 
     /**
      * 非空参数校验
@@ -42,7 +42,7 @@ public class MerchantQueryRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(external_id, "商户外部编号不能为空");
 
-        AssertUtil.assertNotEmpty(sub_merchant_id, "商户标识号不能为空");
+        AssertUtil.assertNotEmpty(merchant_id, "商户标识号不能为空");
 
         return true;
     }
@@ -63,12 +63,12 @@ public class MerchantQueryRequest extends BaseRequest {
         this.external_id = external_id;
     }
 
-    public String getSub_merchant_id() {
-        return sub_merchant_id;
+    public String getMerchant_id() {
+        return merchant_id;
     }
 
-    public void setSub_merchant_id(String sub_merchant_id) {
-        this.sub_merchant_id = sub_merchant_id;
+    public void setMerchant_id(String merchant_id) {
+        this.merchant_id = merchant_id;
     }
 
 }

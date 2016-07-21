@@ -27,14 +27,14 @@ import org.tradecore.common.util.LogUtil;
 public abstract class AbstractBizController {
 
     /** 日志 */
-    private static final Logger logger      = LoggerFactory.getLogger(AbstractBizController.class);
+    private static final Logger   logger      = LoggerFactory.getLogger(AbstractBizController.class);
 
     /** 商户服务接口 */
     @Resource
-    private AcquirerService     acquirerService;
+    private AcquirerService       acquirerService;
 
     /** 收单机构编号 */
-    private static final String ACQUIRER_ID = "acquirer_id";
+    protected static final String ACQUIRER_ID = "acquirer_id";
 
     /**
      * 获取所有请求参数，并用TreeMap保存

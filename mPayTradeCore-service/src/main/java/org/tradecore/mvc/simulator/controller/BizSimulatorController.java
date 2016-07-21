@@ -443,7 +443,7 @@ public class BizSimulatorController {
 
         queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
         queryRequest.setExternal_id(request.getParameter("external_id"));
-        queryRequest.setSub_merchant_id(request.getParameter("merchant_id"));
+        queryRequest.setMerchant_id(request.getParameter("merchant_id"));
 
         return queryRequest;
 

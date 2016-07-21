@@ -23,6 +23,7 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
+import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 
 import com.alibaba.fastjson.JSON;
@@ -34,7 +35,7 @@ import com.alibaba.fastjson.JSON;
  */
 @Controller
 @RequestMapping("/merchant")
-public class MerchantController {
+public class MerchantController extends AbstractBizController {
 
     /** 日志 */
     private static final Logger logger                   = LoggerFactory.getLogger(MerchantController.class);
@@ -63,13 +64,21 @@ public class MerchantController {
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
-        //验签
-
-        //参数转换
-        MerchantCreateRequest merchantCreateRequest = buildCreateRequest(request);
+        MerchantCreateRequest merchantCreateRequest = null;
 
         try {
+
+            //组装参数
+            Map<String, String> paraMap = getParameters(request);
+
+            //验签
+            AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
+            //参数转换
+            merchantCreateRequest = buildCreateRequest(request);
+
             createResponse = merchantService.create(merchantCreateRequest);
+
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户入驻HTTP调用异常,merchantCreateRequest={0}", merchantCreateRequest);
             createResponse.setBizFailed();
@@ -94,10 +103,18 @@ public class MerchantController {
 
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
 
-        //参数转换
-        MerchantQueryRequest merchantQueryRequest = buildQueryRequest(request);
+        MerchantQueryRequest merchantQueryRequest = null;
 
         try {
+
+            //组装参数
+            Map<String, String> paraMap = getParameters(request);
+
+            AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
+            //参数转换
+            merchantQueryRequest = buildQueryRequest(request);
+
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户信息查询HTTP调用异常,merchantQueryRequest={0}", merchantQueryRequest);
