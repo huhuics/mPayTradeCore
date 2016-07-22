@@ -4,7 +4,6 @@
  */
 package org.tradecore.mvc.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -25,6 +24,7 @@ import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.ResponseUtil;
 import org.tradecore.common.util.SecureUtil;
 
 import com.alibaba.fastjson.JSON;
@@ -47,9 +47,6 @@ public class MerchantController extends AbstractBizController {
 
     /**
      * 商户入驻
-     * @param request
-     * @param map
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -83,7 +80,7 @@ public class MerchantController extends AbstractBizController {
         //签名
         String sign = SecureUtil.sign(createResponse.buildSortedParaMap());
 
-        String responseJSONStr = buildResponse(ParamConstant.MERCHANT_CREATE_RESPONSE, createResponse, sign);
+        String responseJSONStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_CREATE_RESPONSE, createResponse, sign);
 
         LogUtil.info(logger, "返回商户入驻响应,responseJSONStr={0}", responseJSONStr);
 
@@ -92,9 +89,6 @@ public class MerchantController extends AbstractBizController {
 
     /**
      * 商户查询
-     * @param request
-     * @param map
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST)
@@ -124,25 +118,11 @@ public class MerchantController extends AbstractBizController {
 
         String sign = SecureUtil.sign(queryResponse.buildSortedParaMap());
 
-        String responseJSONStr = buildResponse(ParamConstant.MERCHANT_QUERY_RESPONSE, queryResponse, sign);
+        String responseJSONStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_QUERY_RESPONSE, queryResponse, sign);
 
         LogUtil.info(logger, "返回商户查询响应,responseJSONStr={0}", responseJSONStr);
 
         return responseJSONStr;
-    }
-
-    /**
-     * 创建json返回数据
-     * @param responseName
-     * @param object
-     * @return
-     */
-    private String buildResponse(String responseName, Object object, String sign) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put(responseName, object);
-        resultMap.put(ParamConstant.SIGN, sign);
-
-        return JSON.toJSONString(resultMap);
     }
 
     private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {
