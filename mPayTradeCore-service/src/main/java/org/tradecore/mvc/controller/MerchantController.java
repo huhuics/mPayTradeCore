@@ -4,6 +4,7 @@
  */
 package org.tradecore.mvc.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -22,7 +23,6 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
-import org.tradecore.common.facade.result.Result;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.SecureUtil;
@@ -57,8 +57,6 @@ public class MerchantController extends AbstractBizController {
 
         LogUtil.info(logger, "收到商户入驻HTTP请求");
 
-        Result<MerchantCreateResponse> createResult = new Result<MerchantCreateResponse>();
-
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
         MerchantCreateRequest merchantCreateRequest = null;
@@ -85,12 +83,11 @@ public class MerchantController extends AbstractBizController {
         //签名
         String sign = SecureUtil.sign(createResponse.buildSortedParaMap());
 
-        createResult.setResponse(createResponse);
-        createResult.setSign(sign);
+        String responseJSONStr = buildResponse(ParamConstant.MERCHANT_CREATE_RESPONSE, createResponse, sign);
 
-        LogUtil.info(logger, "返回商户入驻响应,createResult={0}", JSON.toJSONString(createResult));
+        LogUtil.info(logger, "返回商户入驻响应,responseJSONStr={0}", responseJSONStr);
 
-        return JSON.toJSONString(createResult);
+        return responseJSONStr;
     }
 
     /**
@@ -104,8 +101,6 @@ public class MerchantController extends AbstractBizController {
     public String query(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到商户信息查询HTTP请求");
-
-        Result<MerchantQueryResponse> queryResult = new Result<MerchantQueryResponse>();
 
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
 
@@ -129,12 +124,25 @@ public class MerchantController extends AbstractBizController {
 
         String sign = SecureUtil.sign(queryResponse.buildSortedParaMap());
 
-        queryResult.setResponse(queryResponse);
-        queryResult.setSign(sign);
+        String responseJSONStr = buildResponse(ParamConstant.MERCHANT_QUERY_RESPONSE, queryResponse, sign);
 
-        LogUtil.info(logger, "返回商户查询响应,queryResult={0}", JSON.toJSONString(queryResult));
+        LogUtil.info(logger, "返回商户查询响应,responseJSONStr={0}", responseJSONStr);
 
-        return JSON.toJSONString(queryResult);
+        return responseJSONStr;
+    }
+
+    /**
+     * 创建json返回数据
+     * @param responseName
+     * @param object
+     * @return
+     */
+    private String buildResponse(String responseName, Object object, String sign) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put(responseName, object);
+        resultMap.put(ParamConstant.SIGN, sign);
+
+        return JSON.toJSONString(resultMap);
     }
 
     private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {
