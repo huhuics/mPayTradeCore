@@ -59,6 +59,15 @@ public abstract class AbstractBizController {
     }
 
     /**
+     * 对响应进行签名
+     * @param paraMap
+     * @return
+     */
+    public String sign(Map<String, Object> paraMap) {
+        return null;
+    }
+
+    /**
      * 验签
      * @param paraMap   参数列表
      * @return          true：验签成功；false：验签失败

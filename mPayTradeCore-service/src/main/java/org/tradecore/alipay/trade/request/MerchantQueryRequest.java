@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.request;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tradecore.common.util.AssertUtil;
 
 /**
@@ -22,13 +23,12 @@ public class MerchantQueryRequest extends BaseRequest {
     private String            acquirer_id;
 
     /**
-     * (必填)商户外部编号
+     * (特殊可选)商户外部编号
      */
     private String            external_id;
 
     /**
-     * (必填)商户标识号<br>
-     * 含义和merchantId相同，此处使用sub_merchant_id而不是merchant_id是为了方便转换为支付宝请求参数
+     * (特殊可选)商户标识号<br>
      */
     private String            merchant_id;
 
@@ -40,9 +40,9 @@ public class MerchantQueryRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(acquirer_id, "收单机构编号不能为空");
 
-        AssertUtil.assertNotEmpty(external_id, "商户外部编号不能为空");
-
-        AssertUtil.assertNotEmpty(merchant_id, "商户标识号不能为空");
+        if (StringUtils.isBlank(external_id) && StringUtils.isBlank(merchant_id)) {
+            throw new RuntimeException("商户外部编号和商户标识号不能同时为空");
+        }
 
         return true;
     }

@@ -35,6 +35,9 @@ public class BaseResponse implements Serializable {
     /** 响应消息体 */
     private String            body;
 
+    /** 签名 */
+    private String            sign;
+
     public String getCode() {
         return code;
     }
@@ -78,6 +81,14 @@ public class BaseResponse implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
     }
 
     /**

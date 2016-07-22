@@ -133,35 +133,8 @@ public class MerchantServiceImpl implements MerchantService {
 
         LogUtil.info(logger, "本地查询商户信息结果nativeMerchantInfo={0}", nativeMerchantInfo);
 
-        //3.本地为空则查询支付宝
-        if (nativeMerchantInfo == null) {
-
-            //3.1请求转换
-            AlipayBossProdSubmerchantQueryRequest alipayQueryRequest = convert2AlipayQueryRequest(merchantQueryRequest);
-
-            AlipayBossProdSubmerchantQueryResponse alipayResponse;
-            try {
-                //3.2查询支付宝商户信息
-                alipayResponse = alipayClient.execute(alipayQueryRequest);
-            } catch (AlipayApiException e) {
-                LogUtil.error(e, logger, "调用支付宝商户查询接口异常,alipayQueryRequest={0}", JSON.toJSONString(alipayQueryRequest, SerializerFeature.UseSingleQuotes));
-                throw new RuntimeException("调用支付宝商户查询接口异常", e);
-            }
-
-            LogUtil.info(logger, "调用支付宝商户查询口响应alipayResponse={0}", JSON.toJSONString(alipayResponse, SerializerFeature.UseSingleQuotes));
-
-            //3.3将支付宝响应转化成BizMerchantInfo
-            BizMerchantInfo merchantInfo = convert2BizMerchantInfo(merchantQueryRequest, alipayResponse);
-
-            //3.4持久化商户信息
-            AssertUtil.assertTrue(insert(merchantInfo), "商户信息持久化失败");
-
-            return buildResponse(merchantInfo, alipayResponse.getCode(), alipayResponse.getMsg());
-
-        } else {
-            //本次查询不为空则直接返回
-            return buildResponse(nativeMerchantInfo, BizResultEnum.SUCCESS.getCode(), BizResultEnum.SUCCESS.getDesc());
-        }
+        //返回
+        return buildResponse(nativeMerchantInfo);
 
     }
 
@@ -332,9 +305,14 @@ public class MerchantServiceImpl implements MerchantService {
         return createResponse;
     }
 
-    private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo, String code, String msg) {
+    private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo) {
 
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
+
+        if (merchantInfo == null) {
+            queryResponse.setBizFailed("商户查询为空");
+            return queryResponse;
+        }
 
         queryResponse.setAcquirer_id(merchantInfo.getAcquirerId());
         queryResponse.setSub_merchant_id(merchantInfo.getMerchantId());
@@ -349,11 +327,10 @@ public class MerchantServiceImpl implements MerchantService {
         queryResponse.setCategory_id(merchantInfo.getCategoryId());
         queryResponse.setSource(merchantInfo.getSource());
         queryResponse.setMemo(merchantInfo.getMemo());
-        queryResponse.setCode(code);
-        queryResponse.setMsg(msg);
+        queryResponse.setCode(BizResultEnum.SUCCESS.getCode());
+        queryResponse.setMsg(BizResultEnum.SUCCESS.getDesc());
 
         return queryResponse;
 
     }
-
 }

@@ -75,7 +75,7 @@ public class MerchantController extends AbstractBizController {
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             //参数转换
-            merchantCreateRequest = buildCreateRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            merchantCreateRequest = buildCreateRequest(paraMap);
 
             createResponse = merchantService.create(merchantCreateRequest);
 
@@ -113,7 +113,7 @@ public class MerchantController extends AbstractBizController {
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             //参数转换
-            merchantQueryRequest = buildQueryRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            merchantQueryRequest = buildQueryRequest(paraMap);
 
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
@@ -139,13 +139,17 @@ public class MerchantController extends AbstractBizController {
         return JSON.toJSONString(resultMap);
     }
 
-    private MerchantQueryRequest buildQueryRequest(String bizContent) {
+    private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
 
         LogUtil.info(logger, "商户查询报文原始业务参数,biz_content={0}", bizContent);
 
         queryRequest = JSON.parseObject(bizContent, MerchantQueryRequest.class);
+        queryRequest.setAcquirer_id(acquirerId);
 
         LogUtil.info(logger, "商户查询参数转换结果:queryRequest={0}", queryRequest);
 
@@ -158,13 +162,17 @@ public class MerchantController extends AbstractBizController {
      * @param request
      * @return
      */
-    private MerchantCreateRequest buildCreateRequest(String bizContent) {
+    private MerchantCreateRequest buildCreateRequest(Map<String, String> paraMap) {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
 
         LogUtil.info(logger, "商户入驻报文原始业务参数,biz_content={0}", bizContent);
 
         createRequest = JSON.parseObject(bizContent, MerchantCreateRequest.class);
+        createRequest.setAcquirer_id(acquirerId);
 
         LogUtil.info(logger, "商户入驻参数转换结果:createRequest={0}", createRequest);
 

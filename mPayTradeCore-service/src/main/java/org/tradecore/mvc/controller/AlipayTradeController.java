@@ -71,7 +71,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
-            PayRequest payRequest = buildPayRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            PayRequest payRequest = buildPayRequest(paraMap);
 
             payResult = tradeService.pay(payRequest);
         } catch (Exception e) {
@@ -318,38 +318,41 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 创建条码支付请求
      */
-    private PayRequest buildPayRequest(String bizContent) {
+    private PayRequest buildPayRequest(Map<String, String> paraMap) {
 
         PayRequest payRequest = new PayRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
 
         LogUtil.info(logger, "条码支付报文原始业务参数,biz_content={0}", bizContent);
 
         //解析json字段
-        Map<String, String> paraMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        payRequest.setAcquirerId(paraMap.get("acquirer_id"));
-        payRequest.setMerchantId(paraMap.get("merchant_id"));
-        payRequest.setScene(paraMap.get("scene"));
-        payRequest.setOutTradeNo(paraMap.get("out_trade_no"));
-        payRequest.setSellerId(paraMap.get("seller_id"));
-        payRequest.setTotalAmount(paraMap.get("total_amount"));
-        payRequest.setDiscountableAmount(paraMap.get("discountable_amount"));
-        payRequest.setUndiscountableAmount(paraMap.get("undiscountable_amount"));
-        payRequest.setSubject(paraMap.get("subject"));
-        payRequest.setBody(paraMap.get("body"));
-        payRequest.setAppAuthToken(paraMap.get("app_auth_token"));
+        payRequest.setAcquirerId(acquirerId);
+        payRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        payRequest.setScene(bizParaMap.get("scene"));
+        payRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        payRequest.setSellerId(bizParaMap.get("seller_id"));
+        payRequest.setTotalAmount(bizParaMap.get("total_amount"));
+        payRequest.setDiscountableAmount(bizParaMap.get("discountable_amount"));
+        payRequest.setUndiscountableAmount(bizParaMap.get("undiscountable_amount"));
+        payRequest.setSubject(bizParaMap.get("subject"));
+        payRequest.setBody(bizParaMap.get("body"));
+        payRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
         //TODO:封装成List
         //        payRequest.setGoodsDetailList(paraMap.get(""));
-        payRequest.setOperatorId(paraMap.get("operator_id"));
-        payRequest.setStoreId(paraMap.get("store_id"));
-        payRequest.setAlipayStoreId(paraMap.get("alipay_store_id"));
-        payRequest.setTerminalId(paraMap.get("terminal_id"));
+        payRequest.setOperatorId(bizParaMap.get("operator_id"));
+        payRequest.setStoreId(bizParaMap.get("store_id"));
+        payRequest.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
+        payRequest.setTerminalId(bizParaMap.get("terminal_id"));
         //TODO:封装成ExtendParams
         //        payRequest.setExtendParams(paraMap.get(""));
-        payRequest.setTimeoutExpress(paraMap.get("timeout_express"));
+        payRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
 
-        payRequest.setAuthCode(paraMap.get("auth_code"));
+        payRequest.setAuthCode(bizParaMap.get("auth_code"));
 
         LogUtil.info(logger, "创建条码支付请求成功,payRequest={0}", payRequest);
 

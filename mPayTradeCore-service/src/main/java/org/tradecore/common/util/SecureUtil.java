@@ -4,15 +4,15 @@
  */
 package org.tradecore.common.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
+import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.demo.trade.config.Configs;
 
 /**
  * 安全工具类
@@ -21,43 +21,26 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class SecureUtil {
 
-    private static final String TYPE      = "X.509";
-
-    private static final String ALGORITHM = "SHA1withRSA";
+    /** 日志 */
+    private static final Logger logger = LoggerFactory.getLogger(SecureUtil.class);
 
     /**
-     * 验签
-     * @param cert          证书内容
-     * @param paraStr       待验签的字符串，即参数字符串
-     * @param oriSign       收单机构传过来的签名内容
-     * @return              true表示验签通过，false表示验签失败
-     * @throws Exception 
+     * 对响应进行签名<br>
+     * @param paraMap    必须传进来的参数是TreeMap
+     * @return
      */
-    public static boolean verifySign(byte[] cert, String paraStr, String oriSign) throws Exception {
+    public static String sign(Map<String, String> paraMap) {
 
-        byte[] binaryData = Base64.decodeBase64(oriSign.getBytes(StandardCharsets.UTF_8));
+        String sign = null;
 
-        //获取公钥
-        PublicKey publicKey = getPublicKey(cert);
-        AssertUtil.assertNotNull(publicKey, "获取公钥失败");
-
-        //验签
-        Signature signature = Signature.getInstance(ALGORITHM);
-        signature.initVerify(publicKey);
-        signature.update(paraStr.getBytes(StandardCharsets.UTF_8));
-
-        return signature.verify(binaryData);
-    }
-
-    private static PublicKey getPublicKey(byte[] cert) throws Exception {
-        InputStream is = new ByteArrayInputStream(cert);
-        CertificateFactory cf = CertificateFactory.getInstance(TYPE);
-        Certificate certifecate = cf.generateCertificate(is);
-        if (is != null) {
-            is.close();
-            is = null;
+        try {
+            sign = AlipaySignature.rsaSign(paraMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(paraMap));
+            throw new RuntimeException("加签发生异常");
         }
-        return certifecate.getPublicKey();
+
+        return sign;
     }
 
 }
