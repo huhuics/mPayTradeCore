@@ -35,6 +35,7 @@ public class UUIDUtilTest {
     @Test
     public void testCancelTime() {
         boolean b = checkCancelTime(new Date());
+        LogUtil.info(logger, "b={0}", b);
     }
 
     private boolean checkCancelTime(Date gmtCreate) {
@@ -56,6 +57,8 @@ public class UUIDUtilTest {
         Map<String, Object> paraMap = new HashMap<String, Object>();
         paraMap.put("out_request_no", out_request_no);
         String json = JSON.toJSONString(paraMap);
+
+        LogUtil.info(logger, "json={0}", json);
     }
 
 }

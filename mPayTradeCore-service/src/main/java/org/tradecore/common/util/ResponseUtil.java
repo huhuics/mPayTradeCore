@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.mvc.controller.AlipayTradeController;
+import org.tradecore.mvc.controller.MerchantController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -20,7 +22,8 @@ import com.alibaba.fastjson.TypeReference;
 public class ResponseUtil {
 
     /**
-     * 创建json返回数据
+     * 创建json返回数据<br>
+     * {@link MerchantController}
      * @param responseName   响应名称，常量，在{@link ParamConstant}中定义
      * @param object         响应的对象
      * @return               响应JSON字符串
@@ -37,7 +40,8 @@ public class ResponseUtil {
     }
 
     /**
-     * 从支付宝返回的body字符串中解析出参数，去掉sign，并将其它参数封装进TreeMap再生产新的签名
+     * 从支付宝返回的body字符串中解析出参数，去掉sign，并将其它参数封装进TreeMap再生产新的签名<br>
+     * {@link AlipayTradeController}
      * @param body        json字符串
      * @param methodName  方法名称常量{@link ParamConstant}
      * @return

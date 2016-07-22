@@ -5,6 +5,7 @@
 package org.tradecore.alipay.trade.service.impl;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -21,6 +22,7 @@ import org.tradecore.alipay.trade.service.TradeNotifyService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.HttpUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.SecureUtil;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
@@ -80,12 +82,18 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空");
 
+        //签名
+        Map<String, String> sortedParaMap = notifyRequest.buildSortedParaMap();
+        String sign = SecureUtil.sign(sortedParaMap);
+
         //组装参数
-        NameValuePair nameValuePair = new NameValuePair(ParamConstant.NOTIFY_RESPONSE, JSON.toJSONString(notifyRequest));
+        NameValuePair bizParaPair = new NameValuePair(ParamConstant.NOTIFY_RESPONSE, JSON.toJSONString(notifyRequest));
+        NameValuePair signPair = new NameValuePair(ParamConstant.SIGN, sign);
 
         //发送
-        String response = HttpUtil.httpClientPost(outNotifyUrl, Arrays.asList(nameValuePair));
+        String response = HttpUtil.httpClientPost(outNotifyUrl, Arrays.asList(bizParaPair, signPair));
 
         LogUtil.info(logger, "完成发送扫码支付响应到收单机构,response={0}", response);
     }
+
 }

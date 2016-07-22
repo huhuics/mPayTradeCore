@@ -68,7 +68,7 @@ public class AlipayTradeNotifyController {
 
         notifyRequest.setNotifyTime(request.getParameter("notify_time"));
         notifyRequest.setNotifyType(request.getParameter("notify_type"));
-        notifyRequest.setNotifyTd(request.getParameter("notify_id"));
+        notifyRequest.setNotifyId(request.getParameter("notify_id"));
         notifyRequest.setSignType(request.getParameter("sign_type"));
         notifyRequest.setSign(request.getParameter("sign"));
         notifyRequest.setTradeNo(request.getParameter("trade_no"));
