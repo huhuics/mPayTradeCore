@@ -25,10 +25,10 @@ import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.ResponseUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
@@ -79,9 +79,13 @@ public class AlipayTradeController extends AbstractBizController {
             buildPayErrorResult(payResult);
         }
 
-        LogUtil.info(logger, "条码支付HTTP调用结果,payResult={0}", JSON.toJSONString(payResult, SerializerFeature.UseSingleQuotes));
+        String body = payResult.getResponse().getBody();
 
-        return payResult.getResponse().getBody();
+        String payResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
+
+        LogUtil.info(logger, "条码支付HTTP调用结果,payResponse={0}", payResponse);
+
+        return payResponse;
     }
 
     /**
@@ -107,9 +111,13 @@ public class AlipayTradeController extends AbstractBizController {
             buildPrecreateErrorResult(precreateResult);
         }
 
-        LogUtil.info(logger, "扫码支付HTTP调用结果,precreateResult={0}", JSON.toJSONString(precreateResult, SerializerFeature.UseSingleQuotes));
+        String body = precreateResult.getResponse().getBody();
 
-        return precreateResult.getResponse().getBody();
+        String precreateResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
+
+        LogUtil.info(logger, "扫码支付HTTP调用结果,precreateResponse={0}", precreateResponse);
+
+        return precreateResponse;
     }
 
     /**
@@ -135,9 +143,13 @@ public class AlipayTradeController extends AbstractBizController {
             buildQueryErrorResult(queryResult);
         }
 
-        LogUtil.info(logger, "订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));
+        String body = queryResult.getResponse().getBody();
 
-        return queryResult.getResponse().getBody();
+        String queryResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
+
+        LogUtil.info(logger, "订单查询HTTP调用结果,queryResponse={0}", queryResponse);
+
+        return queryResponse;
 
     }
 
@@ -164,9 +176,13 @@ public class AlipayTradeController extends AbstractBizController {
             buildRefundErrorResult(refundResult);
         }
 
-        LogUtil.info(logger, "退款HTTP调用结果,refundResult={0}", JSON.toJSONString(refundResult, SerializerFeature.UseSingleQuotes));
+        String body = refundResult.getResponse().getBody();
 
-        return refundResult.getResponse().getBody();
+        String refundResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
+
+        LogUtil.info(logger, "退款HTTP调用结果,refundResponse={0}", refundResponse);
+
+        return refundResponse;
 
     }
 
@@ -193,9 +209,13 @@ public class AlipayTradeController extends AbstractBizController {
             buildCancelResponse(cancelResponse);
         }
 
-        LogUtil.info(logger, "撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
+        String body = cancelResponse.getBody();
 
-        return cancelResponse.getBody();
+        String cancelRespStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE);
+
+        LogUtil.info(logger, "撤销HTTP调用结果,cancelRespStr={0}", cancelRespStr);
+
+        return cancelRespStr;
     }
 
     /**

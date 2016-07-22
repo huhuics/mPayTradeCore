@@ -10,8 +10,10 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.ResponseUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -21,7 +23,7 @@ import com.alibaba.fastjson.TypeReference;
  * @author HuHui
  * @version $Id: FastJSONTest.java, v 0.1 2016年7月9日 上午11:06:22 HuHui Exp $
  */
-public class FastJSONTest {
+public class FastJSONTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(FastJSONTest.class);
 
@@ -41,6 +43,15 @@ public class FastJSONTest {
         jsonStr = JSON.toJSONString(parseObject);
         LogUtil.info(logger, "jsonStr:{0}", jsonStr);
 
+    }
+
+    @Test
+    public void testParsePara() {
+        String jsonStr = "{\"alipay_trade_pay_response\":{\"xode\":\"40004\",\"esg\":\"Business Failed\",\"aay_amount\":\"0.00\",},\"sign\":\"qPCuyNU2DDluz2I8i0=\"}";
+
+        String buildResponse = ResponseUtil.buildResponse(jsonStr, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
+
+        LogUtil.info(logger, "buildResponse={0}", buildResponse);
     }
 
     @Test

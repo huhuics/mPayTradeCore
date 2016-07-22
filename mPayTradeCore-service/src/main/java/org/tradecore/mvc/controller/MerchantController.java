@@ -80,11 +80,11 @@ public class MerchantController extends AbstractBizController {
         //签名
         String sign = SecureUtil.sign(createResponse.buildSortedParaMap());
 
-        String responseJSONStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_CREATE_RESPONSE, createResponse, sign);
+        String mechCreateResponse = ResponseUtil.buildResponse(ParamConstant.MERCHANT_CREATE_RESPONSE, createResponse, sign);
 
-        LogUtil.info(logger, "返回商户入驻响应,responseJSONStr={0}", responseJSONStr);
+        LogUtil.info(logger, "返回商户入驻响应,mechCreateResponse={0}", mechCreateResponse);
 
-        return responseJSONStr;
+        return mechCreateResponse;
     }
 
     /**
@@ -118,11 +118,11 @@ public class MerchantController extends AbstractBizController {
 
         String sign = SecureUtil.sign(queryResponse.buildSortedParaMap());
 
-        String responseJSONStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_QUERY_RESPONSE, queryResponse, sign);
+        String mechQueryResponseStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_QUERY_RESPONSE, queryResponse, sign);
 
-        LogUtil.info(logger, "返回商户查询响应,responseJSONStr={0}", responseJSONStr);
+        LogUtil.info(logger, "返回商户查询响应,responseJSONStr={0}", mechQueryResponseStr);
 
-        return responseJSONStr;
+        return mechQueryResponseStr;
     }
 
     private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {
