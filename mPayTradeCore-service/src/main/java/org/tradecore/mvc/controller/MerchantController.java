@@ -75,7 +75,7 @@ public class MerchantController extends AbstractBizController {
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             //参数转换
-            merchantCreateRequest = buildCreateRequest(request);
+            merchantCreateRequest = buildCreateRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
 
             createResponse = merchantService.create(merchantCreateRequest);
 
@@ -113,7 +113,7 @@ public class MerchantController extends AbstractBizController {
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             //参数转换
-            merchantQueryRequest = buildQueryRequest(request);
+            merchantQueryRequest = buildQueryRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
 
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
@@ -139,15 +139,13 @@ public class MerchantController extends AbstractBizController {
         return JSON.toJSONString(resultMap);
     }
 
-    private MerchantQueryRequest buildQueryRequest(WebRequest request) {
+    private MerchantQueryRequest buildQueryRequest(String bizContent) {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
 
-        String bizContentJsonStr = request.getParameter(ParamConstant.BIZ_CONTENT);
+        LogUtil.info(logger, "商户查询报文原始业务参数,biz_content={0}", bizContent);
 
-        LogUtil.info(logger, "商户查询报文原始业务参数,biz_content={0}", bizContentJsonStr);
-
-        queryRequest = JSON.parseObject(bizContentJsonStr, MerchantQueryRequest.class);
+        queryRequest = JSON.parseObject(bizContent, MerchantQueryRequest.class);
 
         LogUtil.info(logger, "商户查询参数转换结果:queryRequest={0}", queryRequest);
 
@@ -160,15 +158,13 @@ public class MerchantController extends AbstractBizController {
      * @param request
      * @return
      */
-    private MerchantCreateRequest buildCreateRequest(WebRequest request) {
+    private MerchantCreateRequest buildCreateRequest(String bizContent) {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 
-        String bizContentJsonStr = request.getParameter(ParamConstant.BIZ_CONTENT);
+        LogUtil.info(logger, "商户入驻报文原始业务参数,biz_content={0}", bizContent);
 
-        LogUtil.info(logger, "商户入驻报文原始业务参数,biz_content={0}", bizContentJsonStr);
-
-        createRequest = JSON.parseObject(bizContentJsonStr, MerchantCreateRequest.class);
+        createRequest = JSON.parseObject(bizContent, MerchantCreateRequest.class);
 
         LogUtil.info(logger, "商户入驻参数转换结果:createRequest={0}", createRequest);
 
