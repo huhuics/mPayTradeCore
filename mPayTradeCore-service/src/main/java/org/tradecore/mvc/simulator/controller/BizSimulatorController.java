@@ -80,6 +80,8 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT = "mechQueryResult";
 
+    private static final String ERROR_MESSAGE     = "返回为空";
+
     /** 交易服务接口 */
     @Resource
     private TradeService        tradeService;
@@ -195,7 +197,7 @@ public class BizSimulatorController {
             payResult = tradeService.pay(payRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器条码支付HTTP调用结果,payResult={0}", JSON.toJSONString(payResult, SerializerFeature.UseSingleQuotes));
@@ -210,8 +212,6 @@ public class BizSimulatorController {
             map.put("merchantId", payRequest.getMerchantId());
             map.put("outTradeNo", payRequest.getOutTradeNo());
             map.put("tradeNo", response.getTradeNo());
-        } else {
-            setErrorResult(map);
         }
 
         return RESULT;
@@ -230,7 +230,7 @@ public class BizSimulatorController {
             precreateResult = tradeService.precreate(precreateRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器扫码支付HTTP调用异常");
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,precreateResult={0}", JSON.toJSONString(precreateResult, SerializerFeature.UseSingleQuotes));
@@ -253,8 +253,6 @@ public class BizSimulatorController {
             ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
             map.put("qrFileName", response.getOutTradeNo() + ".png");
 
-        } else {
-            setErrorResult(map);
         }
 
         return RESULT;
@@ -273,7 +271,7 @@ public class BizSimulatorController {
             queryResult = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));
@@ -290,8 +288,6 @@ public class BizSimulatorController {
             map.put("msg", response.getMsg());
             map.put("subCode", response.getSubCode());
             map.put("subMsg", response.getSubMsg());
-        } else {
-            setErrorResult(map);
         }
 
         return QUERY_RESULT;
@@ -311,7 +307,7 @@ public class BizSimulatorController {
             refundResult = tradeService.refund(refundRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器退款HTTP调用异常");
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器退款HTTP调用结果,refundResult={0}", JSON.toJSONString(refundResult, SerializerFeature.UseSingleQuotes));
@@ -326,8 +322,6 @@ public class BizSimulatorController {
             map.put("merchantId", refundRequest.getMerchantId());
             map.put("outTradeNo", refundRequest.getOutTradeNo());
             map.put("tradeNo", response.getTradeNo());
-        } else {
-            setErrorResult(map);
         }
 
         return RESULT;
@@ -347,7 +341,7 @@ public class BizSimulatorController {
             cancelResponse = tradeService.cancel(cancelRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器撤销HTTP调用异常");
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
@@ -361,8 +355,6 @@ public class BizSimulatorController {
             map.put("merchantId", cancelRequest.getMerchantId());
             map.put("outTradeNo", cancelRequest.getOutTradeNo());
             map.put("tradeNo", cancelResponse.getTradeNo());
-        } else {
-            setErrorResult(map);
         }
 
         return RESULT;
@@ -382,12 +374,12 @@ public class BizSimulatorController {
             createResponse = merchantService.create(merchantCreateRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器商户入驻HTTP调用异常,merchantCreateRequest={0}", merchantCreateRequest);
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器返回商户入驻响应,createResponse={0}", createResponse);
 
-        if (createResponse != null) {
+        if (createResponse != null && StringUtils.equals(createResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
             map.put("code", createResponse.getCode());
             map.put("msg", createResponse.getMsg());
             map.put("acquirerId", createResponse.getAcquirerId());
@@ -411,12 +403,12 @@ public class BizSimulatorController {
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器商户信息查询HTTP调用异常,merchantQueryRequest={0}", merchantQueryRequest);
-            setErrorResult(map);
+            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器返回商户查询响应,queryResponse={0}", queryResponse);
 
-        if (queryResponse != null) {
+        if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
             map.put("acquirer_id", queryResponse.getAcquirer_id());
             map.put("sub_merchant_id", queryResponse.getSub_merchant_id());
             map.put("external_id", queryResponse.getExternal_id());
@@ -610,9 +602,9 @@ public class BizSimulatorController {
         return payRequest;
     }
 
-    private void setErrorResult(ModelMap map) {
+    private void setErrorResult(ModelMap map, String errorMsg) {
         map.put("code", BizResultEnum.FAILED.getCode());
-        map.put("msg", "业务处理发生异常，请稍后再试");
+        map.put("msg", errorMsg);
     }
 
     /**
