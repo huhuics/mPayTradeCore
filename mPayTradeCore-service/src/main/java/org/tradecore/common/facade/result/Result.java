@@ -17,73 +17,25 @@ public class Result<T> implements Serializable {
     private static final long serialVersionUID = -7226506032494666664L;
 
     /** 结果对象 */
-    private T                 resultObj;
+    private T                 response;
 
-    /** 结果码 */
-    private String            code;
+    /** 签名 */
+    private String            sign;
 
-    /** 结果信息 */
-    private String            msg;
-
-    /** 子结果码 */
-    private String            subCode;
-
-    /** 子信息 */
-    private String            subMsg;
-
-    /** 响应消息体 */
-    private String            body;
-
-    public T getResultObj() {
-        return resultObj;
+    public T getResponse() {
+        return response;
     }
 
-    public void setResultObj(T resultObj) {
-        this.resultObj = resultObj;
+    public void setResponse(T response) {
+        this.response = response;
     }
 
-    public String getCode() {
-        return code;
+    public String getSign() {
+        return sign;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public String getSubCode() {
-        return subCode;
-    }
-
-    public void setSubCode(String subCode) {
-        this.subCode = subCode;
-    }
-
-    public String getSubMsg() {
-        return subMsg;
-    }
-
-    public void setSubMsg(String subMsg) {
-        this.subMsg = subMsg;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    public void setSign(String sign) {
+        this.sign = sign;
     }
 
 }

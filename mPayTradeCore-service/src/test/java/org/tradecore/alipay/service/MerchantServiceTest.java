@@ -15,8 +15,11 @@ import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
+import org.tradecore.common.facade.result.Result;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * 
@@ -79,6 +82,23 @@ public class MerchantServiceTest extends BaseTest {
         MerchantQueryResponse queryResponse = merchantService.query(queryRequest);
 
         LogUtil.info(logger, "商户查询结果,queryResponse={0}", queryResponse);
+
+    }
+
+    @Test
+    public void testResponse() {
+
+        Result<MerchantQueryResponse> ret = new Result<MerchantQueryResponse>();
+
+        MerchantQueryResponse response = new MerchantQueryResponse();
+        response.setAcquirer_id("acquirer_id123");
+        response.setAlias_name("测试别名");
+        response.setExternal_id("external_id123");
+
+        ret.setResponse(response);
+        ret.setSign("12dfadfasdf342343");
+
+        LogUtil.info(logger, "ret={0}", JSON.toJSONString(ret));
 
     }
 

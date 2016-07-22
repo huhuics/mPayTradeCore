@@ -4,7 +4,6 @@
  */
 package org.tradecore.mvc.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -23,8 +22,10 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
+import org.tradecore.common.facade.result.Result;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.SecureUtil;
 
 import com.alibaba.fastjson.JSON;
 
@@ -38,17 +39,11 @@ import com.alibaba.fastjson.JSON;
 public class MerchantController extends AbstractBizController {
 
     /** 日志 */
-    private static final Logger logger                   = LoggerFactory.getLogger(MerchantController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
 
     /** 商户服务接口 */
     @Resource
     private MerchantService     merchantService;
-
-    /** 商户创建返回json字段名 */
-    private static final String MERCHANT_CREATE_RESPONSE = "merchant_create_response";
-
-    /** 商户查询返回json字段名 */
-    private static final String MERCHANT_QUERY_RESPONSE  = "merchant_query_response";
 
     /**
      * 商户入驻
@@ -61,6 +56,8 @@ public class MerchantController extends AbstractBizController {
     public String create(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到商户入驻HTTP请求");
+
+        Result<MerchantCreateResponse> createResult = new Result<MerchantCreateResponse>();
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
@@ -77,6 +74,7 @@ public class MerchantController extends AbstractBizController {
             //参数转换
             merchantCreateRequest = buildCreateRequest(paraMap);
 
+            //入驻
             createResponse = merchantService.create(merchantCreateRequest);
 
         } catch (Exception e) {
@@ -84,9 +82,15 @@ public class MerchantController extends AbstractBizController {
             createResponse.setBizFailed();
         }
 
-        LogUtil.info(logger, "返回商户入驻响应,createResponse={0}", createResponse);
+        //签名
+        String sign = SecureUtil.sign(createResponse.buildSortedParaMap());
 
-        return buildResponse(MERCHANT_CREATE_RESPONSE, createResponse);
+        createResult.setResponse(createResponse);
+        createResult.setSign(sign);
+
+        LogUtil.info(logger, "返回商户入驻响应,createResult={0}", JSON.toJSONString(createResult));
+
+        return JSON.toJSONString(createResult);
     }
 
     /**
@@ -100,6 +104,8 @@ public class MerchantController extends AbstractBizController {
     public String query(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到商户信息查询HTTP请求");
+
+        Result<MerchantQueryResponse> queryResult = new Result<MerchantQueryResponse>();
 
         MerchantQueryResponse queryResponse = new MerchantQueryResponse();
 
@@ -121,22 +127,14 @@ public class MerchantController extends AbstractBizController {
             queryResponse.setBizFailed();
         }
 
-        LogUtil.info(logger, "返回商户查询响应,queryResponse={0}", queryResponse);
+        String sign = SecureUtil.sign(queryResponse.buildSortedParaMap());
 
-        return buildResponse(MERCHANT_QUERY_RESPONSE, queryResponse);
-    }
+        queryResult.setResponse(queryResponse);
+        queryResult.setSign(sign);
 
-    /**
-     * 创建json返回数据
-     * @param responseName
-     * @param object
-     * @return
-     */
-    private String buildResponse(String responseName, Object object) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put(responseName, object);
+        LogUtil.info(logger, "返回商户查询响应,queryResult={0}", JSON.toJSONString(queryResult));
 
-        return JSON.toJSONString(resultMap);
+        return JSON.toJSONString(queryResult);
     }
 
     private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {

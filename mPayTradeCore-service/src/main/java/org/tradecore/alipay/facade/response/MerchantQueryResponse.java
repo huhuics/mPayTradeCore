@@ -4,6 +4,10 @@
  */
 package org.tradecore.alipay.facade.response;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 商户查询响应
  * @author HuHui
@@ -16,7 +20,7 @@ public class MerchantQueryResponse extends BaseResponse {
 
     private String            acquirer_id;
 
-    private String            sub_merchant_id;
+    private String            merchant_id;
 
     private String            external_id;
 
@@ -49,11 +53,11 @@ public class MerchantQueryResponse extends BaseResponse {
     }
 
     public String getSub_merchant_id() {
-        return sub_merchant_id;
+        return merchant_id;
     }
 
     public void setSub_merchant_id(String sub_merchant_id) {
-        this.sub_merchant_id = sub_merchant_id;
+        this.merchant_id = sub_merchant_id;
     }
 
     public String getExternal_id() {
@@ -144,4 +148,52 @@ public class MerchantQueryResponse extends BaseResponse {
         this.memo = memo;
     }
 
+    /**
+     * 将不为空的参数放入TreeMap，用于签名
+     */
+    public Map<String, String> buildSortedParaMap() {
+        Map<String, String> paraMap = super.buildSortedParaMap();
+
+        if (StringUtils.isNotBlank(acquirer_id)) {
+            paraMap.put("acquirer_id", acquirer_id);
+        }
+        if (StringUtils.isNotBlank(merchant_id)) {
+            paraMap.put("merchant_id", merchant_id);
+        }
+        if (StringUtils.isNotBlank(external_id)) {
+            paraMap.put("external_id", external_id);
+        }
+        if (StringUtils.isNotBlank(name)) {
+            paraMap.put("name", name);
+        }
+        if (StringUtils.isNotBlank(alias_name)) {
+            paraMap.put("alias_name", alias_name);
+        }
+        if (StringUtils.isNotBlank(service_phone)) {
+            paraMap.put("service_phone", service_phone);
+        }
+        if (StringUtils.isNotBlank(contact_name)) {
+            paraMap.put("contact_name", contact_name);
+        }
+        if (StringUtils.isNotBlank(contact_phone)) {
+            paraMap.put("contact_phone", contact_phone);
+        }
+        if (StringUtils.isNotBlank(contact_mobile)) {
+            paraMap.put("contact_mobile", contact_mobile);
+        }
+        if (StringUtils.isNotBlank(contact_email)) {
+            paraMap.put("contact_email", contact_email);
+        }
+        if (StringUtils.isNotBlank(category_id)) {
+            paraMap.put("category_id", category_id);
+        }
+        if (StringUtils.isNotBlank(source)) {
+            paraMap.put("source", source);
+        }
+        if (StringUtils.isNotBlank(memo)) {
+            paraMap.put("memo", memo);
+        }
+
+        return paraMap;
+    }
 }

@@ -4,6 +4,10 @@
  */
 package org.tradecore.alipay.facade.response;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 商户信息DTO
  * @author HuHui
@@ -15,25 +19,40 @@ public class MerchantCreateResponse extends BaseResponse {
     private static final long serialVersionUID = 4668599991968331916L;
 
     /** 收单机构编号 */
-    private String            acquirerId;
+    private String            acquirer_id;
 
     /** 商户标识号 */
-    private String            merchantId;
+    private String            merchant_id;
 
     public String getAcquirerId() {
-        return acquirerId;
+        return acquirer_id;
     }
 
     public void setAcquirerId(String acquirerId) {
-        this.acquirerId = acquirerId;
+        this.acquirer_id = acquirerId;
     }
 
     public String getMerchantId() {
-        return merchantId;
+        return merchant_id;
     }
 
     public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
+        this.merchant_id = merchantId;
+    }
+
+    /**
+     * 将不为空的参数放入TreeMap，用于签名
+     */
+    public Map<String, String> buildSortedParaMap() {
+        Map<String, String> paraMap = super.buildSortedParaMap();
+        if (StringUtils.isNotBlank(acquirer_id)) {
+            paraMap.put("acquirer_id", acquirer_id);
+        }
+        if (StringUtils.isNotBlank(merchant_id)) {
+            paraMap.put("merchant_id", merchant_id);
+        }
+
+        return paraMap;
     }
 
 }

@@ -37,4 +37,7 @@ public class ParamConstant {
     /** 商户标识号 */
     public static final String MERCHANT_ID           = "merchantId";
 
+    /** 签名 */
+    public static final String SIGN                  = "sign";
+
 }

@@ -5,13 +5,16 @@
 package org.tradecore.alipay.facade.response;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.tradecore.alipay.enums.BizResultEnum;
 
 /**
- * Data Transfer Object(DTO)基础类
+ * 基础响应类
  * @author HuHui
  * @version $Id: BaseResponse.java, v 0.1 2016年7月15日 上午12:17:44 HuHui Exp $
  */
@@ -34,9 +37,6 @@ public class BaseResponse implements Serializable {
 
     /** 响应消息体 */
     private String            body;
-
-    /** 签名 */
-    private String            sign;
 
     public String getCode() {
         return code;
@@ -83,12 +83,29 @@ public class BaseResponse implements Serializable {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public String getSign() {
-        return sign;
-    }
+    /**
+     * 将不为空的参数放入TreeMap，用于签名
+     */
+    public Map<String, String> buildSortedParaMap() {
+        Map<String, String> paraMap = new TreeMap<String, String>();
 
-    public void setSign(String sign) {
-        this.sign = sign;
+        if (StringUtils.isNotBlank(code)) {
+            paraMap.put("code", code);
+        }
+        if (StringUtils.isNotBlank(msg)) {
+            paraMap.put("msg", msg);
+        }
+        if (StringUtils.isNotBlank(sub_code)) {
+            paraMap.put("sub_code", sub_code);
+        }
+        if (StringUtils.isNotBlank(sub_msg)) {
+            paraMap.put("sub_msg", sub_msg);
+        }
+        if (StringUtils.isNotBlank(body)) {
+            paraMap.put("body", body);
+        }
+
+        return paraMap;
     }
 
     /**

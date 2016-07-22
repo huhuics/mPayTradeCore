@@ -26,17 +26,17 @@ public class SecureUtil {
 
     /**
      * 对响应进行签名<br>
-     * @param paraMap    必须传进来的参数是TreeMap
+     * @param sortedParaMap    必须传进来的参数是TreeMap
      * @return
      */
-    public static String sign(Map<String, String> paraMap) {
+    public static String sign(Map<String, String> sortedParaMap) {
 
         String sign = null;
 
         try {
-            sign = AlipaySignature.rsaSign(paraMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
+            sign = AlipaySignature.rsaSign(sortedParaMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(paraMap));
+            LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(sortedParaMap));
             throw new RuntimeException("加签发生异常");
         }
 
