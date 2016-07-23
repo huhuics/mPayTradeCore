@@ -36,7 +36,8 @@
 		<property name="testOnBorrow" value="false" />
 		<property name="testOnReturn" value="false" />
 		<property name="validationQuery" value="SELECT 'x' FROM DUAL" />
-		<property name="timeBetweenLogStatsMillis" value="60000" />
+		<!-- 定时输出统计信息 (5分钟)-->
+		<property name="timeBetweenLogStatsMillis" value="300000" />
 		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
 		<property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
 		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
