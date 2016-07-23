@@ -243,6 +243,14 @@ public class BizSimulatorController {
             map.put("merchantId", precreateRequest.getMerchantId());
             map.put("outTradeNo", precreateRequest.getOutTradeNo());
 
+            //拼装二维码图片在服务器端的绝对地址
+            String classPath = this.getClass().getResource("/").toString();
+            String filePath = classPath.substring(5, classPath.length() - 8);
+
+            //线上使用这个
+            //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+
+            //本地使用这个
             String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
