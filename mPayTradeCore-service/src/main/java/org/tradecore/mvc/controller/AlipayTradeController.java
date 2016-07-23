@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -319,6 +320,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
+        String notifyUrl = paraMap.get(OUT_NOTIFY_URL);
 
         LogUtil.info(logger, "扫码支付报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
@@ -327,7 +329,8 @@ public class AlipayTradeController extends AbstractBizController {
 
         precreateRequest.setAcquirerId(acquirerId);
         precreateRequest.setMerchantId(bizParaMap.get("merchant_id"));
-        precreateRequest.setScene(bizParaMap.get("scene"));
+        //由于扫码支付没有scene这个参数，此处统一为SCAN_CODE
+        precreateRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
         precreateRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
         precreateRequest.setSellerId(bizParaMap.get("seller_id"));
         precreateRequest.setTotalAmount(bizParaMap.get("total_amount"));
@@ -354,7 +357,7 @@ public class AlipayTradeController extends AbstractBizController {
         precreateRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
 
         //结算中心通知商户地址
-        precreateRequest.setOutNotifyUrl(bizParaMap.get("notify_url"));
+        precreateRequest.setOutNotifyUrl(notifyUrl);
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
