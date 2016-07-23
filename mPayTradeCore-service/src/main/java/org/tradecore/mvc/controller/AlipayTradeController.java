@@ -4,10 +4,13 @@
  */
 package org.tradecore.mvc.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,6 +37,8 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
+import com.alipay.demo.trade.model.ExtendParams;
+import com.alipay.demo.trade.model.GoodsDetail;
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
@@ -91,6 +96,7 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 处理扫码支付请求
      */
+    @ResponseBody
     @RequestMapping(value = "/precreate", method = RequestMethod.POST)
     public String precreate(WebRequest request, ModelMap map) {
 
@@ -103,7 +109,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
-            PrecreateRequest precreateRequest = buildPrecreateRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            PrecreateRequest precreateRequest = buildPrecreateRequest(paraMap);
 
             precreateResult = tradeService.precreate(precreateRequest);
         } catch (Exception e) {
@@ -123,6 +129,7 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 处理订单查询请求
      */
+    @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public String query(WebRequest request, ModelMap map) {
 
@@ -135,7 +142,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
-            QueryRequest queryRequest = buildQueryRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            QueryRequest queryRequest = buildQueryRequest(paraMap);
 
             queryResult = tradeService.query(queryRequest);
         } catch (Exception e) {
@@ -156,6 +163,7 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 处理订单退款请求
      */
+    @ResponseBody
     @RequestMapping(value = "/refund", method = RequestMethod.POST)
     public String refund(WebRequest request, ModelMap map) {
 
@@ -168,7 +176,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
-            RefundRequest refundRequest = buildRefundRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            RefundRequest refundRequest = buildRefundRequest(paraMap);
 
             refundResult = tradeService.refund(refundRequest);
         } catch (Exception e) {
@@ -189,6 +197,7 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 处理订单撤销请求
      */
+    @ResponseBody
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
     public String cancel(WebRequest request, ModelMap map) {
 
@@ -201,7 +210,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
-            CancelRequest cancelRequest = buildCancelRequest(paraMap.get(ParamConstant.BIZ_CONTENT));
+            CancelRequest cancelRequest = buildCancelRequest(paraMap);
 
             cancelResponse = tradeService.cancel(cancelRequest);
         } catch (Exception e) {
@@ -221,20 +230,23 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 创建撤销请求
      */
-    private CancelRequest buildCancelRequest(String bizContent) {
+    private CancelRequest buildCancelRequest(Map<String, String> paraMap) {
 
         CancelRequest cancelRequest = new CancelRequest();
 
-        LogUtil.info(logger, "订单撤销报文原始业务参数,biz_content={0}", bizContent);
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
+
+        LogUtil.info(logger, "订单撤销报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
-        Map<String, String> paraMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        cancelRequest.setAcquirerId(paraMap.get("acquirer_id"));
-        cancelRequest.setMerchantId(paraMap.get("merchant_id"));
-        cancelRequest.setOutTradeNo(paraMap.get("out_trade_no"));
-        cancelRequest.setAppAuthToken(paraMap.get("app_auth_token"));
+        cancelRequest.setAcquirerId(acquirerId);
+        cancelRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        cancelRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        cancelRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
 
         LogUtil.info(logger, "创建撤销请求成功,cancelRequest={0}", cancelRequest);
 
@@ -244,24 +256,27 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 创建退款请求
      */
-    private RefundRequest buildRefundRequest(String bizContent) {
+    private RefundRequest buildRefundRequest(Map<String, String> paraMap) {
 
         RefundRequest refundRequest = new RefundRequest();
 
-        LogUtil.info(logger, "订单退款报文原始业务参数,biz_content={0}", bizContent);
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
 
-        Map<String, String> paraMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        LogUtil.info(logger, "订单退款报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
+
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        refundRequest.setAcquirerId(paraMap.get("acquirer_id"));
-        refundRequest.setMerchantId(paraMap.get("merchant_id"));
-        refundRequest.setOutTradeNo(paraMap.get("out_trade_no"));
-        refundRequest.setAlipayTradeNo(paraMap.get("trade_no"));
-        refundRequest.setRefundAmount(paraMap.get("refund_amount"));
-        refundRequest.setRefundReason(paraMap.get("refund_reason"));
-        refundRequest.setOutRequestNo(paraMap.get("out_request_no"));
-        refundRequest.setStoreId(paraMap.get("store_id"));
-        refundRequest.setTerminalId(paraMap.get("terminal_id"));
+        refundRequest.setAcquirerId(acquirerId);
+        refundRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        refundRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        refundRequest.setAlipayTradeNo(bizParaMap.get("trade_no"));
+        refundRequest.setRefundAmount(bizParaMap.get("refund_amount"));
+        refundRequest.setRefundReason(bizParaMap.get("refund_reason"));
+        refundRequest.setOutRequestNo(bizParaMap.get("out_request_no"));
+        refundRequest.setStoreId(bizParaMap.get("store_id"));
+        refundRequest.setTerminalId(bizParaMap.get("terminal_id"));
 
         LogUtil.info(logger, "创建退款请求成功,refundRequest={0}", refundRequest);
 
@@ -271,21 +286,24 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 创建订单查询请求
      */
-    private QueryRequest buildQueryRequest(String bizContent) {
+    private QueryRequest buildQueryRequest(Map<String, String> paraMap) {
 
         QueryRequest queryRequest = new QueryRequest();
 
-        LogUtil.info(logger, "订单查询报文原始业务参数,biz_content={0}", bizContent);
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
+
+        LogUtil.info(logger, "订单查询报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
-        Map<String, String> paraMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        queryRequest.setAcquirerId(paraMap.get("acquirer_id"));
-        queryRequest.setMerchantId(paraMap.get("merchant_id"));
-        queryRequest.setOutTradeNo(paraMap.get("out_trade_no"));
-        queryRequest.setAlipayTradeNo(paraMap.get("trade_no"));
-        queryRequest.setAppAuthToken(paraMap.get("app_auth_token"));
+        queryRequest.setAcquirerId(acquirerId);
+        queryRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        queryRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        queryRequest.setAlipayTradeNo(bizParaMap.get("trade_no"));
+        queryRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
 
         LogUtil.info(logger, "创建订单查询请求成功,queryRequest={0}", queryRequest);
 
@@ -295,38 +313,48 @@ public class AlipayTradeController extends AbstractBizController {
     /**
      * 创建扫码支付请求
      */
-    private PrecreateRequest buildPrecreateRequest(String bizContent) {
+    private PrecreateRequest buildPrecreateRequest(Map<String, String> paraMap) {
 
         PrecreateRequest precreateRequest = new PrecreateRequest();
 
-        LogUtil.info(logger, "扫码支付报文原始业务参数,biz_content={0}", bizContent);
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
 
-        Map<String, String> paraMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        LogUtil.info(logger, "扫码支付报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
+
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        precreateRequest.setAcquirerId(paraMap.get("acquirer_id"));
-        precreateRequest.setMerchantId(paraMap.get("merchant_id"));
-        precreateRequest.setScene(paraMap.get("scene"));
-        precreateRequest.setOutTradeNo(paraMap.get("out_trade_no"));
-        precreateRequest.setSellerId(paraMap.get("seller_id"));
-        precreateRequest.setTotalAmount(paraMap.get("total_amount"));
-        precreateRequest.setDiscountableAmount(paraMap.get("discountable_amount"));
-        precreateRequest.setUndiscountableAmount(paraMap.get("undiscountable_amount"));
-        precreateRequest.setSubject(paraMap.get("subject"));
-        precreateRequest.setBody(paraMap.get("body"));
-        precreateRequest.setAppAuthToken(paraMap.get("app_auth_token"));
-        //TODO:封装成List
-        //        payRequest.setGoodsDetailList(request.getParameter(""));
-        precreateRequest.setOperatorId(paraMap.get("operator_id"));
-        precreateRequest.setStoreId(paraMap.get("store_id"));
-        precreateRequest.setAlipayStoreId(paraMap.get("alipay_store_id"));
-        precreateRequest.setTerminalId(paraMap.get("terminal_id"));
-        //TODO:封装成ExtendParams
-        //        payRequest.setExtendParams(request.getParameter(""));
-        precreateRequest.setTimeoutExpress(paraMap.get("timeout_express"));
+        precreateRequest.setAcquirerId(acquirerId);
+        precreateRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        precreateRequest.setScene(bizParaMap.get("scene"));
+        precreateRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        precreateRequest.setSellerId(bizParaMap.get("seller_id"));
+        precreateRequest.setTotalAmount(bizParaMap.get("total_amount"));
+        precreateRequest.setDiscountableAmount(bizParaMap.get("discountable_amount"));
+        precreateRequest.setUndiscountableAmount(bizParaMap.get("undiscountable_amount"));
+        precreateRequest.setSubject(bizParaMap.get("subject"));
+        precreateRequest.setBody(bizParaMap.get("body"));
+        precreateRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
+
+        //封装成List
+        if (StringUtils.isNotBlank(bizParaMap.get("goods_detail"))) {
+            precreateRequest.setGoodsDetailList(parseGoodsDetailList(bizParaMap.get("goods_detail")));
+        }
+
+        precreateRequest.setOperatorId(bizParaMap.get("operator_id"));
+        precreateRequest.setStoreId(bizParaMap.get("store_id"));
+        precreateRequest.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
+        precreateRequest.setTerminalId(bizParaMap.get("terminal_id"));
+
+        if (StringUtils.isNotBlank(bizParaMap.get("extend_params"))) {
+            precreateRequest.setExtendParams(parseExtendParams(bizParaMap.get("extend_params")));
+        }
+
+        precreateRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
 
         //结算中心通知商户地址
-        precreateRequest.setOutNotifyUrl(paraMap.get("notify_url"));
+        precreateRequest.setOutNotifyUrl(bizParaMap.get("notify_url"));
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
@@ -345,7 +373,7 @@ public class AlipayTradeController extends AbstractBizController {
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
 
-        LogUtil.info(logger, "条码支付报文原始业务参数,biz_content={0}", bizContent);
+        LogUtil.info(logger, "条码支付报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
@@ -362,14 +390,22 @@ public class AlipayTradeController extends AbstractBizController {
         payRequest.setSubject(bizParaMap.get("subject"));
         payRequest.setBody(bizParaMap.get("body"));
         payRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
-        //TODO:封装成List
-        //        payRequest.setGoodsDetailList(paraMap.get(""));
+
+        //封装成List
+        if (StringUtils.isNotBlank(bizParaMap.get("goods_detail"))) {
+            payRequest.setGoodsDetailList(parseGoodsDetailList(bizParaMap.get("goods_detail")));
+        }
+
         payRequest.setOperatorId(bizParaMap.get("operator_id"));
         payRequest.setStoreId(bizParaMap.get("store_id"));
         payRequest.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
         payRequest.setTerminalId(bizParaMap.get("terminal_id"));
-        //TODO:封装成ExtendParams
-        //        payRequest.setExtendParams(paraMap.get(""));
+
+        //获取ExtendParams
+        if (StringUtils.isNotBlank(bizParaMap.get("extend_params"))) {
+            payRequest.setExtendParams(parseExtendParams(bizParaMap.get("extend_params")));
+        }
+
         payRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
 
         payRequest.setAuthCode(bizParaMap.get("auth_code"));
@@ -377,6 +413,48 @@ public class AlipayTradeController extends AbstractBizController {
         LogUtil.info(logger, "创建条码支付请求成功,payRequest={0}", payRequest);
 
         return payRequest;
+    }
+
+    /**
+     * 解析GoodsDetail
+     */
+    private List<GoodsDetail> parseGoodsDetailList(String goodsDetailListStr) {
+
+        List<GoodsDetail> goodsDetails = new ArrayList<GoodsDetail>();
+
+        List<Map<String, String>> listMap = JSON.parseObject(goodsDetailListStr, new TypeReference<List<Map<String, String>>>() {
+        });
+
+        for (int i = 0; i < listMap.size(); i++) {
+            Map<String, String> goodsDetailMap = listMap.get(i);
+            GoodsDetail goodDetail = new GoodsDetail();
+            goodDetail.setAlipayGoodsId(goodsDetailMap.get("alipay_goods_id"));
+            goodDetail.setGoodsCategory(goodsDetailMap.get("goods_category"));
+            goodDetail.setGoodsId(goodsDetailMap.get("goods_id"));
+            goodDetail.setGoodsName(goodsDetailMap.get("goods_name"));
+            if (StringUtils.isNotBlank(goodsDetailMap.get("price"))) {
+                goodDetail.setPrice(Long.parseLong(goodsDetailMap.get("price")));
+            }
+            if (StringUtils.isNotBlank(goodsDetailMap.get("quantity"))) {
+                goodDetail.setQuantity(Double.parseDouble(goodsDetailMap.get("quantity")));
+            }
+
+            goodsDetails.add(goodDetail);
+        }
+
+        return goodsDetails;
+    }
+
+    /**
+     * 解析ExtendParams
+     */
+    private ExtendParams parseExtendParams(String extendParamsStr) {
+        Map<String, String> extendParamsMap = JSON.parseObject(extendParamsStr, new TypeReference<Map<String, String>>() {
+        });
+        ExtendParams extendParams = new ExtendParams();
+        extendParams.setSysServiceProviderId(extendParamsMap.get("sys_service _provider_id"));
+
+        return extendParams;
     }
 
     //以下方法存在的意义在于， 当发生异常，避免响应为null而抛出NullpointException

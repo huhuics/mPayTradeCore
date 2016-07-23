@@ -5,6 +5,7 @@
 package org.tradecore.service.test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -23,7 +24,7 @@ import com.alibaba.fastjson.TypeReference;
  * @author HuHui
  * @version $Id: FastJSONTest.java, v 0.1 2016年7月9日 上午11:06:22 HuHui Exp $
  */
-public class FastJSONTest extends BaseTest {
+public class FastJSONTest {
 
     private static final Logger logger = LoggerFactory.getLogger(FastJSONTest.class);
 
@@ -72,5 +73,25 @@ public class FastJSONTest extends BaseTest {
 
         LogUtil.info(logger, "paraMap={0}", paraMap);
 
+    }
+
+    @Test
+    public void testExtendParams() {
+        String extend_params_str = "{\"sys_service _provider_id\":\"333444\"}";
+        Map<String, String> extendParams0 = JSON.parseObject(extend_params_str, new TypeReference<Map<String, String>>() {
+        });
+
+        LogUtil.info(logger, "extendParams0={0}", extendParams0.get("sys_service _provider_id"));
+    }
+
+    @Test
+    public void testGoodsList() {
+        String goods_list_str = "[{\"price\":28,\"goods_id\":\"123\",\"goods_name\":\"红烧肉\",\"quantity\":1},{\"price\":12,\"goods_id\":\"1111\",\"goods_name\":\"蛋炒饭\",\"quantity\":1}]";
+        List<Map<String, String>> listMap = JSON.parseObject(goods_list_str, new TypeReference<List<Map<String, String>>>() {
+        });
+
+        for (int i = 0; i < listMap.size(); i++) {
+            LogUtil.info(logger, "{0}", listMap.get(i));
+        }
     }
 }
