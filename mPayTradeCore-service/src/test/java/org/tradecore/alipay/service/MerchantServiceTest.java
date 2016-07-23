@@ -48,7 +48,7 @@ public class MerchantServiceTest extends BaseTest {
         //封装测试请求参数
         MerchantCreateRequest merchantCreateRequest = new MerchantCreateRequest();
         merchantCreateRequest.setExternal_id(geneRandomId());
-        merchantCreateRequest.setAcquirer_id("acquirerId" + geneRandomId());
+        merchantCreateRequest.setAcquirer_id("10880010001");
         merchantCreateRequest.setName("测试商户");
         merchantCreateRequest.setAlias_name("测试别名");
         merchantCreateRequest.setService_phone("95188");

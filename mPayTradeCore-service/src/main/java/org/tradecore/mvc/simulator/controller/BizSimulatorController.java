@@ -80,8 +80,6 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT = "mechQueryResult";
 
-    private static final String ERROR_MESSAGE     = "返回为空";
-
     /** 交易服务接口 */
     @Resource
     private TradeService        tradeService;
@@ -382,8 +380,8 @@ public class BizSimulatorController {
         if (createResponse != null && StringUtils.equals(createResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
             map.put("code", createResponse.getCode());
             map.put("msg", createResponse.getMsg());
-            map.put("acquirerId", createResponse.getAcquirerId());
-            map.put("merchantId", createResponse.getMerchantId());
+            map.put("acquirerId", createResponse.getAcquirer_id());
+            map.put("merchantId", createResponse.getAcquirer_id());
         }
 
         return RESULT;
@@ -410,7 +408,7 @@ public class BizSimulatorController {
 
         if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
             map.put("acquirer_id", queryResponse.getAcquirer_id());
-            map.put("sub_merchant_id", queryResponse.getSub_merchant_id());
+            map.put("sub_merchant_id", queryResponse.getMerchant_id());
             map.put("external_id", queryResponse.getExternal_id());
             map.put("name", queryResponse.getName());
             map.put("alias_name", queryResponse.getAlias_name());

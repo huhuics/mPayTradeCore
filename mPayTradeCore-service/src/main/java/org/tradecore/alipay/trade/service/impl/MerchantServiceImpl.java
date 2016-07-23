@@ -297,8 +297,8 @@ public class MerchantServiceImpl implements MerchantService {
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
-        createResponse.setAcquirerId(acquirerId);
-        createResponse.setMerchantId(merchantId);
+        createResponse.setAcquirer_id(acquirerId);
+        createResponse.setMerchant_id(merchantId);
         createResponse.setCode(code);
         createResponse.setMsg(msg);
 
@@ -315,7 +315,7 @@ public class MerchantServiceImpl implements MerchantService {
         }
 
         queryResponse.setAcquirer_id(merchantInfo.getAcquirerId());
-        queryResponse.setSub_merchant_id(merchantInfo.getMerchantId());
+        queryResponse.setMerchant_id(merchantInfo.getMerchantId());
         queryResponse.setExternal_id(merchantInfo.getExternalId());
         queryResponse.setName(merchantInfo.getName());
         queryResponse.setAlias_name(merchantInfo.getAliasName());

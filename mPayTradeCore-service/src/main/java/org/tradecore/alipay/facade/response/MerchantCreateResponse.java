@@ -24,20 +24,20 @@ public class MerchantCreateResponse extends BaseResponse {
     /** 商户标识号 */
     private String            merchant_id;
 
-    public String getAcquirerId() {
+    public String getAcquirer_id() {
         return acquirer_id;
     }
 
-    public void setAcquirerId(String acquirerId) {
-        this.acquirer_id = acquirerId;
+    public void setAcquirer_id(String acquirer_id) {
+        this.acquirer_id = acquirer_id;
     }
 
-    public String getMerchantId() {
+    public String getMerchant_id() {
         return merchant_id;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchant_id = merchantId;
+    public void setMerchant_id(String merchant_id) {
+        this.merchant_id = merchant_id;
     }
 
     /**

@@ -52,12 +52,12 @@ public class MerchantQueryResponse extends BaseResponse {
         this.acquirer_id = acquirer_id;
     }
 
-    public String getSub_merchant_id() {
+    public String getMerchant_id() {
         return merchant_id;
     }
 
-    public void setSub_merchant_id(String sub_merchant_id) {
-        this.merchant_id = sub_merchant_id;
+    public void setMerchant_id(String merchant_id) {
+        this.merchant_id = merchant_id;
     }
 
     public String getExternal_id() {
