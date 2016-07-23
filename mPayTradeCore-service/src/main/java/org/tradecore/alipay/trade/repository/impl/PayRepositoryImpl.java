@@ -84,6 +84,7 @@ public class PayRepositoryImpl implements PayRepository {
             payOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
             payOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
             payOrder.setGmtPayment(response.getGmtPayment());
+            payOrder.setCheckDate(DateUtil.format(response.getGmtPayment(), DateUtil.shortFormat));
         } else {
             LogUtil.info(logger, "支付宝条码支付失败");
 

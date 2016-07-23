@@ -75,6 +75,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setRefundDetailItemList(JSON.toJSONString(response.getRefundDetailItemList()));
             refundOrder.setBuyerUserId(response.getBuyerUserId());
             refundOrder.setGmtRefundPay(response.getGmtRefundPay());
+            refundOrder.setCheckDate(DateUtil.format(response.getGmtRefundPay(), DateUtil.shortFormat));
 
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
             if (isTotalRefund(refundRequest.getOutTradeNo(), oriOrder.getTotalAmount(), refundOrder.getRefundAmount())) {
