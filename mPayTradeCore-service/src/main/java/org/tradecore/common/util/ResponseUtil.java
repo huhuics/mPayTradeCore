@@ -4,9 +4,15 @@
  */
 package org.tradecore.common.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.mvc.controller.AlipayTradeController;
 import org.tradecore.mvc.controller.MerchantController;
@@ -20,6 +26,9 @@ import com.alibaba.fastjson.TypeReference;
  * @version $Id: ResponseUtil.java, v 0.1 2016年7月22日 下午8:07:24 HuHui Exp $
  */
 public class ResponseUtil {
+
+    /** 日志 */
+    private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
 
     /**
      * 创建json返回数据<br>
@@ -56,6 +65,33 @@ public class ResponseUtil {
         String sign = SecureUtil.sign(sortedParaMap);
 
         return buildResponse(methodName, sortedParaMap, sign);
+    }
+
+    /**
+     * 将Map中的参数拼装成key1=value1&key2=value2的形式
+     * @param params
+     * @return
+     */
+    public static String buildResponse(Map<String, String> params) {
+        if (MapUtils.isEmpty(params)) {
+            return "";
+        }
+        StringBuffer strBuff = new StringBuffer();
+        for (String key : params.keySet()) {
+            strBuff.append(key);
+            strBuff.append("=");
+            try {
+                strBuff.append(URLEncoder.encode(params.get(key), StandardCharsets.UTF_8.displayName()));
+            } catch (UnsupportedEncodingException e) {
+                LogUtil.error(e, logger, "编码异常={0}", e.getMessage());
+            }
+            strBuff.append("&");
+        }
+
+        //去除最后一个&符号
+        strBuff.deleteCharAt(strBuff.length() - 1);
+
+        return strBuff.toString();
     }
 
 }

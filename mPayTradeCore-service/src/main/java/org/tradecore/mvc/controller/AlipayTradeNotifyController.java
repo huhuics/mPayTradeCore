@@ -4,6 +4,10 @@
  */
 package org.tradecore.mvc.controller;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -50,11 +54,33 @@ public class AlipayTradeNotifyController {
 
         LogUtil.info(logger, "收到支付宝扫码支付HTTP异步通知");
 
-        NotifyRequest notifyRequest = convert2NotifyRequest(request);
+        Map<String, String> paraMap = getParameters(request);
 
-        tradeNotifyService.receiveAndSend(notifyRequest);
+        tradeNotifyService.receiveAndSend(paraMap);
 
         return SUCCESS;
+    }
+
+    /**
+     * 获取所有请求参数，并用TreeMap保存
+     * @param request
+     * @return          返回的Map对象中，参数名是按照字典顺序排序
+     */
+    private Map<String, String> getParameters(WebRequest request) {
+
+        Map<String, String> paraMap = new TreeMap<String, String>();
+
+        Iterator<String> nameItr = request.getParameterNames();
+
+        if (nameItr != null) {
+            while (nameItr.hasNext()) {
+                String paraName = nameItr.next();
+                String paraValue = request.getParameter(paraName);
+                paraMap.put(paraName, paraValue);
+            }
+        }
+
+        return paraMap;
     }
 
     /**

@@ -20,7 +20,7 @@ public class ParamConstant {
     public static final String ALIPAY_CONFIG_CHARSET           = "gbk";
 
     /** 扫码支付结果回调地址(结算中心端) */
-    public static final String NOTIFY_URL                      = "http://183.62.226.168:8089/mPay/tradeNotify/receive";
+    public static final String NOTIFY_URL                      = "http://183.62.226.168:8088/mPay/tradeNotify/receive";
 
     /** 给收单机构的异步通知响应参数名 */
     public static final String NOTIFY_RESPONSE                 = "notify_response";
@@ -39,6 +39,9 @@ public class ParamConstant {
 
     /** 签名 */
     public static final String SIGN                            = "sign";
+
+    /** 签名方式 */
+    public static final String SIGN_TYPE                       = "RSA";
 
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE        = "merchant_create_response";

@@ -55,7 +55,9 @@ public class HttpUtil {
     public static String httpClientPost(String url, List<NameValuePair> params) {
         String result = "";
         HttpClient client = new HttpClient();
-        PostMethod postMethod = new PostMethod();
+        PostMethod postMethod = new PostMethod(url);
+        postMethod.addRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+        postMethod.getParams().setContentCharset("utf-8");
         try {
             NameValuePair[] pair = new NameValuePair[params.size()];
             for (int i = 0; i < params.size(); i++) {

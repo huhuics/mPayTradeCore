@@ -45,4 +45,20 @@ public class SecureUtil {
         return sign;
     }
 
+    public static String signNotify(Map<String, String> sortedParaMap) {
+
+        String sign = null;
+
+        try {
+            LogUtil.info(logger, "签名参数={0}", JSON.toJSONString(sortedParaMap));
+            sign = AlipaySignature.rsaSign(sortedParaMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
+            LogUtil.info(logger, "生成签名={0}", sign);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(sortedParaMap));
+            throw new RuntimeException("加签发生异常");
+        }
+
+        return sign;
+    }
+
 }

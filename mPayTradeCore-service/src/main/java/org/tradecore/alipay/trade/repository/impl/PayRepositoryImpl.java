@@ -20,7 +20,6 @@ import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
-import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.common.util.AssertUtil;
@@ -182,24 +181,24 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public void updatePayOrder(BizAlipayPayOrder oriOrder, NotifyRequest notifyRequest) {
+    public void updatePayOrder(BizAlipayPayOrder oriOrder, Map<String, String> paraMap) {
 
         LogUtil.info(logger, "收到异步响应订单更新请求");
 
-        oriOrder.setOrderStatus(notifyRequest.getTradeStatus());
+        oriOrder.setOrderStatus(paraMap.get("trade_status"));
 
-        if (StringUtils.isNotBlank(notifyRequest.getReceiptAmount())) {
-            oriOrder.setReceiptAmount(new Money(notifyRequest.getReceiptAmount()));
+        if (StringUtils.isNotBlank(paraMap.get("receipt_amount"))) {
+            oriOrder.setReceiptAmount(new Money(paraMap.get("receipt_amount")));
         }
 
-        oriOrder.setAlipayTradeNo(notifyRequest.getTradeNo());
-        oriOrder.setGmtPayment(notifyRequest.getGmtPayment());
-        oriOrder.setFundBillList(notifyRequest.getFundBillList());
+        oriOrder.setAlipayTradeNo(paraMap.get("trade_no"));
+        oriOrder.setGmtPayment(DateUtil.parseDateNewFormat(paraMap.get("gmt_payment")));
+        oriOrder.setFundBillList(paraMap.get("fund_bill_list"));
 
         //封装return_detail
         Map<String, Object> returnDetailMap = new HashMap<String, Object>();
         returnDetailMap.put(JSONFieldConstant.RESPONSE, oriOrder.getReturnDetail());
-        returnDetailMap.put(JSONFieldConstant.NOTIFY_RESPONSE, notifyRequest);
+        returnDetailMap.put(JSONFieldConstant.NOTIFY_RESPONSE, paraMap);
         oriOrder.setReturnDetail(JSON.toJSONString(returnDetailMap, SerializerFeature.UseSingleQuotes));
 
         oriOrder.setGmtUpdate(new Date());

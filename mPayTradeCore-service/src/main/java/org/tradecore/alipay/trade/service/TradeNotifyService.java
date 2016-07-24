@@ -4,7 +4,7 @@
  */
 package org.tradecore.alipay.trade.service;
 
-import org.tradecore.alipay.trade.request.NotifyRequest;
+import java.util.Map;
 
 /**
  * 支付宝扫码支付异步通知服务接口
@@ -15,8 +15,8 @@ public interface TradeNotifyService {
 
     /**
      * 接收支付宝异步通知，并发送给收单机构
-     * @param notifyRequest
+     * @param paraMap
      */
-    void receiveAndSend(NotifyRequest notifyRequest);
+    void receiveAndSend(Map<String, String> paraMap);
 
 }

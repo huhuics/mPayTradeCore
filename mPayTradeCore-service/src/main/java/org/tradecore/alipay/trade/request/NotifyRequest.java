@@ -4,10 +4,14 @@
  */
 package org.tradecore.alipay.trade.request;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.lang3.StringUtils;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
@@ -77,6 +81,27 @@ public class NotifyRequest extends BaseRequest {
     private Date              gmt_close;
 
     private String            fund_bill_list;
+
+    /**
+     * 创建post请求需要的List<br>
+     * 接收来自buildSortedParaMap方法的返回值，然后添加
+     * @throws UnsupportedEncodingException 
+     */
+    public List<NameValuePair> buildPostParaList(Map<String, String> paraMap) {
+
+        paraMap.put("sign", sign);
+        paraMap.put("sign_type", sign_type);
+
+        List<NameValuePair> pairList = new ArrayList<NameValuePair>(paraMap.size());
+
+        for (String key : paraMap.keySet()) {
+            NameValuePair nvPair = new NameValuePair(key, paraMap.get(key));
+            pairList.add(nvPair);
+        }
+
+        return pairList;
+
+    }
 
     /**
      * 将不为空的参数放入TreeMap，用于签名<br>
