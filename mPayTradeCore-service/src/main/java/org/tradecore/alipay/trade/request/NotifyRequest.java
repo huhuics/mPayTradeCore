@@ -21,6 +21,7 @@ import org.tradecore.common.util.DateUtil;
  * @author HuHui
  * @version $Id: NotifyRequest.java, v 0.1 2016年7月13日 上午9:25:19 HuHui Exp $
  */
+@Deprecated
 public class NotifyRequest extends BaseRequest {
 
     /**  */

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
 import org.tradecore.common.util.DateUtil;
@@ -33,10 +34,7 @@ import org.tradecore.common.util.LogUtil;
 public class AlipayTradeNotifyController {
 
     /** 日志 */
-    private static final Logger logger  = LoggerFactory.getLogger(AlipayTradeNotifyController.class);
-
-    /** 给支付宝返回字符 */
-    private static final String SUCCESS = "success";
+    private static final Logger logger = LoggerFactory.getLogger(AlipayTradeNotifyController.class);
 
     /** 交易通知服务接口 */
     @Resource
@@ -56,9 +54,9 @@ public class AlipayTradeNotifyController {
 
         Map<String, String> paraMap = getParameters(request);
 
-        tradeNotifyService.receiveAndSend(paraMap);
+        Boolean result = tradeNotifyService.receiveAndSend(paraMap);
 
-        return SUCCESS;
+        return Boolean.valueOf(result) ? ParamConstant.NOTIFY_SUCCESS : ParamConstant.NOTIFY_FAILED;
     }
 
     /**
@@ -88,6 +86,7 @@ public class AlipayTradeNotifyController {
      * @param request
      * @return
      */
+    @Deprecated
     private NotifyRequest convert2NotifyRequest(WebRequest request) {
 
         NotifyRequest notifyRequest = new NotifyRequest();

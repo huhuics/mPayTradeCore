@@ -43,7 +43,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
     private static final Logger logger = LoggerFactory.getLogger(TradeNotifyServiceImpl.class);
 
     @Override
-    public void receiveAndSend(Map<String, String> paraMap) {
+    public boolean receiveAndSend(Map<String, String> paraMap) {
 
         LogUtil.info(logger, "收到扫码支付异步通知请求参数,paraMap={0}", paraMap);
 
@@ -56,17 +56,15 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, Boolean.TRUE);
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
-        //幂等
-        if (StringUtils.equals(oriOrder.getOrderStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())) {
+        //幂等控制，如果原始订单为支付成功，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构
+        if (!StringUtils.equals(oriOrder.getOrderStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())) {
             LogUtil.info(logger, "异步通知修改原始订单幂等,outTradeNo={0}", outTradeNo);
-            return;
+            //3.修改原始订单
+            payRepository.updatePayOrder(oriOrder, paraMap);
         }
 
-        //3.修改原始订单
-        payRepository.updatePayOrder(oriOrder, paraMap);
-
         //4.发送给收单机构
-        send(paraMap, oriOrder.getOutNotifyUrl());
+        return send(paraMap, oriOrder.getOutNotifyUrl());
 
     }
 
@@ -75,20 +73,20 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
      * @param notifyRequest  支付宝异步通知请求参数
      * @param outNotifyUrl   收单机构异步通知地址
      */
-    public void send(Map<String, String> paraMap, String outNotifyUrl) {
+    public boolean send(Map<String, String> paraMap, String outNotifyUrl) {
 
         LogUtil.info(logger, "开始发送扫码支付响应到收单机构,outNotifyUrl={0}", outNotifyUrl);
 
-        AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空");
+        AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空,发送消息失败");
 
         //签名
-        paraMap.remove("sign_type");
-        paraMap.remove("sign");
+        paraMap.remove(ParamConstant.SIGN_TYPE);
+        paraMap.remove(ParamConstant.SIGN);
 
         String sign = SecureUtil.signNotify(paraMap);
 
-        paraMap.put("sign_type", ParamConstant.SIGN_TYPE);
-        paraMap.put("sign", sign);
+        paraMap.put(ParamConstant.SIGN_TYPE, ParamConstant.SIGN_TYPE_VALUE);
+        paraMap.put(ParamConstant.SIGN, sign);
 
         List<NameValuePair> paraList = buildPostParaList(paraMap);
 
@@ -96,8 +94,13 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         String response = HttpUtil.httpClientPost(outNotifyUrl, paraList);
 
         LogUtil.info(logger, "完成发送扫码支付响应到收单机构,response={0}", response);
+
+        return StringUtils.equals(response, ParamConstant.NOTIFY_SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    /**
+     * 将Map中的参数转换成NamValuePair对，并封装成List
+     */
     private List<NameValuePair> buildPostParaList(Map<String, String> paraMap) {
 
         List<NameValuePair> pairList = new ArrayList<NameValuePair>(paraMap.size());

@@ -31,7 +31,7 @@ public class ParamConstant {
     /** 收单机构编号 */
     public static final String ACQUIRER_ID                     = "acquirerId";
 
-    /** 装填 */
+    /** 状态 */
     public static final String STATUS                          = "status";
 
     /** 商户标识号 */
@@ -41,7 +41,16 @@ public class ParamConstant {
     public static final String SIGN                            = "sign";
 
     /** 签名方式 */
-    public static final String SIGN_TYPE                       = "RSA";
+    public static final String SIGN_TYPE                       = "sign_type";
+
+    /** 签名方式值 */
+    public static final String SIGN_TYPE_VALUE                 = "RSA";
+
+    /** 异步通知成功 */
+    public static final String NOTIFY_SUCCESS                  = "success";
+
+    /** 异步通知失败 */
+    public static final String NOTIFY_FAILED                   = "failed";
 
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE        = "merchant_create_response";
