@@ -45,12 +45,12 @@ public class RefundRequest extends BaseRequest {
     private String            outRequestNo;
 
     /**
-     * (必填) 退款原因，可以说明用户退款原因，方便为商家后台提供统计
+     * 退款原因，可以说明用户退款原因，方便为商家后台提供统计
      */
     private String            refundReason;
 
     /**
-     * (必填) 商户门店编号
+     * 商户门店编号
      */
     private String            storeId;
 
@@ -84,10 +84,6 @@ public class RefundRequest extends BaseRequest {
         }
 
         AssertUtil.assertNotEmpty(refundAmount, "退款金额不能为空");
-
-        AssertUtil.assertNotEmpty(refundReason, "退款原因不能为空");
-
-        AssertUtil.assertNotEmpty(storeId, "商户门店编号不能为空");
 
         return true;
     }

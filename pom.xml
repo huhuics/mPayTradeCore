@@ -209,7 +209,7 @@
 			<dependency>
 				<groupId>com.alipay.f2f</groupId>
 				<artifactId>TradePaySDK</artifactId>
-				<version>20160713</version>
+				<version>20160724</version>
 			</dependency>
 			<!-- sdk end -->
 

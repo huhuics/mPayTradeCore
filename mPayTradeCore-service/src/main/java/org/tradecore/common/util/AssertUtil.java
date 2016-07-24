@@ -17,6 +17,7 @@ import com.github.pagehelper.StringUtil;
  * @version $Id: AssertUtil.java, v 0.1 2016年5月21日 下午8:49:15 HuHui Exp $
  */
 public class AssertUtil {
+
     private static final String DEFAULT_ERR_MESSAGE = "对象为null";
 
     /**

@@ -48,7 +48,7 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>退款原因：</label>
+		  <label class="control-label">退款原因：</label>
 		  <div class="controls">
 			<input type="text" class="input-large" name="refund_reason" value="${refund_reason}">
 		  </div>
@@ -60,7 +60,7 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>商户门店编号：</label>
+		  <label class="control-label">商户门店编号：</label>
 		  <div class="controls">
 			<input type="text" class="input-large" name="store_id" value="${store_id }">
 		  </div>

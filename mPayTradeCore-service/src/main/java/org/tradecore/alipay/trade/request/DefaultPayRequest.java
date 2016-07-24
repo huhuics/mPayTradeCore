@@ -87,7 +87,7 @@ public class DefaultPayRequest extends BaseRequest {
     protected String            operatorId;
 
     /**
-     * (必填)商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
+     * 商户门店编号，通过门店号和商家后台可以配置精准到门店的折扣信息，详询支付宝技术支持
      */
     protected String            storeId;
 
@@ -128,8 +128,6 @@ public class DefaultPayRequest extends BaseRequest {
         AssertUtil.assertNotEmpty(totalAmount, "订单总金额不能为空");
 
         AssertUtil.assertNotEmpty(subject, "订单标题不能为空");
-
-        AssertUtil.assertNotEmpty(storeId, "商户门店编号不能为空");
 
         return true;
     }
