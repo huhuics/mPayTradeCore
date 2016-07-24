@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
+import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
@@ -45,12 +46,12 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
     @Override
     public boolean receiveAndSend(Map<String, String> paraMap) {
 
-        LogUtil.info(logger, "收到扫码支付异步通知请求参数,paraMap={0}", paraMap);
+        LogUtil.info(logger, "收到扫码支付异步通知请求参数");
 
         //1.校验参数
         AssertUtil.assertNotNull(paraMap, "异步通知参数不能为空");
 
-        String outTradeNo = paraMap.get("out_trade_no");
+        String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, Boolean.TRUE);

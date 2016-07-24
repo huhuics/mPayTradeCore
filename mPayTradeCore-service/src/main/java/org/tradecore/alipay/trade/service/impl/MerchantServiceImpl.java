@@ -82,7 +82,7 @@ public class MerchantServiceImpl implements MerchantService {
         //  1.1判断收单机构是否存在
         AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantCreateRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
-        //2.根据受理机构号和商户外部编号查询
+        //2.根据收单机构号和商户外部编号查询
         BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
 
         //  2.1.幂等控制

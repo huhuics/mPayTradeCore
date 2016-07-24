@@ -75,6 +75,8 @@ public class AlipayTradeController extends AbstractBizController {
         try {
             Map<String, String> paraMap = getParameters(request);
 
+            LogUtil.info(logger, "条码支付原始报文参数paraMap={0}", paraMap);
+
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             PayRequest payRequest = buildPayRequest(paraMap);
@@ -107,6 +109,8 @@ public class AlipayTradeController extends AbstractBizController {
 
         try {
             Map<String, String> paraMap = getParameters(request);
+
+            LogUtil.info(logger, "扫码支付原始报文参数paraMap={0}", paraMap);
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
@@ -233,12 +237,12 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private CancelRequest buildCancelRequest(Map<String, String> paraMap) {
 
+        LogUtil.info(logger, "收到订单撤销报文转换请求");
+
         CancelRequest cancelRequest = new CancelRequest();
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
-
-        LogUtil.info(logger, "订单撤销报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
@@ -249,7 +253,7 @@ public class AlipayTradeController extends AbstractBizController {
         cancelRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
         cancelRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
 
-        LogUtil.info(logger, "创建撤销请求成功,cancelRequest={0}", cancelRequest);
+        LogUtil.info(logger, "订单撤销请求参数转换完成");
 
         return cancelRequest;
     }
@@ -259,12 +263,12 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private RefundRequest buildRefundRequest(Map<String, String> paraMap) {
 
+        LogUtil.info(logger, "收到订单退款报文转换请求");
+
         RefundRequest refundRequest = new RefundRequest();
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
-
-        LogUtil.info(logger, "订单退款报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
@@ -279,7 +283,7 @@ public class AlipayTradeController extends AbstractBizController {
         refundRequest.setStoreId(bizParaMap.get("store_id"));
         refundRequest.setTerminalId(bizParaMap.get("terminal_id"));
 
-        LogUtil.info(logger, "创建退款请求成功,refundRequest={0}", refundRequest);
+        LogUtil.info(logger, "订单退款请求参数转换完成");
 
         return refundRequest;
     }
@@ -289,12 +293,12 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private QueryRequest buildQueryRequest(Map<String, String> paraMap) {
 
+        LogUtil.info(logger, "收到订单查询报文转换请求");
+
         QueryRequest queryRequest = new QueryRequest();
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
-
-        LogUtil.info(logger, "订单查询报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
@@ -306,7 +310,7 @@ public class AlipayTradeController extends AbstractBizController {
         queryRequest.setAlipayTradeNo(bizParaMap.get("trade_no"));
         queryRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
 
-        LogUtil.info(logger, "创建订单查询请求成功,queryRequest={0}", queryRequest);
+        LogUtil.info(logger, "订单查询请求参数转换完成");
 
         return queryRequest;
     }
@@ -316,13 +320,13 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private PrecreateRequest buildPrecreateRequest(Map<String, String> paraMap) {
 
+        LogUtil.info(logger, "收到扫码支付报文转换请求");
+
         PrecreateRequest precreateRequest = new PrecreateRequest();
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
         String notifyUrl = paraMap.get(OUT_NOTIFY_URL);
-
-        LogUtil.info(logger, "扫码支付报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
@@ -361,7 +365,7 @@ public class AlipayTradeController extends AbstractBizController {
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
-        LogUtil.info(logger, "创建扫码支付请求成功,precreateRequest={0}", precreateRequest);
+        LogUtil.info(logger, "扫码支付请求参数转换完成");
 
         return precreateRequest;
     }
@@ -371,12 +375,12 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private PayRequest buildPayRequest(Map<String, String> paraMap) {
 
+        LogUtil.info(logger, "收到条码支付报文转换请求");
+
         PayRequest payRequest = new PayRequest();
 
         String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
         String acquirerId = paraMap.get(ACQUIRER_ID);
-
-        LogUtil.info(logger, "条码支付报文原始业务参数:acquirerId={0},biz_content={1}", acquirerId, bizContent);
 
         //解析json字段
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
@@ -413,7 +417,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         payRequest.setAuthCode(bizParaMap.get("auth_code"));
 
-        LogUtil.info(logger, "创建条码支付请求成功,payRequest={0}", payRequest);
+        LogUtil.info(logger, "条码支付请求参数转换完成");
 
         return payRequest;
     }

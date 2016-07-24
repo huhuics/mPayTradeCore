@@ -4,9 +4,7 @@
  */
 package org.tradecore.mvc.controller;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
@@ -31,7 +29,7 @@ import org.tradecore.common.util.LogUtil;
  */
 @Controller
 @RequestMapping("/tradeNotify")
-public class AlipayTradeNotifyController {
+public class AlipayTradeNotifyController extends AbstractBizController {
 
     /** 日志 */
     private static final Logger logger = LoggerFactory.getLogger(AlipayTradeNotifyController.class);
@@ -54,31 +52,11 @@ public class AlipayTradeNotifyController {
 
         Map<String, String> paraMap = getParameters(request);
 
+        LogUtil.info(logger, "扫码支付结果通知原始报文参数paraMap={0}", paraMap);
+
         Boolean result = tradeNotifyService.receiveAndSend(paraMap);
 
         return Boolean.valueOf(result) ? ParamConstant.NOTIFY_SUCCESS : ParamConstant.NOTIFY_FAILED;
-    }
-
-    /**
-     * 获取所有请求参数，并用TreeMap保存
-     * @param request
-     * @return          返回的Map对象中，参数名是按照字典顺序排序
-     */
-    private Map<String, String> getParameters(WebRequest request) {
-
-        Map<String, String> paraMap = new TreeMap<String, String>();
-
-        Iterator<String> nameItr = request.getParameterNames();
-
-        if (nameItr != null) {
-            while (nameItr.hasNext()) {
-                String paraName = nameItr.next();
-                String paraValue = request.getParameter(paraName);
-                paraMap.put(paraName, paraValue);
-            }
-        }
-
-        return paraMap;
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * 加载src/main/resources目录下的所有配置文件
+ * 加载src/main/resources目录下的配置文件
  * @author HuHui
  * @version $Id: Resources.java, v 0.1 2016年7月24日 下午2:48:32 HuHui Exp $
  */
