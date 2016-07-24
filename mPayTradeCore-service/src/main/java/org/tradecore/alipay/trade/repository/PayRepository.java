@@ -52,14 +52,15 @@ public interface PayRepository {
     void updateOrderCancelStatus(BizAlipayPayOrder oriOrder, BizAlipayCancelOrder cancelOrder);
 
     /**
-     * 根据商户标识号和外部商户号查询订单<br>
+     * 根据商户标识号和外部商户号或支付宝订单号查询订单<br>
      * isLock为true则加锁查询，false为普通不加锁查询
-     * @param merchantId  商户标识号
-     * @param outTradeNo  外部商户号
-     * @param isLock      是否加锁
-     * @return            订单对象
+     * @param merchantId     商户标识号
+     * @param outTradeNo     外部商户号
+     * @param alipayTradeNo  支付宝订单号
+     * @param isLock         是否加锁
+     * @return               订单对象
      */
-    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, boolean isLock);
+    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock);
 
     /**
      * 根据支付宝异步通知参数更新本地支付订单

@@ -54,7 +54,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     @Override
     public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayF2FRefundResult alipayF2FRefundResult) {
 
-        LogUtil.info(logger, "收到退款订单持久化请求,refundRequest={0}", refundRequest);
+        LogUtil.info(logger, "收到退款订单持久化请求");
 
         AlipayTradeRefundResponse response = alipayF2FRefundResult.getResponse();
 
@@ -78,7 +78,8 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setCheckDate(DateUtil.format(response.getGmtRefundPay(), DateUtil.shortFormat));
 
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
-            if (isTotalRefund(refundRequest.getOutTradeNo(), oriOrder.getTotalAmount(), refundOrder.getRefundAmount())) {
+            if (isTotalRefund(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), oriOrder.getTotalAmount(),
+                refundOrder.getRefundAmount())) {
                 oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             }
 
@@ -95,18 +96,31 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         AssertUtil.assertTrue(bizAlipayRefundOrderDAO.insert(refundOrder) > 0, "退款请求数据持久化失败");
 
+        LogUtil.info(logger, "退款订单持久化成功");
+
         return refundOrder;
     }
 
     @Override
-    public List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo, String refundStatus) {
+    public List<BizAlipayRefundOrder> selectRefundOrders(String merchantId, String outTradeNo, String alipayTradeNo, String refundStatus) {
 
         LogUtil.info(logger, "收到查询退款订单请求,outTradeNo={0},refundStatus={1}", outTradeNo, refundStatus);
 
         //封装查询参数。根据商户订单号和退款状态查询所有退款订单
         Map<String, Object> paraMap = new HashMap<String, Object>();
-        paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
-        paraMap.put(QueryFieldConstant.REFUND_STATUS, refundStatus);
+
+        if (StringUtils.isNotEmpty(merchantId)) {
+            paraMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
+        }
+        if (StringUtils.isNotEmpty(outTradeNo)) {
+            paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        }
+        if (StringUtils.isNotEmpty(alipayTradeNo)) {
+            paraMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, alipayTradeNo);
+        }
+        if (StringUtils.isNotEmpty(refundStatus)) {
+            paraMap.put(QueryFieldConstant.REFUND_STATUS, refundStatus);
+        }
 
         List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
 
@@ -116,14 +130,14 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public Money getRefundedMoney(String outTradeNo) {
+    public Money getRefundedMoney(String merchantId, String outTradeNo, String alipayTradeNo) {
 
         LogUtil.info(logger, "收到查询已成功退款总金额请求,outTradeNo={0}", outTradeNo);
 
         Money totalRefundedAmount = new Money(0);
 
         //根据商户订单号获取该订单下所有退款成功的退款订单
-        List<BizAlipayRefundOrder> refundOrders = selectRefundOrdersByOutTradeNo(outTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        List<BizAlipayRefundOrder> refundOrders = selectRefundOrders(merchantId, outTradeNo, alipayTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
         if (CollectionUtils.isNotEmpty(refundOrders)) {
             for (BizAlipayRefundOrder order : refundOrders) {
@@ -143,17 +157,18 @@ public class RefundRepositoryImpl implements RefundRepository {
      * <li>本次退款金额+历史退款成功总金额=订单总金额</li>
      * </ul>
      * @param outTradeNo
+     * @param alipayTradeNo
      * @param totalAmount
      * @param refundAmount
      * @return
      */
-    private boolean isTotalRefund(String outTradeNo, Money totalAmount, Money refundAmount) {
+    private boolean isTotalRefund(String merchantId, String outTradeNo, String alipayTradeNo, Money totalAmount, Money refundAmount) {
 
         if (totalAmount.equals(refundAmount)) {
             return true;
         } else {
             //历史退款成功总金额
-            Money refundedMoney = getRefundedMoney(outTradeNo);
+            Money refundedMoney = getRefundedMoney(merchantId, outTradeNo, alipayTradeNo);
 
             refundedMoney.addTo(refundAmount);
 

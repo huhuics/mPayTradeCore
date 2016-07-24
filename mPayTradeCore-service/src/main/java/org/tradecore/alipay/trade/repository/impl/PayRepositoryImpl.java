@@ -114,7 +114,8 @@ public class PayRepositoryImpl implements PayRepository {
             //判断业务是否业务成功
             if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
                 //1.加锁查询本地订单数据
-                BizAlipayPayOrder order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), Boolean.TRUE);
+                BizAlipayPayOrder order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo(),
+                    Boolean.TRUE);
 
                 AssertUtil.assertNotNull(order, "原订单查询为空");
 
@@ -154,9 +155,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, boolean isLock) {
+    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) {
 
-        LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},isLock={2}", merchantId, outTradeNo, isLock);
+        LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2},isLock={3}", merchantId, outTradeNo, alipayTradeNo, isLock);
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -166,6 +167,10 @@ public class PayRepositoryImpl implements PayRepository {
 
         if (StringUtils.isNotEmpty(outTradeNo)) {
             paramMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        }
+
+        if (StringUtils.isNotEmpty(alipayTradeNo)) {
+            paramMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, alipayTradeNo);
         }
 
         BizAlipayPayOrder order;

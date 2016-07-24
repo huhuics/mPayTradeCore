@@ -6,14 +6,17 @@ package org.tradecore.alipay.trade.service.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
@@ -113,7 +116,7 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), Boolean.FALSE);
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null, Boolean.FALSE);
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
@@ -146,7 +149,8 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
         //1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), Boolean.FALSE);
+        BizAlipayPayOrder nativePayOrder = payRepository
+            .selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null, Boolean.FALSE);
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
@@ -206,12 +210,13 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
+            refundRequest.getAlipayTradeNo(), Boolean.TRUE);
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
         //  2.1原始订单和退款请求参数校验
-        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest.getRefundAmount()), "退款金额校验错误，退款失败");
+        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest), "退款金额校验错误，退款失败");
 
         //3.转换成支付宝退款请求参数
         AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
@@ -246,7 +251,8 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+            cancelRequest.getAlipayTradeNo(), Boolean.TRUE);
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -268,11 +274,16 @@ public class TradeServiceImpl implements TradeService {
 
         LogUtil.info(logger, "支付宝返回撤销业务结果cancelResponse={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
-        //6.本地持久化撤销数据
-        BizAlipayCancelOrder cancelOrder = cancelRepository.saveCancelOrder(oriOrder, cancelRequest, cancelResponse);
+        //6.查询本地是否有撤销成功记录，如果本地为空，则持久化撤销订单，并修改原交易订单的撤销状态；如果本地不为空，则不修改本地订单数据，直接返回支付宝响应
+        List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+            cancelRequest.getAlipayTradeNo(), AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
 
-        //7.修改原始订单的撤销状态
-        payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
+        if (CollectionUtils.isEmpty(cancelOrders)) {
+            //6.1 本地持久化撤销数据
+            BizAlipayCancelOrder cancelOrder = cancelRepository.saveCancelOrder(oriOrder, cancelRequest, cancelResponse);
+            //6.2 修改原始订单的撤销状态
+            payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
+        }
 
         return cancelResponse;
     }
@@ -351,19 +362,21 @@ public class TradeServiceImpl implements TradeService {
 
     /**
      * 原始订单与退款金额校验
-     * @param oriOrder      原始订单
-     * @param refundAmount  本次退款金额
+     * @param oriOrder        原始订单
+     * @param refundRequest   退款请求
      * @return
      */
-    private boolean checkFee(BizAlipayPayOrder oriOrder, String refundAmountStr) {
+    private boolean checkFee(BizAlipayPayOrder oriOrder, RefundRequest refundRequest) {
         //原订单总金额
         Money totalAmount = oriOrder.getTotalAmount();
         //本次退款金额
-        Money refundAmount = new Money(refundAmountStr);
+        Money refundAmount = new Money(refundRequest.getRefundAmount());
 
         AssertUtil.assertTrue(checkTotalFee(totalAmount, refundAmount), "退款金额不能大于订单总金额");
 
-        AssertUtil.assertTrue(checkTotalRufundFee(oriOrder.getOutTradeNo(), totalAmount, refundAmount), "多次退款,退款总金额不能大于订单总金额");
+        AssertUtil.assertTrue(
+            checkTotalRufundFee(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), totalAmount, refundAmount),
+            "多次退款,退款总金额不能大于订单总金额");
 
         return true;
     }
@@ -381,14 +394,15 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 订单总金额与所有退款总金额校验
      * @param outTradeNo
+     * @param alipayTradeNo
      * @param totalAmount
      * @param refundAmount
      * @return
      */
-    private boolean checkTotalRufundFee(String outTradeNo, Money totalAmount, Money refundAmount) {
+    private boolean checkTotalRufundFee(String merchantId, String outTradeNo, String alipayTradeNo, Money totalAmount, Money refundAmount) {
 
         //根据商户订单号获取该订单下所有退款成功的金额
-        Money refundedAmount = refundRepository.getRefundedMoney(outTradeNo);
+        Money refundedAmount = refundRepository.getRefundedMoney(merchantId, outTradeNo, alipayTradeNo);
 
         refundedAmount.addTo(refundAmount);
 

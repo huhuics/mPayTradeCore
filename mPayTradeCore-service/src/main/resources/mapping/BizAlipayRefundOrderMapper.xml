@@ -300,6 +300,9 @@
 		<include refid="Base_Column_List" />
 		from BIZ_ALIPAY_REFUND_ORDER where 
 		1 = 1
+		<if test="_parameter.containsKey('merchantId')">
+			AND MERCHANT_ID = #{merchantId}
+		</if>
 		<if test="_parameter.containsKey('outTradeNo')">
 			AND OUT_TRADE_NO = #{outTradeNo}
 		</if>
@@ -308,6 +311,9 @@
 		</if>
 		<if test="_parameter.containsKey('sendBackFee')">
 			AND SEND_BACK_FEE = #{sendBackFee}
+		</if>
+		<if test="_parameter.containsKey('alipayTradeNo')">
+			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
 		</if>
 	</select>
   

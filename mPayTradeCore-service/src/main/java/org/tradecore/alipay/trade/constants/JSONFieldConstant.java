@@ -32,6 +32,9 @@ public class JSONFieldConstant {
     /** 商户订单号 */
     public static final String OUT_TRADE_NO    = "out_trade_no";
 
+    /** 支付宝交易号 */
+    public static final String TRADE_NO        = "trade_no";
+
     /** 正常交易同步响应消息体 */
     public static final String RESPONSE        = "response";
 

@@ -5,6 +5,9 @@
 package org.tradecore.alipay.trade.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.common.util.AssertUtil;
@@ -46,7 +50,7 @@ public class CancelRepositoryImpl implements CancelRepository {
     @Override
     public BizAlipayCancelOrder saveCancelOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest, AlipayTradeCancelResponse cancelResponse) {
 
-        LogUtil.info(logger, "收到撤销订单持久化请求,cancelRequest={0}", cancelRequest);
+        LogUtil.info(logger, "收到撤销订单持久化请求");
 
         BizAlipayCancelOrder cancelOrder = convert2CancelOrder(oriOrder, cancelRequest);
 
@@ -70,7 +74,36 @@ public class CancelRepositoryImpl implements CancelRepository {
         //持久化撤销订单数据
         AssertUtil.assertTrue(bizAlipayCancelOrderDAO.insert(cancelOrder) > 0, "撤销请求数据持久化失败");
 
+        LogUtil.info(logger, "撤销订单持久化成功");
+
         return cancelOrder;
+    }
+
+    @Override
+    public List<BizAlipayCancelOrder> selectCancelOrder(String merchantId, String outTradeNo, String alipayTradeNo, String cancelStatus) {
+
+        LogUtil.info(logger, "收到撤销订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2}", merchantId, outTradeNo, alipayTradeNo);
+
+        Map<String, Object> paraMap = new HashMap<String, Object>();
+
+        if (StringUtils.isNotEmpty(merchantId)) {
+            paraMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
+        }
+        if (StringUtils.isNotEmpty(outTradeNo)) {
+            paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        }
+        if (StringUtils.isNotEmpty(alipayTradeNo)) {
+            paraMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, alipayTradeNo);
+        }
+        if (StringUtils.isNotEmpty(cancelStatus)) {
+            paraMap.put(QueryFieldConstant.CANCEL_STATUS, cancelStatus);
+        }
+
+        List<BizAlipayCancelOrder> cancelOrders = bizAlipayCancelOrderDAO.selectCancelOrders(paraMap);
+
+        LogUtil.info(logger, "撤销订单查询结果,cancelOrders={0}", cancelOrders);
+
+        return cancelOrders;
     }
 
     /**
@@ -97,4 +130,5 @@ public class CancelRepositoryImpl implements CancelRepository {
         return cancelOrder;
 
     }
+
 }

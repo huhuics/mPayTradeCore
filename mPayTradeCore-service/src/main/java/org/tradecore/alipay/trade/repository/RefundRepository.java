@@ -32,17 +32,21 @@ public interface RefundRepository {
 
     /**
      * 通过商户订单号、退款订单状态获取所有退款订单<br>
-     * @param outTradeNo    商户订单号
-     * @param refundStatus  退款状态
+     * @param merchantId     商户标识号
+     * @param outTradeNo     商户订单号
+     * @param alipayTradeNo  支付宝订单号
+     * @param refundStatus   退款状态
      * @return
      */
-    List<BizAlipayRefundOrder> selectRefundOrdersByOutTradeNo(String outTradeNo, String refundStatus);
+    List<BizAlipayRefundOrder> selectRefundOrders(String merchantId, String outTradeNo, String alipayTradeNo, String refundStatus);
 
     /**
      * 通过商户订单号获取当前订单所有已成功退款的总金额
-     * @param outTradeNo
+     * @param merchantId     商户标识号
+     * @param outTradeNo     商户订单号
+     * @param alipayTradeNo  支付宝订单号
      * @return
      */
-    Money getRefundedMoney(String outTradeNo);
+    Money getRefundedMoney(String merchantId, String outTradeNo, String alipayTradeNo);
 
 }

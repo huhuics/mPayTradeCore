@@ -53,8 +53,10 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
+        String tradeNo = paraMap.get(JSONFieldConstant.TRADE_NO);
+
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, tradeNo, Boolean.TRUE);
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //幂等控制，如果原始订单为支付成功，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构

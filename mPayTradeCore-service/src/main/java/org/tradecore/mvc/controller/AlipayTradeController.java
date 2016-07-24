@@ -251,6 +251,7 @@ public class AlipayTradeController extends AbstractBizController {
         cancelRequest.setAcquirerId(acquirerId);
         cancelRequest.setMerchantId(bizParaMap.get("merchant_id"));
         cancelRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        cancelRequest.setAlipayTradeNo(bizParaMap.get("trade_no"));
         cancelRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
 
         LogUtil.info(logger, "订单撤销请求参数转换完成");

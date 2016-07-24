@@ -13,21 +13,27 @@ package org.tradecore.alipay.trade.constants;
 public class QueryFieldConstant {
 
     /** 商户标识号 */
-    public static final String MERCHANT_ID   = "merchantId";
+    public static final String MERCHANT_ID     = "merchantId";
 
     /** 商户订单号 */
-    public static final String OUT_TRADE_NO  = "outTradeNo";
+    public static final String OUT_TRADE_NO    = "outTradeNo";
 
     /** 退款状态 */
-    public static final String REFUND_STATUS = "refundStatus";
+    public static final String REFUND_STATUS   = "refundStatus";
+
+    /** 撤销状态 */
+    public static final String CANCEL_STATUS   = "cancelStatus";
 
     /** 收单机构号 */
-    public static final String ACQUIRER_ID   = "acquirerId";
+    public static final String ACQUIRER_ID     = "acquirerId";
 
     /** 商户外部编号 */
-    public static final String EXTERNAL_ID   = "externalId";
+    public static final String EXTERNAL_ID     = "externalId";
 
     /** 某次退款实际退款金额 */
-    public static final String SEND_BACK_FEE = "sendBackFee";
+    public static final String SEND_BACK_FEE   = "sendBackFee";
+
+    /** 支付宝订单号 */
+    public static final String ALIPAY_TRADE_NO = "alipayTradeNo";
 
 }

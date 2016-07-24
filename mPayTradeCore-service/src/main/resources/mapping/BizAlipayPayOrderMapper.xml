@@ -462,6 +462,9 @@
 		<if test="_parameter.containsKey('outTradeNo')">
 			AND OUT_TRADE_NO = #{outTradeNo}
 		</if>
+		<if test="_parameter.containsKey('alipayTradeNo')">
+			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
+		</if>
 		for update
 	</select>
 	
@@ -477,6 +480,9 @@
 		</if>
 		<if test="_parameter.containsKey('outTradeNo')">
 			AND OUT_TRADE_NO = #{outTradeNo}
+		</if>
+		<if test="_parameter.containsKey('alipayTradeNo')">
+			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
 		</if>
 	</select>
 
