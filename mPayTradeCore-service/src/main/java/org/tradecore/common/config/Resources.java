@@ -17,6 +17,6 @@ import org.springframework.context.annotation.PropertySource;
 public final class Resources {
 
     /** notify_url配置 */
-    public static final ResourceBundle NOTIFY_URL = ResourceBundle.getBundle("config/notifyurl.properties");
+    public static final ResourceBundle NOTIFY_URL = ResourceBundle.getBundle("config/notifyurl");
 
 }
