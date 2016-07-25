@@ -228,6 +228,8 @@ public class TradeServiceImpl implements TradeService {
 
         AssertUtil.assertNotNull(alipayF2FRefundResult, "支付宝返回订单退款结果为空");
 
+        //5.查询本地是否
+
         //5.根据支付宝返回结果持久化退款订单，修改原订单状态
         BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
 
