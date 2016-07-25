@@ -122,6 +122,7 @@ public class PayRepositoryImpl implements PayRepository {
                 //2.判断订单状态是否一致，如果不一致则更新本地订单状态
                 if (!StringUtils.equals(order.getOrderStatus(), response.getTradeStatus())) {
                     order.setOrderStatus(response.getTradeStatus());
+                    order.setAlipayTradeNo(response.getTradeNo());
                     order.setGmtUpdate(new Date());
 
                     //更新订单

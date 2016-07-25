@@ -110,7 +110,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "138");
+        map.put("merchant_id", "196");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");
@@ -124,7 +124,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "138");
+        map.put("merchant_id", "196");
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");
@@ -389,7 +389,7 @@ public class BizSimulatorController {
             map.put("code", createResponse.getCode());
             map.put("msg", createResponse.getMsg());
             map.put("acquirerId", createResponse.getAcquirer_id());
-            map.put("merchantId", createResponse.getAcquirer_id());
+            map.put("merchantId", createResponse.getMerchant_id());
         }
 
         return RESULT;
@@ -487,6 +487,7 @@ public class BizSimulatorController {
         cancelRequest.setMerchantId(request.getParameter("merchant_id"));
         cancelRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         cancelRequest.setAppAuthToken(request.getParameter("app_auth_token"));
+        cancelRequest.setAlipayTradeNo(request.getParameter("trade_no"));
 
         LogUtil.info(logger, "创建撤销请求成功,cancelRequest={0}", cancelRequest);
 
@@ -531,6 +532,7 @@ public class BizSimulatorController {
         queryRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         queryRequest.setAlipayTradeNo(request.getParameter("trade_no"));
         queryRequest.setAppAuthToken(request.getParameter("app_auth_token"));
+        queryRequest.setAlipayTradeNo(request.getParameter("trade_no"));
 
         LogUtil.info(logger, "创建订单查询请求成功,queryRequest={0}", queryRequest);
 

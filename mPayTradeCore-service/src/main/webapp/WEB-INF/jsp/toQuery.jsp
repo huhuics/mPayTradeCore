@@ -38,7 +38,7 @@
 		<div class="control-group">
 		  <label class="control-label">支付宝订单号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="subject">
+			<input type="text" class="input-large" name="trade_no">
 		  </div>
 		</div>
 		<div class="row actions-bar">       

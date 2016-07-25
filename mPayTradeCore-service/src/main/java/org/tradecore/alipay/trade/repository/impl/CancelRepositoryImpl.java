@@ -54,21 +54,22 @@ public class CancelRepositoryImpl implements CancelRepository {
 
         BizAlipayCancelOrder cancelOrder = convert2CancelOrder(oriOrder, cancelRequest);
 
-        if (cancelResponse != null && StringUtils.equals(cancelResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {//撤销成功
-            LogUtil.info(logger, "支付宝撤销成功");
-            cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+        if (cancelResponse != null) {
+            if (StringUtils.equals(cancelResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {//撤销成功
+                LogUtil.info(logger, "支付宝撤销成功");
+                cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+                //撤销完成，交易状态改为TRADE_CLOSED
+                oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+            } else {//业务失败
+                LogUtil.info(logger, "支付宝撤销失败");
+                cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_FAILED.getCode());
+            }
+
             cancelOrder.setRetryFlag(cancelResponse.getRetryFlag());
             cancelOrder.setAction(cancelResponse.getAction());
-
-            //撤销完成，交易状态改为TRADE_CLOSED
-            oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
-
-        } else {//业务失败
-            LogUtil.info(logger, "支付宝撤销失败");
-            cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_FAILED.getCode());
+            cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
-        cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
         cancelOrder.setGmtUpdate(new Date());
 
         //持久化撤销订单数据

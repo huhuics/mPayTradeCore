@@ -4,8 +4,6 @@
  */
 package org.tradecore.alipay.trade.constants;
 
-import org.tradecore.common.config.Resources;
-
 /**
  * 参数常量
  * @author HuHui
@@ -22,7 +20,7 @@ public class ParamConstant {
     public static final String ALIPAY_CONFIG_CHARSET           = "gbk";
 
     /** 扫码支付结果回调地址(结算中心端) */
-    public static final String NOTIFY_URL                      = Resources.NOTIFY_URL.getString("notify_url");
+    public static final String NOTIFY_URL                      = "http://183.62.226.168:8088/mPay/tradeNotify/receive";
 
     /** 给收单机构的异步通知响应参数名 */
     public static final String NOTIFY_RESPONSE                 = "notify_response";
