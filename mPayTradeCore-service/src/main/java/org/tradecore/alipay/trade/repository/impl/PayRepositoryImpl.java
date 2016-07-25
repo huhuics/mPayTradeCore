@@ -80,6 +80,10 @@ public class PayRepositoryImpl implements PayRepository {
             payDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, response.getBuyerLogonId());
             payOrder.setPayDetail(JSON.toJSONString(payDetailMap));
 
+            if (StringUtils.isNotBlank(response.getReceiptAmount())) {
+                payOrder.setReceiptAmount(new Money(response.getReceiptAmount()));
+            }
+
             payOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
             payOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
             payOrder.setGmtPayment(response.getGmtPayment());
