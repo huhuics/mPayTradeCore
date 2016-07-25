@@ -431,7 +431,7 @@ public class TradeServiceImpl implements TradeService {
         String formatedStr = DateUtil.format(gmtCreate, DateUtil.shortFormat);
 
         //订单撤销截止时间
-        String endDateStr = formatedStr + "235959";
+        String endDateStr = formatedStr + ParamConstant.TIME_SUFFIX;
 
         Date endDate = DateUtil.parseDateLongFormat(endDateStr);
 

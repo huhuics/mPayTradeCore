@@ -54,6 +54,9 @@ public class ParamConstant {
     /** 异步通知失败 */
     public static final String NOTIFY_FAILED                   = "failed";
 
+    /** 时间后缀 */
+    public static final String TIME_SUFFIX                     = "235959";
+
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE        = "merchant_create_response";
 
