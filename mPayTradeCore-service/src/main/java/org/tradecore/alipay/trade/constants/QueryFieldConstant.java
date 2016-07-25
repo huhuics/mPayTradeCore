@@ -36,4 +36,7 @@ public class QueryFieldConstant {
     /** 支付宝订单号 */
     public static final String ALIPAY_TRADE_NO = "alipayTradeNo";
 
+    /** 外部退款编号 */
+    public static final String OUT_REQUEST_NO  = "outRequestNo";
+
 }

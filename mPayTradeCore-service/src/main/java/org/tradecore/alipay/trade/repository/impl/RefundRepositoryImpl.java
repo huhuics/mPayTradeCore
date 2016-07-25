@@ -21,6 +21,7 @@ import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.RefundRepository;
+import org.tradecore.alipay.trade.request.RefundOrderQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
@@ -102,24 +103,27 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public List<BizAlipayRefundOrder> selectRefundOrders(String merchantId, String outTradeNo, String alipayTradeNo, String refundStatus) {
+    public List<BizAlipayRefundOrder> selectRefundOrders(RefundOrderQueryRequest queryRequest) {
 
-        LogUtil.info(logger, "收到查询退款订单请求,outTradeNo={0},refundStatus={1}", outTradeNo, refundStatus);
+        LogUtil.info(logger, "收到查询退款订单请求,refundOrderQueryRequest={0}", queryRequest);
 
         //封装查询参数。根据商户订单号和退款状态查询所有退款订单
         Map<String, Object> paraMap = new HashMap<String, Object>();
 
-        if (StringUtils.isNotEmpty(merchantId)) {
-            paraMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
+        if (StringUtils.isNotEmpty(queryRequest.getMerchantId())) {
+            paraMap.put(QueryFieldConstant.MERCHANT_ID, queryRequest.getMerchantId());
         }
-        if (StringUtils.isNotEmpty(outTradeNo)) {
-            paraMap.put(QueryFieldConstant.OUT_TRADE_NO, outTradeNo);
+        if (StringUtils.isNotEmpty(queryRequest.getOutTradeNo())) {
+            paraMap.put(QueryFieldConstant.OUT_TRADE_NO, queryRequest.getOutTradeNo());
         }
-        if (StringUtils.isNotEmpty(alipayTradeNo)) {
-            paraMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, alipayTradeNo);
+        if (StringUtils.isNotEmpty(queryRequest.getAlipayTradeNo())) {
+            paraMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, queryRequest.getAlipayTradeNo());
         }
-        if (StringUtils.isNotEmpty(refundStatus)) {
-            paraMap.put(QueryFieldConstant.REFUND_STATUS, refundStatus);
+        if (StringUtils.isNotEmpty(queryRequest.getRefundStatus())) {
+            paraMap.put(QueryFieldConstant.REFUND_STATUS, queryRequest.getRefundStatus());
+        }
+        if (StringUtils.isNotEmpty(queryRequest.getOutRequestNo())) {
+            paraMap.put(QueryFieldConstant.OUT_REQUEST_NO, queryRequest.getOutRequestNo());
         }
 
         List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
@@ -137,7 +141,13 @@ public class RefundRepositoryImpl implements RefundRepository {
         Money totalRefundedAmount = new Money(0);
 
         //根据商户订单号获取该订单下所有退款成功的退款订单
-        List<BizAlipayRefundOrder> refundOrders = selectRefundOrders(merchantId, outTradeNo, alipayTradeNo, AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        RefundOrderQueryRequest queryRequest = new RefundOrderQueryRequest();
+        queryRequest.setMerchantId(merchantId);
+        queryRequest.setOutTradeNo(outTradeNo);
+        queryRequest.setAlipayTradeNo(alipayTradeNo);
+        queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+
+        List<BizAlipayRefundOrder> refundOrders = selectRefundOrders(queryRequest);
 
         if (CollectionUtils.isNotEmpty(refundOrders)) {
             for (BizAlipayRefundOrder order : refundOrders) {

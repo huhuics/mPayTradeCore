@@ -315,6 +315,9 @@
 		<if test="_parameter.containsKey('alipayTradeNo')">
 			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
 		</if>
+		<if test="_parameter.containsKey('outRequestNo')">
+			AND OUT_REQUEST_NO = #{outRequestNo}
+		</if>
 	</select>
   
 </mapper>

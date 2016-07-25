@@ -28,6 +28,7 @@ import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.alipay.trade.request.RefundOrderQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.alipay.trade.service.TradeService;
@@ -216,7 +217,7 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
         //  2.1原始订单和退款请求参数校验
-        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest), "退款金额校验错误，退款失败");
+        AssertUtil.assertTrue(checkFee(oriOrder, refundRequest), "退款金额不能大于订单总金额");
 
         //3.转换成支付宝退款请求参数
         AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
@@ -228,13 +229,16 @@ public class TradeServiceImpl implements TradeService {
 
         AssertUtil.assertNotNull(alipayF2FRefundResult, "支付宝返回订单退款结果为空");
 
-        //5.查询本地是否
+        //5.幂等控制。如果查询到退款成功记录，则不修改本地退款订单；如果没查询到，则持久化退款记录
+        RefundOrderQueryRequest queryRequest = buildRefundOrderQueryRequest(refundRequest);
+        List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrders(queryRequest);
+        if (CollectionUtils.isEmpty(refundOrders)) {
+            //5.1根据支付宝返回结果持久化退款订单，修改原订单状态
+            BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
 
-        //5.根据支付宝返回结果持久化退款订单，修改原订单状态
-        BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
-
-        //6.根据退款订单状态更新本地交易订单的退款状态数据
-        payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
+            //5.2根据退款订单状态更新本地交易订单的退款状态数据
+            payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
+        }
 
         return alipayF2FRefundResult;
     }
@@ -363,33 +367,35 @@ public class TradeServiceImpl implements TradeService {
     }
 
     /**
+     * 构造退款订单查询请求
+     * @param refundRequest
+     * @return
+     */
+    private RefundOrderQueryRequest buildRefundOrderQueryRequest(RefundRequest refundRequest) {
+        RefundOrderQueryRequest queryRequest = new RefundOrderQueryRequest();
+
+        queryRequest.setAlipayTradeNo(refundRequest.getAlipayTradeNo());
+        queryRequest.setMerchantId(refundRequest.getMerchantId());
+        queryRequest.setOutRequestNo(refundRequest.getOutRequestNo());
+        queryRequest.setOutTradeNo(refundRequest.getOutTradeNo());
+        queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+
+        return queryRequest;
+    }
+
+    /**
      * 原始订单与退款金额校验
      * @param oriOrder        原始订单
      * @param refundRequest   退款请求
      * @return
      */
     private boolean checkFee(BizAlipayPayOrder oriOrder, RefundRequest refundRequest) {
+
         //原订单总金额
         Money totalAmount = oriOrder.getTotalAmount();
         //本次退款金额
         Money refundAmount = new Money(refundRequest.getRefundAmount());
 
-        AssertUtil.assertTrue(checkTotalFee(totalAmount, refundAmount), "退款金额不能大于订单总金额");
-
-        AssertUtil.assertTrue(
-            checkTotalRufundFee(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), totalAmount, refundAmount),
-            "多次退款,退款总金额不能大于订单总金额");
-
-        return true;
-    }
-
-    /**
-     * 订单总金额与本次退款金额校验
-     * @param totalAmount
-     * @param refundAmount
-     * @return
-     */
-    private boolean checkTotalFee(Money totalAmount, Money refundAmount) {
         return totalAmount.compareTo(refundAmount) >= 0;
     }
 
@@ -401,6 +407,7 @@ public class TradeServiceImpl implements TradeService {
      * @param refundAmount
      * @return
      */
+    @Deprecated
     private boolean checkTotalRufundFee(String merchantId, String outTradeNo, String alipayTradeNo, Money totalAmount, Money refundAmount) {
 
         //根据商户订单号获取该订单下所有退款成功的金额

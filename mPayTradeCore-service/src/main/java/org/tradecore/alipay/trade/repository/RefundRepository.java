@@ -6,6 +6,7 @@ package org.tradecore.alipay.trade.repository;
 
 import java.util.List;
 
+import org.tradecore.alipay.trade.request.RefundOrderQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -32,13 +33,10 @@ public interface RefundRepository {
 
     /**
      * 通过商户订单号、退款订单状态获取所有退款订单<br>
-     * @param merchantId     商户标识号
-     * @param outTradeNo     商户订单号
-     * @param alipayTradeNo  支付宝订单号
-     * @param refundStatus   退款状态
+     * @param queryRequest   查询请求{@link RefundOrderQueryRequest}
      * @return
      */
-    List<BizAlipayRefundOrder> selectRefundOrders(String merchantId, String outTradeNo, String alipayTradeNo, String refundStatus);
+    List<BizAlipayRefundOrder> selectRefundOrders(RefundOrderQueryRequest queryRequest);
 
     /**
      * 通过商户订单号获取当前订单所有已成功退款的总金额
