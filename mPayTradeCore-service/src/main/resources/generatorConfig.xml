@@ -29,11 +29,14 @@
         </javaClientGenerator>  
 		
 		<!-- 生成表 -->
-		<!-- <table tableName="BIZ_ALIPAY_CANCEL_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		<table tableName="BIZ_ALIPAY_PAY_ORDER" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<columnOverride column="TOTAL_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
-		</table> -->
+			<columnOverride column="RECEIPT_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
+			<columnOverride column="DISCOUNTABLE_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
+			<columnOverride column="UNDISCOUNTABLE_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
+		</table>
 		
-		<table tableName="BIZ_ACQUIRER_INFO" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
-		
+		<!-- <table tableName="BIZ_ACQUIRER_INFO" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+		 -->
     </context>  
 </generatorConfiguration>

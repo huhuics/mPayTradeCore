@@ -90,9 +90,7 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
         payOrder.setOutTradeNo(precreateRequest.getOutTradeNo());
 
         //封装payDetail
-        Map<String, Object> payDetailMap = new HashMap<String, Object>();
-        payDetailMap.put(JSONFieldConstant.SCENE, precreateRequest.getScene());
-        payOrder.setPayDetail(JSON.toJSONString(payDetailMap));
+        payOrder.setScene(precreateRequest.getScene());
 
         payOrder.setSellerId(precreateRequest.getSellerId());
         payOrder.setTotalAmount(new Money(precreateRequest.getTotalAmount()));

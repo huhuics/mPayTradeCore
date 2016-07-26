@@ -7,7 +7,7 @@ import org.tradecore.common.util.Money;
 public class BizAlipayPayOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -2696913156538849497L;
+    private static final long serialVersionUID = 8039479720103713014L;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.ID
@@ -50,9 +50,9 @@ public class BizAlipayPayOrder extends BaseDomain {
     private String            refundStatus;
 
     /**
-     *  null, BIZ_ALIPAY_PAY_ORDER.PAY_DETAIL
+     *  null, BIZ_ALIPAY_PAY_ORDER.SCENE
      */
-    private String            payDetail;
+    private String            scene;
 
     /**
      *  null, BIZ_ALIPAY_PAY_ORDER.AUTH_CODE
@@ -243,12 +243,12 @@ public class BizAlipayPayOrder extends BaseDomain {
         this.refundStatus = refundStatus == null ? null : refundStatus.trim();
     }
 
-    public String getPayDetail() {
-        return payDetail;
+    public String getScene() {
+        return scene;
     }
 
-    public void setPayDetail(String payDetail) {
-        this.payDetail = payDetail == null ? null : payDetail.trim();
+    public void setScene(String scene) {
+        this.scene = scene == null ? null : scene.trim();
     }
 
     public String getAuthCode() {

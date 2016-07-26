@@ -33,7 +33,6 @@ import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -73,12 +72,6 @@ public class PayRepositoryImpl implements PayRepository {
 
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
             payOrder.setAlipayTradeNo(response.getTradeNo());
-
-            //增加PayDetail字段数据
-            Map<String, Object> payDetailMap = JSON.parseObject(payOrder.getPayDetail(), new TypeReference<Map<String, Object>>() {
-            });
-            payDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, response.getBuyerLogonId());
-            payOrder.setPayDetail(JSON.toJSONString(payDetailMap));
 
             if (StringUtils.isNotBlank(response.getReceiptAmount())) {
                 payOrder.setReceiptAmount(new Money(response.getReceiptAmount()));
@@ -237,9 +230,7 @@ public class PayRepositoryImpl implements PayRepository {
         payOrder.setOutTradeNo(payRequest.getOutTradeNo());
 
         //封装payDetail
-        Map<String, Object> payDetailMap = new HashMap<String, Object>();
-        payDetailMap.put(JSONFieldConstant.SCENE, payRequest.getScene());
-        payOrder.setPayDetail(JSON.toJSONString(payDetailMap));
+        payOrder.setScene(payRequest.getScene());
 
         payOrder.setAuthCode(payRequest.getAuthCode());
         payOrder.setSellerId(payRequest.getSellerId());
