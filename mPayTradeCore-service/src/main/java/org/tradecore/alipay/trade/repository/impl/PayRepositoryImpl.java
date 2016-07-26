@@ -203,6 +203,7 @@ public class PayRepositoryImpl implements PayRepository {
 
         oriOrder.setAlipayTradeNo(paraMap.get("trade_no"));
         oriOrder.setGmtPayment(DateUtil.parseDateNewFormat(paraMap.get("gmt_payment")));
+        oriOrder.setCheckDate(DateUtil.format(oriOrder.getGmtPayment(), DateUtil.shortFormat));
         oriOrder.setFundBillList(paraMap.get("fund_bill_list"));
 
         //封装return_detail

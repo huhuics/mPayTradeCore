@@ -90,6 +90,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         }
 
         if (response != null) {
+            refundOrder.setFundChange(response.getFundChange());
             refundOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
