@@ -248,10 +248,10 @@ public class BizSimulatorController {
             String filePath = classPath.substring(5, classPath.length() - 8);
 
             //线上使用这个
-            //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
 
             //本地使用这个
-            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
+            //            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 

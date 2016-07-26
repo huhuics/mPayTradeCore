@@ -120,7 +120,10 @@ public class CancelRepositoryImpl implements CancelRepository {
         cancelOrder.setAcquirerId(cancelRequest.getAcquirerId());
         cancelOrder.setMerchantId(cancelRequest.getMerchantId());
         cancelOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
-        cancelOrder.setOutTradeNo(cancelRequest.getOutTradeNo());
+
+        //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
+        cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+
         cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
 
         //TODO:时间从配置中读取

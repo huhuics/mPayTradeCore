@@ -60,7 +60,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         AlipayTradeRefundResponse response = alipayF2FRefundResult.getResponse();
 
         //将公共参数封装成Domain对象
-        BizAlipayRefundOrder refundOrder = convert2RefundOrder(refundRequest, oriOrder.getTotalAmount());
+        BizAlipayRefundOrder refundOrder = convert2RefundOrder(refundRequest, oriOrder);
 
         LogUtil.info(logger, "退款请求对象refundRequest转换成refundOrder对象成功,refundOrder={0}", refundOrder);
 
@@ -209,15 +209,17 @@ public class RefundRepositoryImpl implements RefundRepository {
      * @param refundRequest
      * @return
      */
-    private BizAlipayRefundOrder convert2RefundOrder(RefundRequest refundRequest, Money totalAmount) {
+    private BizAlipayRefundOrder convert2RefundOrder(RefundRequest refundRequest, BizAlipayPayOrder oriOrder) {
 
         BizAlipayRefundOrder refundOrder = new BizAlipayRefundOrder();
         refundOrder.setId(UUIDUtil.geneId());
         refundOrder.setAcquirerId(refundRequest.getAcquirerId());
         refundOrder.setMerchantId(refundRequest.getMerchantId());
         refundOrder.setAlipayTradeNo(refundRequest.getAlipayTradeNo());
-        refundOrder.setOutTradeNo(refundRequest.getOutTradeNo());
-        refundOrder.setTotalAmount(totalAmount);
+
+        //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
+        refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+        refundOrder.setTotalAmount(oriOrder.getTotalAmount());
 
         //由于refundAmount不可能为空，故此处不再校验
         refundOrder.setRefundAmount(new Money(refundRequest.getRefundAmount()));

@@ -334,8 +334,10 @@ public class AlipayTradeController extends AbstractBizController {
 
         precreateRequest.setAcquirerId(acquirerId);
         precreateRequest.setMerchantId(bizParaMap.get("merchant_id"));
-        //由于扫码支付没有scene这个参数，此处统一为SCAN_CODE
+
+        //此处统一为SCAN_CODE
         precreateRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
+
         precreateRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
         precreateRequest.setSellerId(bizParaMap.get("seller_id"));
         precreateRequest.setTotalAmount(bizParaMap.get("total_amount"));
@@ -389,7 +391,10 @@ public class AlipayTradeController extends AbstractBizController {
 
         payRequest.setAcquirerId(acquirerId);
         payRequest.setMerchantId(bizParaMap.get("merchant_id"));
-        payRequest.setScene(bizParaMap.get("scene"));
+
+        //此处统一为BAR_CODE
+        payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
+
         payRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
         payRequest.setSellerId(bizParaMap.get("seller_id"));
         payRequest.setTotalAmount(bizParaMap.get("total_amount"));
