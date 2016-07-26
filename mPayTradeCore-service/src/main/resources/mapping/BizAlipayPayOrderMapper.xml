@@ -465,7 +465,7 @@
 		<if test="_parameter.containsKey('alipayTradeNo')">
 			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
 		</if>
-		for update
+		for update NOWAIT
 	</select>
 	
 	<!-- 查询订单(不加锁) -->

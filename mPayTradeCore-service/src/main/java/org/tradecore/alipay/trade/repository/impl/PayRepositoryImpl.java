@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,6 @@ import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayPayOrderDAO;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
-import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -118,8 +118,13 @@ public class PayRepositoryImpl implements PayRepository {
             //判断业务是否业务成功
             if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
                 //1.加锁查询本地订单数据
-                BizAlipayPayOrder order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo(),
-                    Boolean.TRUE);
+                BizAlipayPayOrder order = null;
+                try {
+                    order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo(), Boolean.TRUE);
+                } catch (SQLException e) {
+                    LogUtil.error(e, logger, "查询数据异常");
+                    throw new RuntimeException("查询数据异常");
+                }
 
                 AssertUtil.assertNotNull(order, "原订单查询为空");
 
@@ -139,11 +144,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder) {
+    public void updateOrderRefundStatus(BizAlipayPayOrder oriOrder) {
 
         LogUtil.info(logger, "收到订单退款状态更新请求");
-
-        oriOrder.setRefundStatus(refundOrder.getRefundStatus());
 
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单退款状态修改失败");
     }
@@ -160,7 +163,7 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) {
+    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) throws SQLException {
 
         LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2},isLock={3}", merchantId, outTradeNo, alipayTradeNo, isLock);
 
@@ -178,7 +181,7 @@ public class PayRepositoryImpl implements PayRepository {
             paramMap.put(QueryFieldConstant.ALIPAY_TRADE_NO, alipayTradeNo);
         }
 
-        BizAlipayPayOrder order;
+        BizAlipayPayOrder order = null;
         if (Boolean.valueOf(isLock)) {
             order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
         } else {

@@ -4,13 +4,13 @@
  */
 package org.tradecore.alipay.trade.repository;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
-import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
@@ -38,11 +38,10 @@ public interface PayRepository {
     void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult);
 
     /**
-     * 根据退款业务是否成功更新交易订单中的退款状态
+     * 更新交易订单中的交易状态和退款状态
      * @param oriOrder         退款业务原始交易订单
-     * @param refundOrder      退款订单
      */
-    void updateOrderRefundStatus(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder);
+    void updateOrderRefundStatus(BizAlipayPayOrder oriOrder);
 
     /**
      * 根据撤销业务是否成功更新交易订单中的撤销状态
@@ -59,8 +58,9 @@ public interface PayRepository {
      * @param alipayTradeNo  支付宝订单号
      * @param isLock         是否加锁
      * @return               订单对象
+     * @throws SQLException 
      */
-    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock);
+    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) throws SQLException;
 
     /**
      * 根据支付宝异步通知参数更新本地支付订单

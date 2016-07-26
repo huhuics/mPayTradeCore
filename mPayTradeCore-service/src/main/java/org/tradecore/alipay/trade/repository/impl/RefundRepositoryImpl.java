@@ -78,6 +78,8 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setGmtRefundPay(response.getGmtRefundPay());
             refundOrder.setCheckDate(DateUtil.format(response.getGmtRefundPay(), DateUtil.shortFormat));
 
+            oriOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
             if (isTotalRefund(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), oriOrder.getTotalAmount(),
                 refundOrder.getRefundAmount())) {
@@ -87,6 +89,17 @@ public class RefundRepositoryImpl implements RefundRepository {
         } else {
             LogUtil.info(logger, "支付宝退款失败");
             refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_FAILED.getCode());
+
+            //当前订单已经成功退款的金额
+            Money refundedMoney = getRefundedMoney(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
+
+            //原始订单退款状态修改逻辑：1.如果是全额退款，原订单退款状态和支付宝返回一致；2.如果是部分退款，只记录退款成功，退款失败不更改原订单退款记录
+            if (refundedMoney.equals(new Money(0))) {//1.没有历史退款
+
+                if (oriOrder.getTotalAmount().equals(refundOrder.getRefundAmount())) {//1.1全额退款失败，则原订单退款状态失败
+                    oriOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_FAILED.getCode());
+                }
+            }
         }
 
         if (response != null) {

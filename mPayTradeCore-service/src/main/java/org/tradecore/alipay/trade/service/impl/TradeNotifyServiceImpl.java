@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,13 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, null, Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = null;
+        try {
+            oriOrder = payRepository.selectPayOrder(null, outTradeNo, null, Boolean.TRUE);
+        } catch (SQLException e) {
+            LogUtil.error(e, logger, "查询数据异常");
+            throw new RuntimeException("查询数据异常");
+        }
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //幂等控制，如果原始订单为支付成功，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构

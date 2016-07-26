@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +118,13 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null, Boolean.FALSE);
+        BizAlipayPayOrder nativePayOrder = null;
+        try {
+            nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null, Boolean.FALSE);
+        } catch (SQLException e) {
+            LogUtil.error(e, logger, "查询数据异常");
+            throw new RuntimeException("查询数据异常");
+        }
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
@@ -150,8 +157,13 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
         //1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository
-            .selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null, Boolean.FALSE);
+        BizAlipayPayOrder nativePayOrder = null;
+        try {
+            nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null, Boolean.FALSE);
+        } catch (SQLException e) {
+            LogUtil.error(e, logger, "查询数据异常");
+            throw new RuntimeException("查询数据异常");
+        }
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
@@ -211,8 +223,14 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
-            refundRequest.getAlipayTradeNo(), Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = null;
+        try {
+            oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(),
+                Boolean.TRUE);
+        } catch (SQLException e) {
+            LogUtil.error(e, logger, "查询数据异常");
+            throw new RuntimeException("查询数据异常");
+        }
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
@@ -234,10 +252,10 @@ public class TradeServiceImpl implements TradeService {
         List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrders(queryRequest);
         if (CollectionUtils.isEmpty(refundOrders)) {
             //5.1根据支付宝返回结果持久化退款订单，修改原订单状态
-            BizAlipayRefundOrder refundOrder = refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
+            refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
 
             //5.2根据退款订单状态更新本地交易订单的退款状态数据
-            payRepository.updateOrderRefundStatus(oriOrder, refundOrder);
+            payRepository.updateOrderRefundStatus(oriOrder);
         }
 
         return alipayF2FRefundResult;
@@ -257,8 +275,14 @@ public class TradeServiceImpl implements TradeService {
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
-            cancelRequest.getAlipayTradeNo(), Boolean.TRUE);
+        BizAlipayPayOrder oriOrder = null;
+        try {
+            oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo(),
+                Boolean.TRUE);
+        } catch (SQLException e) {
+            LogUtil.error(e, logger, "查询数据异常");
+            throw new RuntimeException("查询数据异常");
+        }
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
