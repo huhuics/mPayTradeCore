@@ -75,7 +75,7 @@ public class MerchantController extends AbstractBizController {
             createResponse = merchantService.create(merchantCreateRequest);
 
         } catch (Exception e) {
-            LogUtil.error(e, logger, "商户入驻HTTP调用异常,merchantCreateRequest={0}", merchantCreateRequest);
+            LogUtil.error(e, logger, "商户入驻HTTP调用异常,Message={0}", e.getMessage());
             createResponse.setBizFailed();
         }
 
@@ -116,7 +116,7 @@ public class MerchantController extends AbstractBizController {
 
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "商户信息查询HTTP调用异常,merchantQueryRequest={0}", merchantQueryRequest);
+            LogUtil.error(e, logger, "商户信息查询HTTP调用异常,Message={0}", e.getMessage());
             queryResponse.setBizFailed();
         }
 
