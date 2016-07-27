@@ -158,6 +158,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @param alipayResponse
      * @return
      */
+    @Deprecated
     private BizMerchantInfo convert2BizMerchantInfo(MerchantQueryRequest merchantQueryRequest, AlipayBossProdSubmerchantQueryResponse alipayResponse) {
         //如果业务失败，则返回null
         if (!StringUtils.equals(alipayResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
@@ -229,6 +230,7 @@ public class MerchantServiceImpl implements MerchantService {
      * @param merchantQueryRequest
      * @return
      */
+    @Deprecated
     private AlipayBossProdSubmerchantQueryRequest convert2AlipayQueryRequest(MerchantQueryRequest merchantQueryRequest) {
         AlipayBossProdSubmerchantQueryRequest alipayQueryRequest = new AlipayBossProdSubmerchantQueryRequest();
         alipayQueryRequest.setBizContent(JSON.toJSONString(merchantQueryRequest));
