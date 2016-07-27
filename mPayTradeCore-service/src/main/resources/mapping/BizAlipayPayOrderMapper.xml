@@ -435,26 +435,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 
-	<!-- 加锁查询订单 -->
-	<select id="selectForUpdate" parameterType="java.util.Map"
-		resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from BIZ_ALIPAY_PAY_ORDER
-		where 1 = 1
-		<if test="_parameter.containsKey('merchantId')">
-			AND MERCHANT_ID = #{merchantId}
-		</if>
-		<if test="_parameter.containsKey('outTradeNo')">
-			AND OUT_TRADE_NO = #{outTradeNo}
-		</if>
-		<if test="_parameter.containsKey('alipayTradeNo')">
-			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
-		</if>
-
-	</select>
-
-	<!-- 查询订单(不加锁) -->
+	<!-- 查询订单 -->
 	<select id="selectOrder" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select

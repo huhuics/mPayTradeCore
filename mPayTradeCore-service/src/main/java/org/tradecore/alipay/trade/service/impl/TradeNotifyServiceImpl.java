@@ -57,7 +57,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = null;
         try {
-            oriOrder = payRepository.selectPayOrder(null, outTradeNo, null, Boolean.TRUE);
+            oriOrder = payRepository.selectPayOrder(null, outTradeNo, null);
         } catch (SQLException e) {
             LogUtil.error(e, logger, "查询数据异常");
             throw new RuntimeException("查询数据异常");

@@ -113,7 +113,7 @@ public class PayRepositoryImpl implements PayRepository {
                 //1.加锁查询本地订单数据
                 BizAlipayPayOrder order = null;
                 try {
-                    order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo(), Boolean.TRUE);
+                    order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
                 } catch (SQLException e) {
                     LogUtil.error(e, logger, "查询数据异常");
                     throw new RuntimeException("查询数据异常");
@@ -156,9 +156,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) throws SQLException {
+    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) throws SQLException {
 
-        LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2},isLock={3}", merchantId, outTradeNo, alipayTradeNo, isLock);
+        LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2}", merchantId, outTradeNo, alipayTradeNo);
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -175,11 +175,7 @@ public class PayRepositoryImpl implements PayRepository {
         }
 
         BizAlipayPayOrder order = null;
-        if (Boolean.valueOf(isLock)) {
-            order = bizAlipayPayOrderDAO.selectForUpdate(paramMap);
-        } else {
-            order = bizAlipayPayOrderDAO.selectOrder(paramMap);
-        }
+        order = bizAlipayPayOrderDAO.selectOrder(paramMap);
 
         LogUtil.info(logger, "订单查询结果,order={0}", order);
 

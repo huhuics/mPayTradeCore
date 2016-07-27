@@ -120,7 +120,7 @@ public class TradeServiceImpl implements TradeService {
         //2.幂等判断
         BizAlipayPayOrder nativePayOrder = null;
         try {
-            nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null, Boolean.FALSE);
+            nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null);
         } catch (SQLException e) {
             LogUtil.error(e, logger, "查询数据异常");
             throw new RuntimeException("查询数据异常");
@@ -159,7 +159,7 @@ public class TradeServiceImpl implements TradeService {
         //1.2幂等判断
         BizAlipayPayOrder nativePayOrder = null;
         try {
-            nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null, Boolean.FALSE);
+            nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null);
         } catch (SQLException e) {
             LogUtil.error(e, logger, "查询数据异常");
             throw new RuntimeException("查询数据异常");
@@ -225,8 +225,7 @@ public class TradeServiceImpl implements TradeService {
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = null;
         try {
-            oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(),
-                Boolean.TRUE);
+            oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
         } catch (SQLException e) {
             LogUtil.error(e, logger, "查询数据异常");
             throw new RuntimeException("查询数据异常");
@@ -277,8 +276,7 @@ public class TradeServiceImpl implements TradeService {
         //2.加锁查询原始订单
         BizAlipayPayOrder oriOrder = null;
         try {
-            oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo(),
-                Boolean.TRUE);
+            oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
         } catch (SQLException e) {
             LogUtil.error(e, logger, "查询数据异常");
             throw new RuntimeException("查询数据异常");

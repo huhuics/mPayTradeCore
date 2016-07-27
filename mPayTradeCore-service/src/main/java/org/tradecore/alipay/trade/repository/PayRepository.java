@@ -56,11 +56,10 @@ public interface PayRepository {
      * @param merchantId     商户标识号
      * @param outTradeNo     外部商户号
      * @param alipayTradeNo  支付宝订单号
-     * @param isLock         是否加锁
      * @return               订单对象
      * @throws SQLException 
      */
-    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo, boolean isLock) throws SQLException;
+    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) throws SQLException;
 
     /**
      * 根据支付宝异步通知参数更新本地支付订单
