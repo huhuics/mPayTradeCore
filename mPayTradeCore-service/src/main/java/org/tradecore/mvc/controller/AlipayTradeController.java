@@ -83,7 +83,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             payResult = tradeService.pay(payRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "条码支付HTTP调用异常");
+            LogUtil.error(e, logger, "条码支付HTTP调用异常,Message={0}", e.getMessage());
             buildPayErrorResult(payResult);
         }
 
@@ -118,7 +118,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             precreateResult = tradeService.precreate(precreateRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "扫码支付HTTP调用异常");
+            LogUtil.error(e, logger, "扫码支付HTTP调用异常,Message={0}", e.getMessage());
             buildPrecreateErrorResult(precreateResult);
         }
 
@@ -151,7 +151,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             queryResult = tradeService.query(queryRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "订单查询HTTP调用异常");
+            LogUtil.error(e, logger, "订单查询HTTP调用异常,Message={0}", e.getMessage());
             buildQueryErrorResult(queryResult);
         }
 
@@ -185,7 +185,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             refundResult = tradeService.refund(refundRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "退款HTTP调用异常");
+            LogUtil.error(e, logger, "退款HTTP调用异常,Message={0}", e.getMessage());
             buildRefundErrorResult(refundResult);
         }
 
@@ -219,7 +219,7 @@ public class AlipayTradeController extends AbstractBizController {
 
             cancelResponse = tradeService.cancel(cancelRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "撤销HTTP调用异常");
+            LogUtil.error(e, logger, "撤销HTTP调用异常,Message={0}", e.getMessage());
             buildCancelResponse(cancelResponse);
         }
 
