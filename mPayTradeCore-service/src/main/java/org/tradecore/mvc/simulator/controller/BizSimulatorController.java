@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.BizResultEnum;
@@ -136,6 +137,13 @@ public class BizSimulatorController {
 
     @RequestMapping(value = "/toQuery", method = RequestMethod.GET)
     public String toQuery(WebRequest request, ModelMap map) {
+
+        return TO_QUERY;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toStressQuery", method = RequestMethod.GET)
+    public String toStressQuery(WebRequest request, ModelMap map) {
 
         return TO_QUERY;
     }
@@ -297,6 +305,29 @@ public class BizSimulatorController {
         }
 
         return QUERY_RESULT;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/stressQuery", method = RequestMethod.POST)
+    public String stressQuery(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "模拟器收到订单查询HTTP请求");
+
+        AlipayF2FQueryResult queryResult = null;
+
+        QueryRequest queryRequest = buildQueryRequest(request);
+
+        try {
+            queryResult = tradeService.query(queryRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
+            setErrorResult(map, e.getMessage());
+        }
+
+        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));
+
+        return queryResult.getResponse().getCode();
 
     }
 
