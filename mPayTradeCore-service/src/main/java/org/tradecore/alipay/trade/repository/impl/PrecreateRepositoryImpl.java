@@ -66,7 +66,7 @@ public class PrecreateRepositoryImpl implements PrecreateRepository {
         } else {
             LogUtil.info(logger, "支付宝扫码支付业务失败");
 
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
         }
 
         if (response != null) {

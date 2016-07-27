@@ -84,7 +84,7 @@ public class PayRepositoryImpl implements PayRepository {
         } else {
             LogUtil.info(logger, "支付宝条码支付失败");
 
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
         }
 
         if (response != null) {

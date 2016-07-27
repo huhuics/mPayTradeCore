@@ -17,8 +17,6 @@ public enum AlipaySceneEnum {
 
     SCAN_CODE("scan_code", "扫码支付"),
 
-    WAVE_CODE("wave_code", "声波支付")
-
     ;
 
     /** 枚举代码 */
