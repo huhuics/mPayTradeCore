@@ -33,4 +33,11 @@ public interface BizMerchantInfoDAO {
      * @return
      */
     List<BizMerchantInfo> selectMerchant(Map<String, Object> paraMap);
+
+    /**
+     * 查询商户状态是否合法
+     * @param paraMap
+     * @return
+     */
+    BizMerchantInfo selectNormalMerchant(Map<String, Object> paraMap);
 }

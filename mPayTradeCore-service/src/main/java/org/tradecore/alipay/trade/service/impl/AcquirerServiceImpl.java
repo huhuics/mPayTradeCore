@@ -91,13 +91,9 @@ public class AcquirerServiceImpl implements AcquirerService {
         paraMap.put(ParamConstant.MERCHANT_ID, merchantId);
         paraMap.put(ParamConstant.STATUS, SubMerchantBizStatusEnum.NORMAL.getCode());
 
-        List<BizMerchantInfo> merchants = bizMerchantInfoDAO.selectMerchant(paraMap);
+        BizMerchantInfo merchant = bizMerchantInfoDAO.selectNormalMerchant(paraMap);
 
-        if (CollectionUtils.isEmpty(merchants)) {
-            return false;
-        }
-
-        return merchants.size() > 0;
+        return merchant != null;
     }
 
     @Override

@@ -282,5 +282,18 @@
 			AND STATUS = #{status}
 		</if>
 	</select>
+
+	<select id="selectNormalMerchant" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_MERCHANT_INFO
+		where merchant_id = #{merchantId}
+		and status = #{status}
+		and acquirer_id in (select acquirer_id
+		from biz_acquirer_info
+		where acquirer_id = #{acquirerId}
+		and status = #{status})
+	</select>
   
 </mapper>
