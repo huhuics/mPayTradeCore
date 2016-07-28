@@ -223,6 +223,32 @@ public class BizSimulatorController {
         return RESULT;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/stressPay", method = RequestMethod.POST)
+    public String stressPay(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "模拟器收到条码支付HTTP请求");
+
+        AlipayF2FPayResult payResult = null;
+
+        PayRequest payRequest = buildPayRequest(request);
+
+        try {
+            payResult = tradeService.pay(payRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
+        }
+
+        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,payResult={0}", JSON.toJSONString(payResult, SerializerFeature.UseSingleQuotes));
+
+        if (payResult != null && payResult.getResponse() != null) {
+            return payResult.getResponse().getCode();
+        } else {
+            return "40004";
+        }
+
+    }
+
     @RequestMapping(value = "/precreate", method = RequestMethod.POST)
     public String precreate(WebRequest request, ModelMap map) {
 
@@ -256,10 +282,10 @@ public class BizSimulatorController {
             String filePath = classPath.substring(5, classPath.length() - 8);
 
             //线上使用这个
-            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+            //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
 
             //本地使用这个
-            //            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
+            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
@@ -322,7 +348,6 @@ public class BizSimulatorController {
             queryResult = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
-            setErrorResult(map, e.getMessage());
         }
 
         LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));

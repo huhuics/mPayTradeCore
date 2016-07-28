@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -45,6 +46,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
     private static final Logger logger = LoggerFactory.getLogger(TradeNotifyServiceImpl.class);
 
     @Override
+    @Transactional
     public boolean receiveAndSend(Map<String, String> paraMap) {
 
         LogUtil.info(logger, "收到扫码支付异步通知请求参数");

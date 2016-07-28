@@ -54,7 +54,13 @@ public class AlipayTradeNotifyController extends AbstractBizController {
 
         LogUtil.info(logger, "扫码支付结果通知原始报文参数paraMap={0}", paraMap);
 
-        Boolean result = tradeNotifyService.receiveAndSend(paraMap);
+        Boolean result = null;
+        try {
+            result = tradeNotifyService.receiveAndSend(paraMap);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "接收支付宝扫码支付异步通知并发送收单机构失败,{0}", e.getMessage());
+            result = Boolean.FALSE;
+        }
 
         return Boolean.valueOf(result) ? ParamConstant.NOTIFY_SUCCESS : ParamConstant.NOTIFY_FAILED;
     }
