@@ -27,8 +27,9 @@ public interface TradeService {
      * 条码支付
      * @param payRequest  请求参数
      * @return            支付返回结果信息
+     * @throws Exception 
      */
-    AlipayF2FPayResult pay(PayRequest payRequest);
+    AlipayF2FPayResult pay(PayRequest payRequest) throws Exception;
 
     /**
      * 扫码支付，预下单(生成二维码)接口

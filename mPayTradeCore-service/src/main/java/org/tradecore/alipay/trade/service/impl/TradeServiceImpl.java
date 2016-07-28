@@ -106,7 +106,7 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     @Transactional
-    public AlipayF2FPayResult pay(PayRequest payRequest) {
+    public AlipayF2FPayResult pay(PayRequest payRequest) throws Exception {
 
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 

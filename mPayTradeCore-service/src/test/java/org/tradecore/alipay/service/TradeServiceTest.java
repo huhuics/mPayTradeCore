@@ -52,9 +52,10 @@ public class TradeServiceTest extends BaseTest {
 
     /**
      * 测试条码支付
+     * @throws Exception 
      */
     @Test
-    public void testPay() {
+    public void testPay() throws Exception {
 
         Assert.assertNotNull(tradeService);
 
