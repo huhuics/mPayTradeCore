@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>com.fesc.mPayTradeCore</groupId>
 		<artifactId>mPayTradeCore</artifactId>
-		<version>20160727</version>
+		<version>20160729</version>
 	</parent>
 
 	<name>mPayTradeCore-service</name>

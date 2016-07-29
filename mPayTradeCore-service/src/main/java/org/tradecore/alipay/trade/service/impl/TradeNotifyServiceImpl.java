@@ -56,7 +56,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
-        //2.加锁查询原始订单
+        //2.查询原始订单
         BizAlipayPayOrder oriOrder = null;
         try {
             oriOrder = payRepository.selectPayOrder(null, outTradeNo, null);
