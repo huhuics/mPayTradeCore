@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
+import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.AssertUtil;
@@ -127,6 +129,64 @@ public class MerchantController extends AbstractBizController {
         LogUtil.info(logger, "返回商户查询响应,mechQueryResponseStr={0}", mechQueryResponseStr);
 
         return mechQueryResponseStr;
+    }
+
+    /**
+     * 商户修改
+     */
+    @ResponseBody
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    public String modify(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "收到商户信息修改HTTP请求");
+
+        MerchantModifyResponse modifyResponse = new MerchantModifyResponse();
+
+        MerchantModifyRequest modifyRequest = null;
+
+        try {
+
+            //参数组装
+            Map<String, String> paraMap = getParameters(request);
+
+            LogUtil.info(logger, "商户修改原始报文参数paraMap={0}", paraMap);
+
+            AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
+            modifyRequest = buildModifyRequest(paraMap);
+
+            modifyResponse = merchantService.modify(modifyRequest);
+
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "商户信息修改HTTP调用异常,Message={0}", e.getMessage());
+            modifyResponse.setBizFailed();
+        }
+
+        String sign = SecureUtil.sign(modifyResponse.buildSortedParaMap());
+
+        String mechModifyResponseStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_MODIFY_RESPONSE, modifyResponse, sign);
+
+        LogUtil.info(logger, "返回商户信息修改响应,mechModifyResponseStr={0}", mechModifyResponseStr);
+
+        return mechModifyResponseStr;
+
+    }
+
+    private MerchantModifyRequest buildModifyRequest(Map<String, String> paraMap) {
+
+        LogUtil.info(logger, "收到商户信息修改报文转换请求");
+
+        MerchantModifyRequest modifyRequest = new MerchantModifyRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
+
+        modifyRequest = JSON.parseObject(bizContent, MerchantModifyRequest.class);
+        modifyRequest.setAcquirer_id(acquirerId);
+
+        LogUtil.info(logger, "商户信息修改参数转换完成");
+
+        return modifyRequest;
     }
 
     private MerchantQueryRequest buildQueryRequest(Map<String, String> paraMap) {

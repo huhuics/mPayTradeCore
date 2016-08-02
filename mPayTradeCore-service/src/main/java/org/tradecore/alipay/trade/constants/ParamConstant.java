@@ -63,6 +63,9 @@ public class ParamConstant {
     /** 商户查询返回json字段名 */
     public static final String MERCHANT_QUERY_RESPONSE         = "merchant_query_response";
 
+    /** 商户信息修改返回json字段名 */
+    public static final String MERCHANT_MODIFY_RESPONSE        = "merchant_modify_response";
+
     /** 条码交易返回json字段名 */
     public static final String ALIPAY_TRADE_PAY_RESPONSE       = "alipay_trade_pay_response";
 

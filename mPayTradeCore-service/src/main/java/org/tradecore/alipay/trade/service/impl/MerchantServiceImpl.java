@@ -198,9 +198,6 @@ public class MerchantServiceImpl implements MerchantService {
      */
     private void fillBizMerchantInfo(MerchantModifyRequest merchantModifyRequest, BizMerchantInfo merchantInfo) {
 
-        if (StringUtils.isNotBlank(merchantModifyRequest.getName())) {
-            merchantInfo.setName(merchantModifyRequest.getName());
-        }
         if (StringUtils.isNotBlank(merchantModifyRequest.getAlias_name())) {
             merchantInfo.setAliasName(merchantModifyRequest.getAlias_name());
         }

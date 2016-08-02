@@ -47,18 +47,18 @@ public class MerchantServiceTest extends BaseTest {
 
         //封装测试请求参数
         MerchantCreateRequest merchantCreateRequest = new MerchantCreateRequest();
-        merchantCreateRequest.setExternal_id(geneRandomId());
+        merchantCreateRequest.setExternal_id("20160802181911");
         merchantCreateRequest.setAcquirer_id("10880010001");
         merchantCreateRequest.setName("测试商户");
         merchantCreateRequest.setAlias_name("测试别名");
         merchantCreateRequest.setService_phone("95188");
         merchantCreateRequest.setContact_name("小二");
-        merchantCreateRequest.setContact_phone("0571-85022088");
-        merchantCreateRequest.setContact_mobile("13688888888");
-        merchantCreateRequest.setContact_email("user@163.com");
+        merchantCreateRequest.setContact_phone("0795-85022088");
+        merchantCreateRequest.setContact_mobile("15013789478");
+        merchantCreateRequest.setContact_email("user@126.com");
         merchantCreateRequest.setCategory_id("2015110500080520");
         merchantCreateRequest.setSource("2016070723781231");
-        merchantCreateRequest.setMemo("测试备注信息");
+        merchantCreateRequest.setMemo("备注信息");
 
         MerchantCreateResponse createResponse = merchantService.create(merchantCreateRequest);
 
@@ -75,9 +75,9 @@ public class MerchantServiceTest extends BaseTest {
 
         //封装测试请求参数
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
-        queryRequest.setAcquirer_id("acquirerId1468487593003");
-        queryRequest.setExternal_id("1468486584701");
-        queryRequest.setMerchant_id("27");
+        queryRequest.setAcquirer_id("10880010001");
+        queryRequest.setExternal_id("20160802181911");
+        queryRequest.setMerchant_id("20215");
 
         MerchantQueryResponse queryResponse = merchantService.query(queryRequest);
 
