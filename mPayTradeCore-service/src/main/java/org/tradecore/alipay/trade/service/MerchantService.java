@@ -5,8 +5,10 @@
 package org.tradecore.alipay.trade.service;
 
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
+import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 
 /**
@@ -30,4 +32,12 @@ public interface MerchantService {
      * @return
      */
     MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest);
+
+    /**
+     * 商户信息修改接口
+     * @param merchantModifyRequest
+     * @return
+     */
+    MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest);
+
 }

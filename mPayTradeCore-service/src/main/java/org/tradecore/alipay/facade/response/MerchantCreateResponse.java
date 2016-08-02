@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 商户信息DTO
+ * 商户入驻响应
  * @author HuHui
  * @version $Id: MerchantCreateResponse.java, v 0.1 2016年7月15日 上午12:20:25 HuHui Exp $
  */

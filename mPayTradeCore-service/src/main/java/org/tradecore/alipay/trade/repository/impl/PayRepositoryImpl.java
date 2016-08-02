@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
@@ -109,7 +109,7 @@ public class PayRepositoryImpl implements PayRepository {
             AlipayTradeQueryResponse response = alipayF2FQueryResult.getResponse();
 
             //判断业务是否业务成功
-            if (StringUtils.equals(response.getCode(), BizResultEnum.SUCCESS.getCode())) {
+            if (StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
                 //1.加锁查询本地订单数据
                 BizAlipayPayOrder order = null;
                 try {

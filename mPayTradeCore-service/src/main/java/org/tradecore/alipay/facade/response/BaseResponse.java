@@ -11,7 +11,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 
 /**
  * 基础响应类
@@ -112,12 +112,12 @@ public class BaseResponse implements Serializable {
      * 当发生异常时设置code和msg的值
      */
     public void setBizFailed() {
-        this.code = BizResultEnum.FAILED.getCode();
-        this.msg = BizResultEnum.FAILED.getDesc();
+        this.code = AlipayBizResultEnum.FAILED.getCode();
+        this.msg = AlipayBizResultEnum.FAILED.getDesc();
     }
 
     public void setBizFailed(String msg) {
-        this.code = BizResultEnum.FAILED.getCode();
+        this.code = AlipayBizResultEnum.FAILED.getCode();
         this.msg = msg;
     }
 

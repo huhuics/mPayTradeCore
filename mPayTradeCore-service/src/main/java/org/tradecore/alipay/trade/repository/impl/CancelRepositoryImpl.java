@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
@@ -55,7 +55,7 @@ public class CancelRepositoryImpl implements CancelRepository {
         BizAlipayCancelOrder cancelOrder = convert2CancelOrder(oriOrder, cancelRequest);
 
         if (cancelResponse != null) {
-            if (StringUtils.equals(cancelResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {//撤销成功
+            if (StringUtils.equals(cancelResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {//撤销成功
                 LogUtil.info(logger, "支付宝撤销成功");
                 cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
                 //撤销完成，交易状态改为TRADE_CLOSED

@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -150,7 +150,7 @@ public class TradeServiceTest extends BaseTest {
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(StringUtils.equals(ret.getResponse().getCode(), BizResultEnum.SUCCESS.getCode()));
+        Assert.assertTrue(StringUtils.equals(ret.getResponse().getCode(), AlipayBizResultEnum.SUCCESS.getCode()));
     }
 
     /**
@@ -195,7 +195,7 @@ public class TradeServiceTest extends BaseTest {
 
         LogUtil.info(logger, "订单撤销结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(ret.getCode().equals(BizResultEnum.SUCCESS.getCode()));
+        Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
     }
 
     private String geneRandomId() {

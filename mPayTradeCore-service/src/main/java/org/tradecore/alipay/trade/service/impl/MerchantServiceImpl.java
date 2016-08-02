@@ -15,13 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
+import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.alipay.trade.service.MerchantService;
@@ -87,8 +89,8 @@ public class MerchantServiceImpl implements MerchantService {
 
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
-            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), BizResultEnum.SUCCESS.getCode(),
-                BizResultEnum.SUCCESS.getDesc());
+            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(),
+                AlipayBizResultEnum.SUCCESS.getDesc());
         }
 
         //3.将请求转化为支付宝商户入驻请求
@@ -138,6 +140,11 @@ public class MerchantServiceImpl implements MerchantService {
 
     }
 
+    @Override
+    public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) {
+        return null;
+    }
+
     /**
      * 持久化
      * @param bizMerchantInfo
@@ -161,7 +168,7 @@ public class MerchantServiceImpl implements MerchantService {
     @Deprecated
     private BizMerchantInfo convert2BizMerchantInfo(MerchantQueryRequest merchantQueryRequest, AlipayBossProdSubmerchantQueryResponse alipayResponse) {
         //如果业务失败，则返回null
-        if (!StringUtils.equals(alipayResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
+        if (!StringUtils.equals(alipayResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             return null;
         }
 
@@ -198,7 +205,7 @@ public class MerchantServiceImpl implements MerchantService {
     private BizMerchantInfo convert2BizMerchantInfo(MerchantCreateRequest merchantCreateRequest, AlipayBossProdSubmerchantCreateResponse alipayResponse) {
 
         //如果业务失败，则返回null
-        if (!StringUtils.equals(alipayResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
+        if (!StringUtils.equals(alipayResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             return null;
         }
 
@@ -329,10 +336,11 @@ public class MerchantServiceImpl implements MerchantService {
         queryResponse.setCategory_id(merchantInfo.getCategoryId());
         queryResponse.setSource(merchantInfo.getSource());
         queryResponse.setMemo(merchantInfo.getMemo());
-        queryResponse.setCode(BizResultEnum.SUCCESS.getCode());
-        queryResponse.setMsg(BizResultEnum.SUCCESS.getDesc());
+        queryResponse.setCode(AlipayBizResultEnum.SUCCESS.getCode());
+        queryResponse.setMsg(AlipayBizResultEnum.SUCCESS.getDesc());
 
         return queryResponse;
 
     }
+
 }

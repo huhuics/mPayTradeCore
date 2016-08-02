@@ -7,19 +7,15 @@ package org.tradecore.alipay.enums;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 支付宝业务结果码枚举
+ * 通用业务结果码枚举
  * @author HuHui
- * @version $Id: AlipaySceneEnum.java, v 0.1 2016年7月8日 下午7:55:02 HuHui Exp $
+ * @version $Id: DefaultBizResultEnum.java, v 0.1 2016年8月2日 下午4:45:02 HuHui Exp $
  */
-public enum BizResultEnum {
+public enum DefaultBizResultEnum {
 
-    SUCCESS("10000", "业务处理成功"),
+    SUCCESS("success", "业务处理成功"),
 
-    FAILED("40004", "业务处理失败"),
-
-    PROCESSING("10003", "业务处理中"),
-
-    UNKNOW("20000", "业务出现未知错误或者系统异常")
+    FAILED("failed", "业务处理失败"),
 
     ;
 
@@ -29,7 +25,7 @@ public enum BizResultEnum {
     /** 枚举值 */
     private String desc;
 
-    private BizResultEnum(String code, String desc) {
+    private DefaultBizResultEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -43,8 +39,8 @@ public enum BizResultEnum {
      * @return     对应的枚举对象
 
      */
-    public static BizResultEnum getByCode(String code) {
-        for (BizResultEnum eachValue : BizResultEnum.values()) {
+    public static DefaultBizResultEnum getByCode(String code) {
+        for (DefaultBizResultEnum eachValue : DefaultBizResultEnum.values()) {
             if (StringUtils.equals(code, eachValue.getCode())) {
                 return eachValue;
             }

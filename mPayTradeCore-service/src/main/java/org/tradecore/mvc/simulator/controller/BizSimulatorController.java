@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
-import org.tradecore.alipay.enums.BizResultEnum;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -441,7 +441,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器返回商户入驻响应,createResponse={0}", createResponse);
 
-        if (createResponse != null && StringUtils.equals(createResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
+        if (createResponse != null && StringUtils.equals(createResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             map.put("code", createResponse.getCode());
             map.put("msg", createResponse.getMsg());
             map.put("acquirerId", createResponse.getAcquirer_id());
@@ -470,7 +470,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器返回商户查询响应,queryResponse={0}", queryResponse);
 
-        if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), BizResultEnum.SUCCESS.getCode())) {
+        if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             map.put("acquirer_id", queryResponse.getAcquirer_id());
             map.put("sub_merchant_id", queryResponse.getMerchant_id());
             map.put("external_id", queryResponse.getExternal_id());
@@ -667,7 +667,7 @@ public class BizSimulatorController {
     }
 
     private void setErrorResult(ModelMap map, String errorMsg) {
-        map.put("code", BizResultEnum.FAILED.getCode());
+        map.put("code", AlipayBizResultEnum.FAILED.getCode());
         map.put("msg", errorMsg);
     }
 
