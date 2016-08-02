@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.enums.DefaultBizResultEnum;
 import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantModifyResponse;
@@ -130,19 +131,103 @@ public class MerchantServiceImpl implements MerchantService {
         AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
-        BizMerchantInfo nativeMerchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantQueryRequest.getAcquirer_id(),
-            merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getExternal_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantQueryRequest.getAcquirer_id(), merchantQueryRequest.getMerchant_id(),
+            merchantQueryRequest.getExternal_id());
 
-        LogUtil.info(logger, "本地查询商户信息结果nativeMerchantInfo={0}", nativeMerchantInfo);
+        LogUtil.info(logger, "本地查询商户信息结果merchantInfo={0}", merchantInfo);
 
         //返回
-        return buildResponse(nativeMerchantInfo);
+        return buildResponse(merchantInfo);
 
     }
 
     @Override
     public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) {
-        return null;
+
+        LogUtil.info(logger, "收到商户信息修改请求参数,merchantModifyRequest={0}", merchantModifyRequest);
+
+        //1.参数校验
+        AssertUtil.assertNotNull(merchantModifyRequest, "商户信息修改请求不能为空");
+        AssertUtil.assertTrue(merchantModifyRequest.validate(), "商户信息修改请求参数不合法");
+
+        //2.校验收单机构
+        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantModifyRequest.getAcquirer_id()), "收单机构不存在或状态非法");
+
+        //3.查询本地商户数据
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantModifyRequest.getAcquirer_id(),
+            merchantModifyRequest.getMerchant_id(), merchantModifyRequest.getExternal_id());
+
+        AssertUtil.assertNotNull(merchantInfo, "商户信息查询为空,商户修改失败");
+
+        //4.将修改请求填充Domain对象
+        fillBizMerchantInfo(merchantModifyRequest, merchantInfo);
+
+        return buildMerchantModifyResponse(merchantInfo);
+    }
+
+    /**
+     * 创建商户信息修改响应
+     * @param merchantInfo
+     * @return
+     */
+    private MerchantModifyResponse buildMerchantModifyResponse(BizMerchantInfo merchantInfo) {
+
+        MerchantModifyResponse response = new MerchantModifyResponse();
+
+        response.setAcquirer_id(merchantInfo.getAcquirerId());
+        response.setMerchant_id(merchantInfo.getMerchantId());
+        response.setExternal_id(merchantInfo.getExternalId());
+
+        if (bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo) > 0) {
+            response.setModify_result(DefaultBizResultEnum.SUCCESS.getCode());
+            response.setCode(AlipayBizResultEnum.SUCCESS.getCode());
+            response.setMsg(AlipayBizResultEnum.SUCCESS.getDesc());
+        } else {
+            response.setModify_result(DefaultBizResultEnum.FAILED.getCode());
+            response.setCode(AlipayBizResultEnum.FAILED.getCode());
+            response.setMsg(AlipayBizResultEnum.FAILED.getDesc());
+        }
+
+        return response;
+    }
+
+    /**
+     * 将不为空的商户修改请求参数填充至Domain对象
+     * @param merchantModifyRequest
+     * @param merchantInfo
+     */
+    private void fillBizMerchantInfo(MerchantModifyRequest merchantModifyRequest, BizMerchantInfo merchantInfo) {
+
+        if (StringUtils.isNotBlank(merchantModifyRequest.getName())) {
+            merchantInfo.setName(merchantModifyRequest.getName());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getAlias_name())) {
+            merchantInfo.setAliasName(merchantModifyRequest.getAlias_name());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getService_phone())) {
+            merchantInfo.setServicePhone(merchantModifyRequest.getService_phone());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_name())) {
+            merchantInfo.setContactName(merchantModifyRequest.getContact_name());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_phone())) {
+            merchantInfo.setContactPhone(merchantModifyRequest.getContact_phone());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_mobile())) {
+            merchantInfo.setContactMobile(merchantModifyRequest.getContact_mobile());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_email())) {
+            merchantInfo.setContactEmail(merchantModifyRequest.getContact_email());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getCategory_id())) {
+            merchantInfo.setCategoryId(merchantModifyRequest.getCategory_id());
+        }
+        if (StringUtils.isNotBlank(merchantModifyRequest.getMemo())) {
+            merchantInfo.setMemo(merchantModifyRequest.getMemo());
+        }
+
+        merchantInfo.setGmtUpdate(new Date());
+
     }
 
     /**
