@@ -6,13 +6,17 @@ package org.tradecore.alipay.service;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.enums.DefaultBizResultEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
+import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
+import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.facade.result.Result;
@@ -83,6 +87,32 @@ public class MerchantServiceTest extends BaseTest {
 
         LogUtil.info(logger, "商户查询结果,queryResponse={0}", queryResponse);
 
+    }
+
+    @Test
+    public void testModify() {
+
+        Assert.assertNotNull(merchantService);
+
+        //封装测试请求参数
+        MerchantModifyRequest modifyreateRequest = new MerchantModifyRequest();
+        modifyreateRequest.setExternal_id("1469412591828");
+        modifyreateRequest.setAcquirer_id("1234567890");
+        modifyreateRequest.setMerchant_id("195");
+        modifyreateRequest.setName("测试商户123");
+        modifyreateRequest.setAlias_name("测试别名123");
+        modifyreateRequest.setService_phone("9518888");
+        modifyreateRequest.setContact_name("小二2");
+        modifyreateRequest.setContact_phone("0795-110");
+        modifyreateRequest.setContact_mobile("15013789478");
+        modifyreateRequest.setContact_email("user@126.com");
+        modifyreateRequest.setCategory_id("2015110500080520");
+        modifyreateRequest.setSource("2016070723781231");
+        modifyreateRequest.setMemo("备注信息");
+
+        MerchantModifyResponse modifyRet = merchantService.modify(modifyreateRequest);
+
+        Assert.assertTrue(StringUtils.equals(modifyRet.getModify_result(), DefaultBizResultEnum.SUCCESS.getCode()));
     }
 
     @Test
