@@ -113,7 +113,7 @@ public class TradeServiceImpl implements TradeService {
 
         //1.校验参数
         AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
-        AssertUtil.assertTrue(payRequest.validate(), "支付支付请求参数不合法");
+        payRequest.validate();
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");

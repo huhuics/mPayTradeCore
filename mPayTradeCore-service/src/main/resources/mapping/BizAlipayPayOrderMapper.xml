@@ -5,6 +5,7 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
     <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
+    <result column="TRADE_NO" jdbcType="VARCHAR" property="tradeNo" />
     <result column="ALIPAY_TRADE_NO" jdbcType="VARCHAR" property="alipayTradeNo" />
     <result column="OUT_TRADE_NO" jdbcType="VARCHAR" property="outTradeNo" />
     <result column="ORDER_STATUS" jdbcType="VARCHAR" property="orderStatus" />
@@ -38,12 +39,12 @@
     <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, ACQUIRER_ID, MERCHANT_ID, ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, CANCEL_STATUS, 
-    REFUND_STATUS, SCENE, AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, 
-    UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, APP_AUTH_TOKEN, GOODS_DETAIL, MERCHANT_DETAIL, 
-    EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, QR_CODE, RETURN_DETAIL, 
-    OUT_NOTIFY_URL, NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, CREATE_DATE, GMT_PAYMENT, 
-    GMT_CREATE, GMT_UPDATE
+    ID, ACQUIRER_ID, MERCHANT_ID, TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, 
+    CANCEL_STATUS, REFUND_STATUS, SCENE, AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, RECEIPT_AMOUNT, 
+    DISCOUNTABLE_AMOUNT, UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, APP_AUTH_TOKEN, GOODS_DETAIL, 
+    MERCHANT_DETAIL, EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, 
+    QR_CODE, RETURN_DETAIL, OUT_NOTIFY_URL, NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, CREATE_DATE, 
+    GMT_PAYMENT, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -57,29 +58,29 @@
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayPayOrder">
     insert into BIZ_ALIPAY_PAY_ORDER (ID, ACQUIRER_ID, MERCHANT_ID, 
-      ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, 
-      CANCEL_STATUS, REFUND_STATUS, SCENE, 
-      AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, 
-      RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, UNDISCOUNTABLE_AMOUNT, 
-      SUBJECT, BODY, APP_AUTH_TOKEN, 
-      GOODS_DETAIL, MERCHANT_DETAIL, EXTEND_PARAMS, 
-      TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, 
-      QR_CODE, RETURN_DETAIL, OUT_NOTIFY_URL, 
-      NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, 
-      CREATE_DATE, GMT_PAYMENT, GMT_CREATE, 
-      GMT_UPDATE)
+      TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, 
+      ORDER_STATUS, CANCEL_STATUS, REFUND_STATUS, 
+      SCENE, AUTH_CODE, SELLER_ID, 
+      TOTAL_AMOUNT, RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, 
+      UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, 
+      APP_AUTH_TOKEN, GOODS_DETAIL, MERCHANT_DETAIL, 
+      EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, 
+      DISCOUNT_GOODS_DETAIL, QR_CODE, RETURN_DETAIL, 
+      OUT_NOTIFY_URL, NOTIFY_BODY, CHECK_STATUS, 
+      CHECK_DATE, CREATE_DATE, GMT_PAYMENT, 
+      GMT_CREATE, GMT_UPDATE)
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
-      #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR}, 
-      #{cancelStatus,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, #{scene,jdbcType=VARCHAR}, 
-      #{authCode,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
-      #{receiptAmount,jdbcType=DECIMAL}, #{discountableAmount,jdbcType=DECIMAL}, #{undiscountableAmount,jdbcType=DECIMAL}, 
-      #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, #{appAuthToken,jdbcType=VARCHAR}, 
-      #{goodsDetail,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, #{extendParams,jdbcType=VARCHAR}, 
-      #{timeoutExpress,jdbcType=VARCHAR}, #{fundBillList,jdbcType=VARCHAR}, #{discountGoodsDetail,jdbcType=VARCHAR}, 
-      #{qrCode,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{outNotifyUrl,jdbcType=VARCHAR}, 
-      #{notifyBody,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, #{checkDate,jdbcType=CHAR}, 
-      #{createDate,jdbcType=CHAR}, #{gmtPayment,jdbcType=TIMESTAMP}, #{gmtCreate,jdbcType=TIMESTAMP}, 
-      #{gmtUpdate,jdbcType=TIMESTAMP})
+      #{tradeNo,jdbcType=VARCHAR}, #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{orderStatus,jdbcType=VARCHAR}, #{cancelStatus,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, 
+      #{scene,jdbcType=VARCHAR}, #{authCode,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, 
+      #{totalAmount,jdbcType=DECIMAL}, #{receiptAmount,jdbcType=DECIMAL}, #{discountableAmount,jdbcType=DECIMAL}, 
+      #{undiscountableAmount,jdbcType=DECIMAL}, #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, 
+      #{appAuthToken,jdbcType=VARCHAR}, #{goodsDetail,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, 
+      #{extendParams,jdbcType=VARCHAR}, #{timeoutExpress,jdbcType=VARCHAR}, #{fundBillList,jdbcType=VARCHAR}, 
+      #{discountGoodsDetail,jdbcType=VARCHAR}, #{qrCode,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, 
+      #{outNotifyUrl,jdbcType=VARCHAR}, #{notifyBody,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, 
+      #{checkDate,jdbcType=CHAR}, #{createDate,jdbcType=CHAR}, #{gmtPayment,jdbcType=TIMESTAMP}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAlipayPayOrder">
     insert into BIZ_ALIPAY_PAY_ORDER
@@ -92,6 +93,9 @@
       </if>
       <if test="merchantId != null">
         MERCHANT_ID,
+      </if>
+      <if test="tradeNo != null">
+        TRADE_NO,
       </if>
       <if test="alipayTradeNo != null">
         ALIPAY_TRADE_NO,
@@ -197,6 +201,9 @@
       <if test="merchantId != null">
         #{merchantId,jdbcType=VARCHAR},
       </if>
+      <if test="tradeNo != null">
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
       <if test="alipayTradeNo != null">
         #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
@@ -301,6 +308,9 @@
       <if test="merchantId != null">
         MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       </if>
+      <if test="tradeNo != null">
+        TRADE_NO = #{tradeNo,jdbcType=VARCHAR},
+      </if>
       <if test="alipayTradeNo != null">
         ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
@@ -401,6 +411,7 @@
     update BIZ_ALIPAY_PAY_ORDER
     set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
+      TRADE_NO = #{tradeNo,jdbcType=VARCHAR},
       ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
       ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
@@ -435,7 +446,7 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 
-	<!-- 查询订单 -->
+	<!-- 根据条件查询订单 -->
 	<select id="selectOrder" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select
@@ -451,6 +462,15 @@
 		<if test="_parameter.containsKey('alipayTradeNo')">
 			AND ALIPAY_TRADE_NO = #{alipayTradeNo}
 		</if>
+	</select>
+
+	<!-- 根据订单号查询订单 -->
+	<select id="selectByTradeNo" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_ALIPAY_PAY_ORDER
+		where TRADE_NO = #{tradeNo,jdbcType=VARCHAR}
 	</select>
   
 </mapper>

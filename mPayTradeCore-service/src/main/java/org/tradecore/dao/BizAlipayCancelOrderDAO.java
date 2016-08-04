@@ -27,4 +27,5 @@ public interface BizAlipayCancelOrderDAO {
      * @param paraMap
      */
     List<BizAlipayCancelOrder> selectCancelOrders(Map<String, Object> paraMap);
+
 }

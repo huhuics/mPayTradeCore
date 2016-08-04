@@ -7,7 +7,7 @@ import org.tradecore.common.util.Money;
 public class BizAlipayRefundOrder extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -4916593202439536547L;
+    private static final long serialVersionUID = -6347261000747078119L;
 
     /**
      *  null, BIZ_ALIPAY_REFUND_ORDER.ID
@@ -23,6 +23,11 @@ public class BizAlipayRefundOrder extends BaseDomain {
      *  null, BIZ_ALIPAY_REFUND_ORDER.MERCHANT_ID
      */
     private String            merchantId;
+
+    /**
+     *  null, BIZ_ALIPAY_REFUND_ORDER.TRADE_NO
+     */
+    private String            tradeNo;
 
     /**
      *  null, BIZ_ALIPAY_REFUND_ORDER.ALIPAY_TRADE_NO
@@ -141,6 +146,14 @@ public class BizAlipayRefundOrder extends BaseDomain {
 
     public void setMerchantId(String merchantId) {
         this.merchantId = merchantId == null ? null : merchantId.trim();
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo == null ? null : tradeNo.trim();
     }
 
     public String getAlipayTradeNo() {

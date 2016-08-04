@@ -25,4 +25,13 @@ public interface BizAlipayPayOrderDAO {
      * @return
      */
     BizAlipayPayOrder selectOrder(Map<String, Object> paramMap);
+
+    /**
+     * 根据订单号查询订单<br>
+     * 由于订单号全局唯一，可唯一确定一笔订单记录
+     * @param tradeNo
+     * @return
+     */
+    BizAlipayPayOrder selectByTradeNo(String tradeNo);
+
 }

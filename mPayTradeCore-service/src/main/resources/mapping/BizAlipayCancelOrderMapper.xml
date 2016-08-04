@@ -5,6 +5,7 @@
     <id column="ID" jdbcType="VARCHAR" property="id" />
     <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
     <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
+    <result column="TRADE_NO" jdbcType="VARCHAR" property="tradeNo" />
     <result column="ALIPAY_TRADE_NO" jdbcType="VARCHAR" property="alipayTradeNo" />
     <result column="OUT_TRADE_NO" jdbcType="VARCHAR" property="outTradeNo" />
     <result column="TOTAL_AMOUNT" jdbcType="DECIMAL" property="totalAmount" />
@@ -17,8 +18,8 @@
     <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, ACQUIRER_ID, MERCHANT_ID, ALIPAY_TRADE_NO, OUT_TRADE_NO, TOTAL_AMOUNT, RETRY_FLAG, 
-    ACTION, CANCEL_STATUS, RETURN_DETAIL, CREATE_DATE, GMT_CREATE, GMT_UPDATE
+    ID, ACQUIRER_ID, MERCHANT_ID, TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, TOTAL_AMOUNT, 
+    RETRY_FLAG, ACTION, CANCEL_STATUS, RETURN_DETAIL, CREATE_DATE, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -32,15 +33,15 @@
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
     insert into BIZ_ALIPAY_CANCEL_ORDER (ID, ACQUIRER_ID, MERCHANT_ID, 
-      ALIPAY_TRADE_NO, OUT_TRADE_NO, TOTAL_AMOUNT, 
-      RETRY_FLAG, ACTION, CANCEL_STATUS, 
-      RETURN_DETAIL, CREATE_DATE, GMT_CREATE, 
-      GMT_UPDATE)
+      TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, 
+      TOTAL_AMOUNT, RETRY_FLAG, ACTION, 
+      CANCEL_STATUS, RETURN_DETAIL, CREATE_DATE, 
+      GMT_CREATE, GMT_UPDATE)
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
-      #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, #{totalAmount,jdbcType=DECIMAL}, 
-      #{retryFlag,jdbcType=CHAR}, #{action,jdbcType=VARCHAR}, #{cancelStatus,jdbcType=VARCHAR}, 
-      #{returnDetail,jdbcType=VARCHAR}, #{createDate,jdbcType=CHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, 
-      #{gmtUpdate,jdbcType=TIMESTAMP})
+      #{tradeNo,jdbcType=VARCHAR}, #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
+      #{totalAmount,jdbcType=DECIMAL}, #{retryFlag,jdbcType=CHAR}, #{action,jdbcType=VARCHAR}, 
+      #{cancelStatus,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{createDate,jdbcType=CHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAlipayCancelOrder">
     insert into BIZ_ALIPAY_CANCEL_ORDER
@@ -53,6 +54,9 @@
       </if>
       <if test="merchantId != null">
         MERCHANT_ID,
+      </if>
+      <if test="tradeNo != null">
+        TRADE_NO,
       </if>
       <if test="alipayTradeNo != null">
         ALIPAY_TRADE_NO,
@@ -95,6 +99,9 @@
       <if test="merchantId != null">
         #{merchantId,jdbcType=VARCHAR},
       </if>
+      <if test="tradeNo != null">
+        #{tradeNo,jdbcType=VARCHAR},
+      </if>
       <if test="alipayTradeNo != null">
         #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
@@ -136,6 +143,9 @@
       <if test="merchantId != null">
         MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       </if>
+      <if test="tradeNo != null">
+        TRADE_NO = #{tradeNo,jdbcType=VARCHAR},
+      </if>
       <if test="alipayTradeNo != null">
         ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       </if>
@@ -173,6 +183,7 @@
     update BIZ_ALIPAY_CANCEL_ORDER
     set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
+      TRADE_NO = #{tradeNo,jdbcType=VARCHAR},
       ALIPAY_TRADE_NO = #{alipayTradeNo,jdbcType=VARCHAR},
       OUT_TRADE_NO = #{outTradeNo,jdbcType=VARCHAR},
       TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
