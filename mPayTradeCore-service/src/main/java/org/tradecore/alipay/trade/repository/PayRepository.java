@@ -7,12 +7,10 @@ package org.tradecore.alipay.trade.repository;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
@@ -23,12 +21,10 @@ import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 public interface PayRepository {
 
     /**
-     * 将条码支付请求转化为Domain对象，并持久化
-     * @param   payRequest            支付请求
-     * @param   alipayF2FPayResult    支付宝返回条码支付结果
-     * @return                        转化之后的Domain对象
+     * 并持久化交易对象
+     * @param   payOrder       交易对象
      */
-    BizAlipayPayOrder savePayOrder(PayRequest payRequest, AlipayF2FPayResult alipayF2FPayResult);
+    void savePayOrder(BizAlipayPayOrder payOrder);
 
     /**
      * 如果查询支付宝端的订单状态与本地订单状态不一致，则修改本地订单状态

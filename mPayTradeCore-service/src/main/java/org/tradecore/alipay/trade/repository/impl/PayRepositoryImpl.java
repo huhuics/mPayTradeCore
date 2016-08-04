@@ -16,27 +16,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
-import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
-import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.UUIDUtil;
+import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.dao.BizAlipayPayOrderDAO;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
@@ -56,47 +51,16 @@ public class PayRepositoryImpl implements PayRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public BizAlipayPayOrder savePayOrder(PayRequest payRequest, AlipayF2FPayResult alipayF2FPayResult) {
+    public void savePayOrder(BizAlipayPayOrder payOrder) {
 
         LogUtil.info(logger, "收到条码支付持久化请求");
 
-        AlipayTradePayResponse response = alipayF2FPayResult.getResponse();
-
-        //将公共参数封装成Domain对象
-        BizAlipayPayOrder payOrder = convert2PayOrder(payRequest);
-
-        LogUtil.info(logger, "条码支付请求payRequest转化为domian对象成功,payOrder={0}", payOrder);
-
-        if (alipayF2FPayResult.isTradeSuccess()) {
-            LogUtil.info(logger, "支付宝条码支付成功");
-
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
-            payOrder.setAlipayTradeNo(response.getTradeNo());
-
-            if (StringUtils.isNotBlank(response.getReceiptAmount())) {
-                payOrder.setReceiptAmount(new Money(response.getReceiptAmount()));
-            }
-
-            payOrder.setFundBillList(JSON.toJSONString(response.getFundBillList()));
-            payOrder.setDiscountGoodsDetail(response.getDiscountGoodsDetail());
-            payOrder.setGmtPayment(response.getGmtPayment());
-            payOrder.setCheckDate(DateUtil.format(response.getGmtPayment(), DateUtil.shortFormat));
-        } else {
-            LogUtil.info(logger, "支付宝条码支付失败");
-
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+        try {
+            bizAlipayPayOrderDAO.insert(payOrder);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "条码支付订单持久化失败,message={0}", e.getMessage());
+            throw new RuntimeException("条码支付订单持久化失败", e);
         }
-
-        if (response != null) {
-            //支付宝返回信息
-            payOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
-        }
-
-        payOrder.setGmtUpdate(new Date());
-
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.insert(payOrder) > 0, "条码支付订单持久化失败");
-
-        return payOrder;
 
     }
 
@@ -186,7 +150,7 @@ public class PayRepositoryImpl implements PayRepository {
     public BizAlipayPayOrder selectPayOrderByTradeNo(String acquirerId, String merchantId, String outTradeNo) throws SQLException {
 
         //组装结算中心订单号
-        String tradeNo = acquirerId + merchantId + outTradeNo;
+        String tradeNo = TradeNoFormater.format(acquirerId, merchantId, outTradeNo);
 
         LogUtil.info(logger, "收到订单查询请求,tradeNo={0}", tradeNo);
 
@@ -232,63 +196,6 @@ public class PayRepositoryImpl implements PayRepository {
 
         LogUtil.info(logger, "异步响应订单更新请求成功");
 
-    }
-
-    /**
-     * 将payRequest转化为domian对象
-     * @param payRequest
-     * @return
-     */
-    private BizAlipayPayOrder convert2PayOrder(PayRequest payRequest) {
-
-        BizAlipayPayOrder payOrder = new BizAlipayPayOrder();
-        payOrder.setId(UUIDUtil.geneId());
-        payOrder.setAcquirerId(payRequest.getAcquirerId());
-        payOrder.setMerchantId(payRequest.getMerchantId());
-        payOrder.setOutTradeNo(payRequest.getOutTradeNo());
-
-        //封装payDetail
-        payOrder.setScene(payRequest.getScene());
-
-        payOrder.setAuthCode(payRequest.getAuthCode());
-        payOrder.setSellerId(payRequest.getSellerId());
-        payOrder.setTotalAmount(new Money(payRequest.getTotalAmount()));
-
-        //判断金额是否为空
-        if (StringUtils.isNotBlank(payRequest.getDiscountableAmount())) {
-            payOrder.setDiscountableAmount(new Money(payRequest.getDiscountableAmount()));
-        }
-
-        if (StringUtils.isNotBlank(payRequest.getUndiscountableAmount())) {
-            payOrder.setUndiscountableAmount(new Money(payRequest.getUndiscountableAmount()));
-        }
-
-        payOrder.setSubject(payRequest.getSubject());
-        payOrder.setBody(payRequest.getBody());
-        payOrder.setAppAuthToken(payRequest.getAppAuthToken());
-        payOrder.setGoodsDetail(JSON.toJSONString(payRequest.getGoodsDetailList()));
-
-        //封装merchantDetail
-        Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
-        merchantDetailMap.put(JSONFieldConstant.OPERATOR_ID, payRequest.getOperatorId());
-        merchantDetailMap.put(JSONFieldConstant.STORE_ID, payRequest.getStoreId());
-        merchantDetailMap.put(JSONFieldConstant.TERMINAL_ID, payRequest.getTerminalId());
-        merchantDetailMap.put(JSONFieldConstant.ALIPAY_STORE_ID, payRequest.getAlipayStoreId());
-        payOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
-
-        if (payRequest.getExtendParams() != null) {
-            payOrder.setExtendParams(payRequest.getExtendParams().toString());
-        }
-
-        payOrder.setTimeoutExpress(payRequest.getTimeoutExpress());
-        payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
-
-        // TODO: 创建日期要改成从配置参数中读取
-        payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
-
-        payOrder.setGmtCreate(new Date());
-
-        return payOrder;
     }
 
 }

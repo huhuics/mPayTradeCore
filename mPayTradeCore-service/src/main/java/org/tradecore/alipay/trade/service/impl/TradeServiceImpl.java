@@ -13,13 +13,16 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
@@ -44,7 +47,6 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
@@ -52,7 +54,6 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
 import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
@@ -64,16 +65,13 @@ import com.alipay.demo.trade.service.AlipayTradeService;
  * @version $Id: TradeServiceImpl.java, v 0.1 2016年7月8日 下午4:13:39 HuHui Exp $
  */
 @Service
-public class TradeServiceImpl implements TradeService {
+public class TradeServiceImpl extends AbstractAlipayService implements TradeService {
 
     /** 日志 */
     private static final Logger       logger = LoggerFactory.getLogger(TradeServiceImpl.class);
 
     /** 支付宝交易接口 */
     private static AlipayTradeService alipayTradeService;
-
-    /** 公共请求方法类 */
-    private static AlipayClient       alipayClient;
 
     /** 支付仓储服务 */
     @Resource
@@ -101,8 +99,6 @@ public class TradeServiceImpl implements TradeService {
         //工厂方法创建静态支付服务类
         alipayTradeService = AlipayClientFactory.getAlipayTradeServiceInstance();
 
-        //工厂方法创建静态AlipayClient
-        alipayClient = AlipayClientFactory.getAlipayClientInstance();
     }
 
     @Override
@@ -128,16 +124,24 @@ public class TradeServiceImpl implements TradeService {
         AlipayTradePayRequest alipayRequest = convert2AlipayRequest(payRequest);
 
         //4.调用支付宝条码支付接口
-        AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(alipayRequest);
+        AlipayTradePayResponse payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
 
-        LogUtil.info(logger, "支付宝返回条码支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "支付宝返回条码支付业务结果payResponse={0}", JSON.toJSONString(payResponse));
 
-        AssertUtil.assertNotNull(alipayF2FPayResult, "支付宝返回条码支付结果为空");
+        //5.创建交易订单对象
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
 
-        //5.根据支付宝返回结果保存本地数据
-        payRepository.savePayOrder(payRequest, alipayF2FPayResult);
+        //6.根据调用结果分别处理
+        if (payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
+            //6.1 支付明确成功
+            LogUtil.info(logger, "条码支付返回成功");
+            setPayOrderSuccess(payOrder, payResponse);
+        }
 
-        return alipayF2FPayResult;
+        //7.保存交易数据
+        payRepository.savePayOrder(payOrder);
+
+        return payResponse;
     }
 
     @Override
@@ -402,6 +406,29 @@ public class TradeServiceImpl implements TradeService {
         queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
         return queryRequest;
+    }
+
+    /**
+     * 条码支付成功时设置交易数据
+     */
+    private void setPayOrderSuccess(BizAlipayPayOrder payOrder, AlipayTradePayResponse payResponse) {
+
+        payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
+        payOrder.setAlipayTradeNo(payResponse.getTradeNo());
+
+        if (StringUtils.isNotBlank(payResponse.getReceiptAmount())) {
+            payOrder.setReceiptAmount(new Money(payResponse.getReceiptAmount()));
+        }
+
+        payOrder.setFundBillList(JSON.toJSONString(payResponse.getFundBillList()));
+        payOrder.setDiscountGoodsDetail(payResponse.getDiscountGoodsDetail());
+        payOrder.setGmtPayment(payResponse.getGmtPayment());
+        payOrder.setCheckDate(DateUtil.format(payResponse.getGmtPayment(), DateUtil.shortFormat));
+
+        //支付宝返回消息体
+        payOrder.setReturnDetail(payResponse.getBody());
+
+        payOrder.setGmtUpdate(new Date());
     }
 
     /**
