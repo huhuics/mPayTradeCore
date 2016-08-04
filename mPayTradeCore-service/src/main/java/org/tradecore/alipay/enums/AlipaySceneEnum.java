@@ -17,6 +17,8 @@ public enum AlipaySceneEnum {
 
     SCAN_CODE("scan_code", "扫码支付"),
 
+    ONLINE("online", "线上支付")
+
     ;
 
     /** 枚举代码 */

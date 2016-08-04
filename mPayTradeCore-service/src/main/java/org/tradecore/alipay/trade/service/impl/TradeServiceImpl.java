@@ -47,6 +47,7 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
@@ -106,7 +107,7 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     @Transactional
-    public AlipayF2FPayResult pay(PayRequest payRequest) throws Exception {
+    public AlipayTradePayResponse pay(PayRequest payRequest) throws Exception {
 
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 

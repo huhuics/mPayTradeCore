@@ -11,7 +11,7 @@ import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 
 import com.alipay.api.response.AlipayTradeCancelResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
+import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
@@ -29,7 +29,7 @@ public interface TradeService {
      * @return            支付返回结果信息
      * @throws Exception 
      */
-    AlipayF2FPayResult pay(PayRequest payRequest) throws Exception;
+    AlipayTradePayResponse pay(PayRequest payRequest) throws Exception;
 
     /**
      * 扫码支付，预下单(生成二维码)接口
