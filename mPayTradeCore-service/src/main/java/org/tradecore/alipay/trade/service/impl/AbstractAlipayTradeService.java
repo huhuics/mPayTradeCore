@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.common.util.LogUtil;
 
 import com.alipay.api.request.AlipayTradeQueryRequest;
@@ -27,7 +28,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
 
     protected AlipayTradeQueryResponse loopQuery(AlipayTradeQueryRequest alipayQueryRequest) {
 
-        LogUtil.info(logger, "收到轮询查询订单请求,outTradeNo={0}", alipayQueryRequest.getBizContent());
+        LogUtil.info(logger, "收到轮询订单请求,outTradeNo={0}", alipayQueryRequest.getBizContent());
 
         AlipayTradeQueryResponse queryResult = null;
 
@@ -37,20 +38,28 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
             AlipayTradeQueryResponse response = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
 
             if (response != null) {
-
+                if (isStopQuery(response)) {
+                    return response;
+                }
+                queryResult = response;
             }
         }
 
         return queryResult;
     }
 
-    protected boolean isStopQuery(AlipayTradeQueryResponse response){
-        
-        if(StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())){
+    protected boolean isStopQuery(AlipayTradeQueryResponse response) {
+
+        if (StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             //如果查询到交易成功、交易结束、交易关闭，则返回true
-            if(StringUtils.equals(response.getTradeStatus(), cs2))
+            if (StringUtils.equals(response.getTradeStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())
+                || StringUtils.equals(response.getTradeStatus(), AlipayTradeStatusEnum.TRADE_FINISHED.getCode())
+                || StringUtils.equals(response.getTradeStatus(), AlipayTradeStatusEnum.TRADE_CLOSED.getCode())) {
+
+                return Boolean.TRUE;
+            }
         }
-        
-        return false;
+
+        return Boolean.FALSE;
     }
 }
