@@ -36,6 +36,7 @@ public class MerchantQueryRequest extends BaseRequest {
      * 非空参数校验
      * @return
      */
+    @Override
     public boolean validate() {
 
         AssertUtil.assertNotEmpty(acquirer_id, "收单机构编号不能为空");

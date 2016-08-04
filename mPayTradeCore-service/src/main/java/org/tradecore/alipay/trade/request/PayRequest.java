@@ -25,9 +25,10 @@ public class PayRequest extends DefaultPayRequest {
      * 参数校验
      * @return 校验是否成功
      */
+    @Override
     public boolean validate() {
 
-        AssertUtil.assertTrue(super.validate(), "参数校验错误");
+        super.validate();
 
         AssertUtil.assertNotEmpty(authCode, "交易授权码不能为空");
 

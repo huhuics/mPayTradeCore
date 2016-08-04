@@ -73,6 +73,7 @@ public class RefundRequest extends BaseRequest {
      * 参数校验
      * @return 校验是否成功
      */
+    @Override
     public boolean validate() {
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");

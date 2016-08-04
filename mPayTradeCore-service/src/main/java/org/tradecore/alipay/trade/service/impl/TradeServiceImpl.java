@@ -46,9 +46,9 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayTradeCancelRequest;
+import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
-import com.alipay.demo.trade.model.builder.AlipayTradePayRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
@@ -120,19 +120,15 @@ public class TradeServiceImpl implements TradeService {
 
         //2.幂等判断
         BizAlipayPayOrder nativePayOrder = null;
-        try {
-            nativePayOrder = payRepository.selectPayOrder(payRequest.getMerchantId(), payRequest.getOutTradeNo(), null);
-        } catch (SQLException e) {
-            LogUtil.error(e, logger, "查询数据异常");
-            throw new RuntimeException("查询数据异常");
-        }
+
+        nativePayOrder = payRepository.selectPayOrderByTradeNo(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo());
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
-        AlipayTradePayRequestBuilder builder = convert2Builder(payRequest);
+        AlipayTradePayRequest alipayRequest = convert2AlipayRequest(payRequest);
 
         //4.调用支付宝条码支付接口
-        AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(builder);
+        AlipayF2FPayResult alipayF2FPayResult = alipayTradeService.tradePay(alipayRequest);
 
         LogUtil.info(logger, "支付宝返回条码支付业务结果alipayF2FPayResult={0}", JSON.toJSONString(alipayF2FPayResult, SerializerFeature.UseSingleQuotes));
 
@@ -363,14 +359,16 @@ public class TradeServiceImpl implements TradeService {
      * @param payRequest 
      * @return
      */
-    private AlipayTradePayRequestBuilder convert2Builder(PayRequest payRequest) {
-        return new AlipayTradePayRequestBuilder().setSubMerchantId(payRequest.getMerchantId()).setScene(payRequest.getScene())
+    private AlipayTradePayRequest convert2AlipayRequest(PayRequest payRequest) {
+        /*return new AlipayTradePayRequestBuilder().setSubMerchantId(payRequest.getMerchantId()).setScene(payRequest.getScene())
             .setOutTradeNo(payRequest.getOutTradeNo()).setSellerId(payRequest.getSellerId()).setTotalAmount(payRequest.getTotalAmount())
             .setDiscountableAmount(payRequest.getDiscountableAmount()).setUndiscountableAmount(payRequest.getUndiscountableAmount())
             .setSubject(payRequest.getSubject()).setBody(payRequest.getBody()).setAppAuthToken(payRequest.getAppAuthToken())
             .setGoodsDetailList(payRequest.getGoodsDetailList()).setOperatorId(payRequest.getOperatorId()).setStoreId(payRequest.getStoreId())
             .setAlipayStoreId(payRequest.getAlipayStoreId()).setTerminalId(payRequest.getTerminalId()).setExtendParams(payRequest.getExtendParams())
-            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAuthCode(payRequest.getAuthCode());
+            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAuthCode(payRequest.getAuthCode());*/
+
+        return null;
     }
 
     /**

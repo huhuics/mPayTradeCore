@@ -197,6 +197,7 @@ public class NotifyRequest extends BaseRequest {
      * 参数校验
      * @return
      */
+    @Override
     public boolean validate() {
 
         AssertUtil.assertNotEmpty(out_trade_no, "商户订单号不能为空");

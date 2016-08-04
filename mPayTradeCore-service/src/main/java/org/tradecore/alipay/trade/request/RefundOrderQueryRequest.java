@@ -64,4 +64,9 @@ public class RefundOrderQueryRequest extends BaseRequest {
         this.refundStatus = refundStatus;
     }
 
+    @Override
+    public boolean validate() {
+        return true;
+    }
+
 }

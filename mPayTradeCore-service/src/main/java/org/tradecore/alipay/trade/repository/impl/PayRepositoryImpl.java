@@ -15,8 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
@@ -176,6 +176,28 @@ public class PayRepositoryImpl implements PayRepository {
 
         BizAlipayPayOrder order = null;
         order = bizAlipayPayOrderDAO.selectOrder(paramMap);
+
+        LogUtil.info(logger, "订单查询结果,order={0}", order);
+
+        return order;
+    }
+
+    @Override
+    public BizAlipayPayOrder selectPayOrderByTradeNo(String acquirerId, String merchantId, String outTradeNo) throws SQLException {
+
+        //组装结算中心订单号
+        String tradeNo = acquirerId + merchantId + outTradeNo;
+
+        LogUtil.info(logger, "收到订单查询请求,tradeNo={0}", tradeNo);
+
+        BizAlipayPayOrder order = null;
+
+        try {
+            order = bizAlipayPayOrderDAO.selectByTradeNo(tradeNo);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "订单查询异常,message={0}", e.getMessage());
+            throw new RuntimeException("订单查询异常", e);
+        }
 
         LogUtil.info(logger, "订单查询结果,order={0}", order);
 

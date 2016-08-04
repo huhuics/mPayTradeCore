@@ -115,7 +115,8 @@ public class DefaultPayRequest extends BaseRequest {
      * 参数校验
      * @return 校验是否成功
      */
-    protected boolean validate() {
+    @Override
+    public boolean validate() {
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");
 

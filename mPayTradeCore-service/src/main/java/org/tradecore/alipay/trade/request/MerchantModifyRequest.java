@@ -85,6 +85,7 @@ public class MerchantModifyRequest extends BaseRequest {
      * 非空参数校验
      * @return
      */
+    @Override
     public boolean validate() {
 
         AssertUtil.assertNotEmpty(external_id, "商户外部编号不能为空");
