@@ -139,6 +139,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             setPayOrderSuccess(payOrder, payResponse);
         } else if (payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.PROCESSING.getCode())) {
             //6.2 返回处理中，则轮询查询交易是否成功，如果超时，则调用撤销
+            LogUtil.info(logger, "条码支付返回业务处理中");
             AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
 
         }
