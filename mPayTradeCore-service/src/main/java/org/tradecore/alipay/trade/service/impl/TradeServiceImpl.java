@@ -49,6 +49,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
@@ -65,7 +66,7 @@ import com.alipay.demo.trade.service.AlipayTradeService;
  * @version $Id: TradeServiceImpl.java, v 0.1 2016年7月8日 下午4:13:39 HuHui Exp $
  */
 @Service
-public class TradeServiceImpl extends AbstractAlipayService implements TradeService {
+public class TradeServiceImpl extends AbstractAlipayTradeService implements TradeService {
 
     /** 日志 */
     private static final Logger       logger = LoggerFactory.getLogger(TradeServiceImpl.class);
@@ -121,7 +122,7 @@ public class TradeServiceImpl extends AbstractAlipayService implements TradeServ
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
-        AlipayTradePayRequest alipayRequest = convert2AlipayRequest(payRequest);
+        AlipayTradePayRequest alipayRequest = createAlipayRequest(payRequest);
 
         //4.调用支付宝条码支付接口
         AlipayTradePayResponse payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
@@ -136,6 +137,10 @@ public class TradeServiceImpl extends AbstractAlipayService implements TradeServ
             //6.1 支付明确成功
             LogUtil.info(logger, "条码支付返回成功");
             setPayOrderSuccess(payOrder, payResponse);
+        } else if (payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.PROCESSING.getCode())) {
+            //6.2 返回处理中，则轮询查询交易是否成功，如果超时，则调用撤销
+            AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
+
         }
 
         //7.保存交易数据
@@ -359,20 +364,41 @@ public class TradeServiceImpl extends AbstractAlipayService implements TradeServ
     }
 
     /**
-     * 将条码支付请求参数转换成支付宝请求
+     * 创建支付宝查询请求
+     * @param appAuthToken
+     * @param outTradeNo
+     * @return
+     */
+    private AlipayTradeQueryRequest createAlipayQueryRequest(String appAuthToken, String outTradeNo) {
+
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, appAuthToken);
+
+        //封装查询参数并序列化
+        Map<String, Object> paraMap = new HashMap<String, Object>();
+        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, outTradeNo);
+
+        request.setBizContent(JSON.toJSONString(paraMap));
+
+        return request;
+
+    }
+
+    /**
+     * 创建支付宝请求
      * @param payRequest 
      * @return
      */
-    private AlipayTradePayRequest convert2AlipayRequest(PayRequest payRequest) {
-        /*return new AlipayTradePayRequestBuilder().setSubMerchantId(payRequest.getMerchantId()).setScene(payRequest.getScene())
-            .setOutTradeNo(payRequest.getOutTradeNo()).setSellerId(payRequest.getSellerId()).setTotalAmount(payRequest.getTotalAmount())
-            .setDiscountableAmount(payRequest.getDiscountableAmount()).setUndiscountableAmount(payRequest.getUndiscountableAmount())
-            .setSubject(payRequest.getSubject()).setBody(payRequest.getBody()).setAppAuthToken(payRequest.getAppAuthToken())
-            .setGoodsDetailList(payRequest.getGoodsDetailList()).setOperatorId(payRequest.getOperatorId()).setStoreId(payRequest.getStoreId())
-            .setAlipayStoreId(payRequest.getAlipayStoreId()).setTerminalId(payRequest.getTerminalId()).setExtendParams(payRequest.getExtendParams())
-            .setTimeoutExpress(payRequest.getTimeoutExpress()).setAuthCode(payRequest.getAuthCode());*/
+    private AlipayTradePayRequest createAlipayRequest(PayRequest payRequest) {
 
-        return null;
+        AlipayTradePayRequest request = new AlipayTradePayRequest();
+
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, payRequest.getAppAuthToken());
+
+        request.setBizContent(JSON.toJSONString(payRequest));
+
+        return request;
     }
 
     /**

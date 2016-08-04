@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 import org.tradecore.common.util.AssertUtil;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * 条码支付请求
  * @author HuHui
@@ -19,6 +21,7 @@ public class PayRequest extends DefaultPayRequest {
     private static final long serialVersionUID = -4651634291538225127L;
 
     /** (必填)付款条码，用户支付宝钱包手机app点击“付款”产生的付款条码 */
+    @JSONField(name = "auth_code")
     private String            authCode;
 
     /**
