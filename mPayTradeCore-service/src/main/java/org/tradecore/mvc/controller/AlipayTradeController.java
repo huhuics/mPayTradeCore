@@ -40,10 +40,6 @@ import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.demo.trade.model.ExtendParams;
 import com.alipay.demo.trade.model.GoodsDetail;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 
 /**
  * 处理支付宝交易请求
@@ -70,7 +66,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         LogUtil.info(logger, "收到条码支付HTTP请求");
 
-        AlipayF2FPayResult payResult = null;
+        AlipayTradePayResponse payResponse = new AlipayTradePayResponse();
 
         try {
             Map<String, String> paraMap = getParameters(request);
@@ -81,19 +77,18 @@ public class AlipayTradeController extends AbstractBizController {
 
             PayRequest payRequest = buildPayRequest(paraMap);
 
-            payResult = tradeService.pay(payRequest);
+            payResponse = tradeService.pay(payRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "条码支付HTTP调用异常,Message={0}", e.getMessage());
-            buildPayErrorResult(payResult);
         }
 
-        String body = payResult.getResponse().getBody();
+        String body = payResponse.getBody();
 
-        String payResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
+        String payResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
 
-        LogUtil.info(logger, "条码支付HTTP调用结果,payResponse={0}", payResponse);
+        LogUtil.info(logger, "条码支付HTTP调用结果,payResponseStr={0}", payResponseStr);
 
-        return payResponse;
+        return payResponseStr;
     }
 
     /**
@@ -105,7 +100,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         LogUtil.info(logger, "收到扫码支付HTTP请求");
 
-        AlipayF2FPrecreateResult precreateResult = null;
+        AlipayTradePrecreateResponse precreateResponse = new AlipayTradePrecreateResponse();
 
         try {
             Map<String, String> paraMap = getParameters(request);
@@ -116,19 +111,18 @@ public class AlipayTradeController extends AbstractBizController {
 
             PrecreateRequest precreateRequest = buildPrecreateRequest(paraMap);
 
-            precreateResult = tradeService.precreate(precreateRequest);
+            precreateResponse = tradeService.precreate(precreateRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "扫码支付HTTP调用异常,Message={0}", e.getMessage());
-            buildPrecreateErrorResult(precreateResult);
         }
 
-        String body = precreateResult.getResponse().getBody();
+        String body = precreateResponse.getBody();
 
-        String precreateResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
+        String precreateResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
 
-        LogUtil.info(logger, "扫码支付HTTP调用结果,precreateResponse={0}", precreateResponse);
+        LogUtil.info(logger, "扫码支付HTTP调用结果,precreateResponseStr={0}", precreateResponseStr);
 
-        return precreateResponse;
+        return precreateResponseStr;
     }
 
     /**
@@ -140,7 +134,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         LogUtil.info(logger, "收到订单查询HTTP请求");
 
-        AlipayF2FQueryResult queryResult = null;
+        AlipayTradeQueryResponse queryResponse = new AlipayTradeQueryResponse();
 
         try {
             Map<String, String> paraMap = getParameters(request);
@@ -149,19 +143,18 @@ public class AlipayTradeController extends AbstractBizController {
 
             QueryRequest queryRequest = buildQueryRequest(paraMap);
 
-            queryResult = tradeService.query(queryRequest);
+            queryResponse = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单查询HTTP调用异常,Message={0}", e.getMessage());
-            buildQueryErrorResult(queryResult);
         }
 
-        String body = queryResult.getResponse().getBody();
+        String body = queryResponse.getBody();
 
-        String queryResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
+        String queryResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
 
-        LogUtil.info(logger, "订单查询HTTP调用结果,queryResponse={0}", queryResponse);
+        LogUtil.info(logger, "订单查询HTTP调用结果,queryResponse={0}", queryResponseStr);
 
-        return queryResponse;
+        return queryResponseStr;
 
     }
 
@@ -174,7 +167,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         LogUtil.info(logger, "收到退款HTTP请求");
 
-        AlipayF2FRefundResult refundResult = null;
+        AlipayTradeRefundResponse refundResponse = null;
 
         try {
             Map<String, String> paraMap = getParameters(request);
@@ -183,19 +176,18 @@ public class AlipayTradeController extends AbstractBizController {
 
             RefundRequest refundRequest = buildRefundRequest(paraMap);
 
-            refundResult = tradeService.refund(refundRequest);
+            refundResponse = tradeService.refund(refundRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "退款HTTP调用异常,Message={0}", e.getMessage());
-            buildRefundErrorResult(refundResult);
         }
 
-        String body = refundResult.getResponse().getBody();
+        String body = refundResponse.getBody();
 
-        String refundResponse = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
+        String refundResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
 
-        LogUtil.info(logger, "退款HTTP调用结果,refundResponse={0}", refundResponse);
+        LogUtil.info(logger, "退款HTTP调用结果,refundResponse={0}", refundResponseStr);
 
-        return refundResponse;
+        return refundResponseStr;
 
     }
 
@@ -220,7 +212,6 @@ public class AlipayTradeController extends AbstractBizController {
             cancelResponse = tradeService.cancel(cancelRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "撤销HTTP调用异常,Message={0}", e.getMessage());
-            buildCancelResponse(cancelResponse);
         }
 
         String body = cancelResponse.getBody();
@@ -468,38 +459,6 @@ public class AlipayTradeController extends AbstractBizController {
         extendParams.setSysServiceProviderId(extendParamsMap.get("sys_service _provider_id"));
 
         return extendParams;
-    }
-
-    //以下方法存在的意义在于， 当发生异常，避免响应为null而抛出NullpointException
-
-    private void buildCancelResponse(AlipayTradeCancelResponse cancelResponse) {
-        if (cancelResponse == null) {
-            cancelResponse = new AlipayTradeCancelResponse();
-        }
-    }
-
-    private void buildRefundErrorResult(AlipayF2FRefundResult refundResult) {
-        if (refundResult == null) {
-            refundResult = new AlipayF2FRefundResult(new AlipayTradeRefundResponse());
-        }
-    }
-
-    private void buildQueryErrorResult(AlipayF2FQueryResult queryResult) {
-        if (queryResult == null) {
-            queryResult = new AlipayF2FQueryResult(new AlipayTradeQueryResponse());
-        }
-    }
-
-    private void buildPrecreateErrorResult(AlipayF2FPrecreateResult precreateResult) {
-        if (precreateResult == null) {
-            precreateResult = new AlipayF2FPrecreateResult(new AlipayTradePrecreateResponse());
-        }
-    }
-
-    private void buildPayErrorResult(AlipayF2FPayResult payResult) {
-        if (payResult == null) {
-            payResult = new AlipayF2FPayResult(new AlipayTradePayResponse());
-        }
     }
 
 }
