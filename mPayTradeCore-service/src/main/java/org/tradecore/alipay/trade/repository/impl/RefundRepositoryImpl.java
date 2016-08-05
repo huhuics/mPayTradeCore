@@ -28,6 +28,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
+import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayRefundOrderDAO;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -219,6 +220,8 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
         refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+        refundOrder.setTradeNo(TradeNoFormater.format(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+
         refundOrder.setTotalAmount(oriOrder.getTotalAmount());
 
         //由于refundAmount不可能为空，故此处不再校验

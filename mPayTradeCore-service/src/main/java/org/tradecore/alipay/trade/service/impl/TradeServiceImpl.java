@@ -377,16 +377,14 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      */
     private AlipayTradeCancelRequest createAlipayCancelRequest(CancelRequest cancelRequest) {
 
-        AlipayTradeCancelRequest alipayCancelRequest = new AlipayTradeCancelRequest();
-        alipayCancelRequest.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, cancelRequest.getAppAuthToken());
+        AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, cancelRequest.getAppAuthToken());
 
-        //封装查询参数并序列化
-        Map<String, Object> paraMap = new HashMap<String, Object>();
-        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, cancelRequest.getOutTradeNo());
+        request.setBizContent(JSON.toJSONString(cancelRequest));
 
-        alipayCancelRequest.setBizContent(JSON.toJSONString(paraMap));
+        LogUtil.info(logger, "cancel.bizContent:{0}", request.getBizContent());
 
-        return alipayCancelRequest;
+        return request;
     }
 
     /**
@@ -399,6 +397,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, refundRequest.getAppAuthToken());
         request.setBizContent(JSON.toJSONString(refundRequest));
+
+        LogUtil.info(logger, "refund.bizContent:{0}", request.getBizContent());
 
         return request;
     }
@@ -414,6 +414,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, queryRequest.getAppAuthToken());
         request.setBizContent(JSON.toJSONString(queryRequest));
+
+        LogUtil.info(logger, "query.bizContent:{0}", request.getBizContent());
 
         return request;
     }
@@ -436,6 +438,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         request.setBizContent(JSON.toJSONString(paraMap));
 
+        LogUtil.info(logger, "query.bizContent:{0}", request.getBizContent());
+
         return request;
 
     }
@@ -453,7 +457,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         request.setBizContent(JSON.toJSONString(payRequest));
 
-        LogUtil.info(logger, "pay bizContent:{0}", request.getBizContent());
+        LogUtil.info(logger, "pay.bizContent:{0}", request.getBizContent());
 
         return request;
     }
@@ -470,6 +474,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, precreateRequest.getAppAuthToken());
         request.setNotifyUrl(precreateRequest.getNotifyUrl());
         request.setBizContent(JSON.toJSONString(precreateRequest));
+
+        LogUtil.info(logger, "precreate.bizContent:{0}", request.getBizContent());
 
         return request;
     }

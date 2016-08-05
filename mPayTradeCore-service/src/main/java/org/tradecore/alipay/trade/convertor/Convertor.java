@@ -168,6 +168,8 @@ public class Convertor {
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
         cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
 
+        cancelOrder.setTradeNo(TradeNoFormater.format(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+
         cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
 
         //TODO:时间从配置中读取
