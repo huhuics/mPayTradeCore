@@ -128,7 +128,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝条码支付接口
         AlipayTradePayResponse payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
 
-        LogUtil.info(logger, "支付宝返回条码支付业务结果payResponse={0}", JSON.toJSONString(payResponse));
+        LogUtil.info(logger, "支付宝返回条码支付响应payResponse={0}", JSON.toJSONString(payResponse));
 
         //5.创建交易订单对象
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
@@ -147,6 +147,20 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             LogUtil.info(logger, "轮询订单结果loopQueryResponse={0}", loopQueryResponse);
 
+            checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, loopQueryResponse);
+
+        } else if (isResponseError(payResponse)) {
+            //6.3 系统错误，则查询一次交易，如果交易没有支付成功，则调用撤销
+            LogUtil.warn(logger, "条码支付返回系统错误,outTradeNo={0}", payRequest.getOutTradeNo());
+            AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
+
+            AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
+
+            checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, queryResponse);
+        } else {
+            //6.4 其它情况明确支付失败
+            LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
         //7.保存交易数据

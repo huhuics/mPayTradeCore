@@ -29,6 +29,11 @@ public enum AlipayTradeStatusEnum {
     TRADE_SUCCESS("TRADE_SUCCESS", "交易成功"),
 
     /**
+     * 交易支付失败
+     */
+    TRADE_FAILED("TRADE_FAILED", "交易失败"),
+
+    /**
      * 交易结束，不可退款<br>
      * 订单变成TRADE_FINISHED状态，只有过了退款期限这一种情况
      */

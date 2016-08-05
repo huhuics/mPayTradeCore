@@ -56,6 +56,7 @@ public class PayRepositoryImpl implements PayRepository {
         LogUtil.info(logger, "收到条码支付持久化请求");
 
         try {
+            payOrder.setGmtUpdate(new Date());
             bizAlipayPayOrderDAO.insert(payOrder);
         } catch (Exception e) {
             LogUtil.error(e, logger, "条码支付订单持久化失败,message={0}", e.getMessage());

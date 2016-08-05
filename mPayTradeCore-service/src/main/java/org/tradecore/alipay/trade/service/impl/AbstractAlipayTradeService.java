@@ -45,9 +45,11 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     /** 线程池 */
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
+    private static final String    TRADE_STATUS    = " tradeStatus:";
+
     /**
-     * 根据轮询结果填充订单信息<br>
-     * 如果轮询订单支付成功，则更新订单信息并返回；如果支付失败，则发起撤销
+     * 根据订单查询结果填充订单信息<br>
+     * 如果查询订单支付成功，则更新订单信息并返回；如果支付失败，则发起撤销
      * @param payOrder
      * @param outTradeNo
      * @param appAuthToken
@@ -58,17 +60,23 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     protected BizAlipayPayOrder checkQueryAndCancel(BizAlipayPayOrder payOrder, String outTradeNo, String appAuthToken, AlipayTradePayResponse payResponse,
                                                     AlipayTradeQueryResponse queryResponse) {
 
-        LogUtil.info(logger, "收到订单轮询结果校验请求");
+        LogUtil.info(logger, "收到订单查询结果校验请求,outTradeNo={0}", outTradeNo);
 
         //1.查询为支付成功
         if (isQuerySuccess(queryResponse)) {
+
+            LogUtil.info(logger, "订单查询结果为支付成功");
+
             //1.1 将查询成功信息填充至订单信息中
             setPayOrderSuccess(payOrder, queryResponse);
 
             //1.2 将查询成功信息填充至支付应答
+            convert2PayResponse(payResponse, queryResponse);
 
             return payOrder;
         }
+
+        LogUtil.info(logger, "订单查询结果为支付失败");
 
         //2.查询为支付失败
         AlipayTradeCancelRequest cancelRequest = new AlipayTradeCancelRequest();
@@ -86,10 +94,12 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
         if (isResponseError(cancelResponse)) {
             //撤销失败则表示交易状态未知
             payOrder.setOrderStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
+            LogUtil.warn(logger, "查询订单支付失败且撤销失败,订单状态未知");
         } else {
             //撤销成功，标记交易状态为TRADE_CLOSED，撤销状态为CANCEL_SUCCESS
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             payOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+            LogUtil.warn(logger, "查询订单支付失败且撤销成功");
         }
 
         return payOrder;
@@ -199,6 +209,35 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
+     * 条码支付成功时将查询响应转化为支付响应
+     */
+    protected AlipayTradePayResponse convert2PayResponse(AlipayTradePayResponse payResponse, AlipayTradeQueryResponse queryResponse) {
+
+        //可明确是业务成功
+        payResponse.setCode(AlipayBizResultEnum.SUCCESS.getCode());
+
+        //补充交易状态信息
+        StringBuilder msg = new StringBuilder(queryResponse.getMsg()).append(TRADE_STATUS).append(queryResponse.getTradeStatus());
+        payResponse.setMsg(msg.toString());
+        payResponse.setSubCode(queryResponse.getSubCode());
+        payResponse.setSubMsg(queryResponse.getSubMsg());
+        payResponse.setBody(queryResponse.getBody());
+        payResponse.setParams(queryResponse.getParams());
+
+        payResponse.setGmtPayment(queryResponse.getSendPayDate());
+        payResponse.setBuyerLogonId(queryResponse.getBuyerLogonId());
+        payResponse.setFundBillList(queryResponse.getFundBillList());
+        payResponse.setOpenId(queryResponse.getOpenId());
+        payResponse.setOutTradeNo(queryResponse.getOutTradeNo());
+        payResponse.setReceiptAmount(queryResponse.getReceiptAmount());
+        payResponse.setTotalAmount(queryResponse.getTotalAmount());
+        //支付宝订单号
+        payResponse.setTradeNo(queryResponse.getTradeNo());
+
+        return payResponse;
+    }
+
+    /**
      * 条码支付成功时设置交易数据
      */
     protected BizAlipayPayOrder setPayOrderSuccess(BizAlipayPayOrder payOrder, AlipayTradeQueryResponse payResponse) {
@@ -244,8 +283,6 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
         //支付宝返回消息体
         payOrder.setReturnDetail(payResponse.getBody());
 
-        payOrder.setGmtUpdate(new Date());
-
         return payOrder;
     }
 
@@ -285,8 +322,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @return
      */
     protected boolean isResponseError(AlipayResponse response) {
-        return response == null || StringUtils.equals(response.getCode(), AlipayBizResultEnum.FAILED.getCode())
-               || StringUtils.equals(response.getCode(), AlipayBizResultEnum.UNKNOW.getCode());
+        return response == null || StringUtils.equals(response.getCode(), AlipayBizResultEnum.UNKNOW.getCode());
     }
 
 }
