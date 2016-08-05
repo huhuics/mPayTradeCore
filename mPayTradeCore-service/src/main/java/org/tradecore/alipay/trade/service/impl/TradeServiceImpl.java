@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -46,17 +44,16 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.AlipayApiException;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.demo.trade.service.AlipayTradeService;
 
 /**
@@ -131,11 +128,11 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
 
         //6.根据调用结果分别处理
-        if (payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
+        if (isPaySuccess(payResponse)) {
             //6.1 支付明确成功
             LogUtil.info(logger, "条码支付返回成功");
             setPayOrderSuccess(payOrder, payResponse);
-        } else if (payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.PROCESSING.getCode())) {
+        } else if (isPayProcessing(payResponse)) {
             //6.2 返回处理中，则轮询查询交易是否成功，如果超时，则调用撤销
             LogUtil.info(logger, "条码支付返回业务处理中");
             AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
@@ -196,7 +193,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
 
         //5.根据调用结果分别处理
-        if (precreateResponse != null && StringUtils.equals(precreateResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
+        if (isPrecreateSuccess(precreateResponse)) {
             LogUtil.info(logger, "扫码支付返回成功");
             payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setQrCode(precreateResponse.getQrCode());
@@ -242,6 +239,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回订单查询结果queryResponse={0}", JSON.toJSONString(queryResponse));
 
+        //5.根据调用结果分别处理
         if (isQuerySuccess(queryResponse)) {
             LogUtil.info(logger, "订单查询返回成功");
             //如果支付宝返回订单状态与本地订单不一致，则修改本地
@@ -262,25 +260,19 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayF2FRefundResult refund(RefundRequest refundRequest) {
+    public AlipayTradeRefundResponse refund(RefundRequest refundRequest) throws Exception {
 
         LogUtil.info(logger, "收到订单退款请求,refundRequest={0}", refundRequest);
 
         //1.校验参数
-        AssertUtil.assertNotNull(refundRequest, "退款请求参数不能为空");
-        AssertUtil.assertTrue(refundRequest.validate(), "退款请求参数不合法");
+        validateRequest(refundRequest);
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "商户不存在或状态非法");
 
-        //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = null;
-        try {
-            oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
-        } catch (SQLException e) {
-            LogUtil.error(e, logger, "查询数据异常");
-            throw new RuntimeException("查询数据异常");
-        }
+        //2.查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
+            refundRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
@@ -288,50 +280,42 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest), "退款金额不能大于订单总金额");
 
         //3.转换成支付宝退款请求参数
-        AlipayTradeRefundRequestBuilder builder = convert2Builder(refundRequest);
+        AlipayTradeRefundRequest alipayRefundRequest = createAlipayRefundRequest(refundRequest);
 
         //4.调用支付宝接口
-        AlipayF2FRefundResult alipayF2FRefundResult = alipayTradeService.tradeRefund(builder);
+        AlipayTradeRefundResponse refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest);
 
-        LogUtil.info(logger, "支付宝返回退款业务结果alipayF2FRefundResult={0}", JSON.toJSONString(alipayF2FRefundResult, SerializerFeature.UseSingleQuotes));
-
-        AssertUtil.assertNotNull(alipayF2FRefundResult, "支付宝返回订单退款结果为空");
+        LogUtil.info(logger, "支付宝返回退款业务结果refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
 
         //5.幂等控制。如果查询到退款成功记录，则不修改本地退款订单；如果没查询到，则持久化退款记录
         RefundOrderQueryRequest queryRequest = buildRefundOrderQueryRequest(refundRequest);
         List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrders(queryRequest);
         if (CollectionUtils.isEmpty(refundOrders)) {
             //5.1根据支付宝返回结果持久化退款订单，修改原订单状态
-            refundRepository.saveRefundOrder(oriOrder, refundRequest, alipayF2FRefundResult);
+            refundRepository.saveRefundOrder(oriOrder, refundRequest, refundResponse);
 
             //5.2根据退款订单状态更新本地交易订单的退款状态数据
             payRepository.updateOrderRefundStatus(oriOrder);
         }
 
-        return alipayF2FRefundResult;
+        return refundResponse;
     }
 
     @Override
     @Transactional
-    public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) {
+    public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) throws Exception {
 
         LogUtil.info(logger, "收到订单撤销请求,cancelRequest={0}", cancelRequest);
 
         //1.参数校验
-        AssertUtil.assertNotNull(cancelRequest, "撤销请求参数不能为空");
-        AssertUtil.assertTrue(cancelRequest.validate(), "撤销请求参数不合法");
+        validateRequest(cancelRequest);
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "商户不存在或状态非法");
 
-        //2.加锁查询原始订单
-        BizAlipayPayOrder oriOrder = null;
-        try {
-            oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
-        } catch (SQLException e) {
-            LogUtil.error(e, logger, "查询数据异常");
-            throw new RuntimeException("查询数据异常");
-        }
+        //2.查询原始订单
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+            cancelRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -339,28 +323,47 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(checkCancelTime(oriOrder.getGmtCreate()), "已超过可撤销时间，订单无法进行撤销");
 
         //4.转换成支付宝撤销请求
-        AlipayTradeCancelRequest alipayTradeCancelRequest = convert2Request(cancelRequest);
+        AlipayTradeCancelRequest alipayCancelRequest = createAlipayCancelRequest(cancelRequest);
 
         //5.调用支付宝撤销接口
-        AlipayTradeCancelResponse cancelResponse = null;
-        try {
-            cancelResponse = alipayClient.execute(alipayTradeCancelRequest);
-        } catch (AlipayApiException e) {
-            LogUtil
-                .error(e, logger, "调用支付宝撤销接口异常,alipayTradeCancelRequest={0}", JSON.toJSONString(alipayTradeCancelRequest, SerializerFeature.UseSingleQuotes));
-            throw new RuntimeException("调用支付宝撤销接口异常", e);
-        }
+        AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest);
 
         LogUtil.info(logger, "支付宝返回撤销业务结果cancelResponse={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
-        //6.查询本地是否有撤销成功记录，如果本地为空，则持久化撤销订单，并修改原交易订单的撤销状态；如果本地不为空，则不修改本地订单数据，直接返回支付宝响应
+        //6.构造撤销订单
+        BizAlipayCancelOrder cancelOrder = Convertor.convert2CancelOrder(oriOrder, cancelRequest);
+
+        //7.根据响应分别处理
+        if (isCancelSuccess(cancelResponse)) {
+            LogUtil.info(logger, "订单撤销返回成功");
+            cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+            //撤销完成，交易状态改为TRADE_CLOSED
+            oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+            //设置其它参数
+            cancelOrder.setRetryFlag(cancelResponse.getRetryFlag());
+            cancelOrder.setAction(cancelResponse.getAction());
+            cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
+
+        } else if (isResponseError(cancelResponse)) {
+            LogUtil.info(logger, "订单撤销返回系统错误");
+            cancelOrder.setCancelStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
+        } else {
+            LogUtil.info(logger, "订单撤销返回失败");
+            cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_FAILED.getCode());
+        }
+
+        if (cancelResponse != null) {
+            cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+
+        //8.幂等.查询本地是否有撤销成功记录，如果本地为空，则持久化撤销订单，并修改原交易订单的撤销状态；如果本地不为空，则不修改本地订单数据，直接返回支付宝响应
         List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
             cancelRequest.getAlipayTradeNo(), AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
 
         if (CollectionUtils.isEmpty(cancelOrders)) {
-            //6.1 本地持久化撤销数据
-            BizAlipayCancelOrder cancelOrder = cancelRepository.saveCancelOrder(oriOrder, cancelRequest, cancelResponse);
-            //6.2 修改原始订单的撤销状态
+            //8.1 本地持久化撤销数据
+            cancelRepository.saveCancelOrder(cancelOrder);
+            //8.2 修改原始订单的撤销状态
             payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
         }
 
@@ -372,7 +375,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param cancelRequest
      * @return
      */
-    private AlipayTradeCancelRequest convert2Request(CancelRequest cancelRequest) {
+    private AlipayTradeCancelRequest createAlipayCancelRequest(CancelRequest cancelRequest) {
 
         AlipayTradeCancelRequest alipayCancelRequest = new AlipayTradeCancelRequest();
         alipayCancelRequest.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, cancelRequest.getAppAuthToken());
@@ -391,11 +394,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param refundRequest
      * @return
      */
-    private AlipayTradeRefundRequestBuilder convert2Builder(RefundRequest refundRequest) {
-        return new AlipayTradeRefundRequestBuilder().setOutTradeNo(refundRequest.getOutTradeNo()).setTradeNo(refundRequest.getAlipayTradeNo())
-            .setRefundAmount(refundRequest.getRefundAmount()).setRefundReason(refundRequest.getRefundReason()).setOutRequestNo(refundRequest.getOutRequestNo())
-            .setStoreId(refundRequest.getStoreId()).setAppAuthToken(refundRequest.getAppAuthToken()).setAlipayStoreId(refundRequest.getAlipayStoreId())
-            .setTerminalId(refundRequest.getTerminalId());
+    private AlipayTradeRefundRequest createAlipayRefundRequest(RefundRequest refundRequest) {
+
+        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, refundRequest.getAppAuthToken());
+        request.setBizContent(JSON.toJSONString(refundRequest));
+
+        return request;
     }
 
     /**
@@ -410,7 +415,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, queryRequest.getAppAuthToken());
         request.setBizContent(JSON.toJSONString(queryRequest));
 
-        return null;
+        return request;
     }
 
     /**

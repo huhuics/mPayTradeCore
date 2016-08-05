@@ -12,7 +12,7 @@ import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
  * 退款仓储服务
@@ -26,10 +26,10 @@ public interface RefundRepository {
      * 收单机构退款请求第一次到结算中心，结算中心持久化退款数据，退款状态为INIT
      * @param oriOrder                 原订单
      * @param refundRequest            退款请求
-     * @param alipayF2FRefundResult    支付宝响应
+     * @param refundResponse    支付宝响应
      * @return
      */
-    BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayF2FRefundResult alipayF2FRefundResult);
+    BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse refundResponse);
 
     /**
      * 通过商户订单号、退款订单状态获取所有退款订单<br>

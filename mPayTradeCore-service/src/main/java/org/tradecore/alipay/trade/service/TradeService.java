@@ -14,7 +14,7 @@ import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
  * 交易服务类
@@ -50,7 +50,7 @@ public interface TradeService {
      * @param refundRequest  请求参数
      * @return               退款返回结果信息
      */
-    AlipayF2FRefundResult refund(RefundRequest refundRequest);
+    AlipayTradeRefundResponse refund(RefundRequest refundRequest) throws Exception;
 
     /**
      * 订单撤销<br>
@@ -60,6 +60,6 @@ public interface TradeService {
      * @param cancelRequest  请求参数，只支持根据商户订单号撤销订单
      * @return
      */
-    AlipayTradeCancelResponse cancel(CancelRequest cancelRequest);
+    AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) throws Exception;
 
 }

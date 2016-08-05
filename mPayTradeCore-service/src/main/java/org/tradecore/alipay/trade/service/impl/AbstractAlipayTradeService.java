@@ -28,7 +28,9 @@ import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.utils.Utils;
 
@@ -287,7 +289,25 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
-     * 订单查询返回“支付成功”
+     * 条码支付是否返回成功
+     * @param payResponse
+     * @return
+     */
+    protected boolean isPaySuccess(AlipayTradePayResponse payResponse) {
+        return payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
+    }
+
+    /**
+     * 条码支付是否返回正在处理中
+     * @param payResponse
+     * @return
+     */
+    protected boolean isPayProcessing(AlipayTradePayResponse payResponse) {
+        return payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.PROCESSING.getCode());
+    }
+
+    /**
+     * 订单查询是否返回“支付成功”
      * @param queryResponse
      * @return
      */
@@ -299,12 +319,30 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
-     * 订单撤销返回成功
+     * 条码支付是否返回成功
+     * @param precreateResponse
+     * @return
+     */
+    protected boolean isPrecreateSuccess(AlipayTradePrecreateResponse precreateResponse) {
+        return precreateResponse != null && StringUtils.equals(precreateResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
+    }
+
+    /**
+     * 订单撤销是否返回成功
      * @param cancelResponse
      * @return
      */
     protected boolean isCancelSuccess(AlipayTradeCancelResponse cancelResponse) {
         return cancelResponse != null && StringUtils.equals(cancelResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
+    }
+
+    /**
+     * 订单退款请求是否返回成功
+     * @param refundResponse
+     * @return
+     */
+    protected boolean isRefundSuccess(AlipayTradeRefundResponse refundResponse) {
+        return refundResponse != null && StringUtils.equals(refundResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
     }
 
     /**

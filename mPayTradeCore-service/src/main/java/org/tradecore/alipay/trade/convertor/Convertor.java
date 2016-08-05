@@ -11,12 +11,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
+import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.Money;
 import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.common.util.UUIDUtil;
+import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
@@ -146,6 +148,35 @@ public class Convertor {
         payOrder.setOutNotifyUrl(precreateRequest.getOutNotifyUrl());
 
         return payOrder;
+    }
+
+    /**
+     * 将cancelRequest转换成domian对象<br>
+     * 只转化公共参数，有些参数，如状态、支付宝返回字段此处不转化
+     * @param oriOrder
+     * @param cancelRequest
+     * @return
+     */
+    public static BizAlipayCancelOrder convert2CancelOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest) {
+        BizAlipayCancelOrder cancelOrder = new BizAlipayCancelOrder();
+
+        cancelOrder.setId(UUIDUtil.geneId());
+        cancelOrder.setAcquirerId(cancelRequest.getAcquirerId());
+        cancelOrder.setMerchantId(cancelRequest.getMerchantId());
+        cancelOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
+
+        //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
+        cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+
+        cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
+
+        //TODO:时间从配置中读取
+        cancelOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+
+        cancelOrder.setGmtCreate(new Date());
+
+        return cancelOrder;
+
     }
 
 }

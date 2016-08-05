@@ -6,11 +6,7 @@ package org.tradecore.alipay.trade.repository;
 
 import java.util.List;
 
-import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
-import org.tradecore.dao.domain.BizAlipayPayOrder;
-
-import com.alipay.api.response.AlipayTradeCancelResponse;
 
 /**
  * 撤销仓储服务
@@ -26,7 +22,7 @@ public interface CancelRepository {
      * @param cancelResponse
      * @return
      */
-    BizAlipayCancelOrder saveCancelOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest, AlipayTradeCancelResponse cancelResponse);
+    BizAlipayCancelOrder saveCancelOrder(BizAlipayCancelOrder cancelOrder);
 
     /**
      * 查询撤销成功的记录

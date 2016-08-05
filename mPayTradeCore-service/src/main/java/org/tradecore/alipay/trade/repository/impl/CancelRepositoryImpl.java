@@ -15,22 +15,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
-import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.CancelRepository;
-import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.common.util.AssertUtil;
-import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
-import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayCancelOrderDAO;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
-import org.tradecore.dao.domain.BizAlipayPayOrder;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.response.AlipayTradeCancelResponse;
 
 /**
  * 撤销仓储接口实现类
@@ -48,27 +38,9 @@ public class CancelRepositoryImpl implements CancelRepository {
 
     /** 撤销DAO */
     @Override
-    public BizAlipayCancelOrder saveCancelOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest, AlipayTradeCancelResponse cancelResponse) {
+    public BizAlipayCancelOrder saveCancelOrder(BizAlipayCancelOrder cancelOrder) {
 
         LogUtil.info(logger, "收到撤销订单持久化请求");
-
-        BizAlipayCancelOrder cancelOrder = convert2CancelOrder(oriOrder, cancelRequest);
-
-        if (cancelResponse != null) {
-            if (StringUtils.equals(cancelResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {//撤销成功
-                LogUtil.info(logger, "支付宝撤销成功");
-                cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
-                //撤销完成，交易状态改为TRADE_CLOSED
-                oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
-            } else {//业务失败
-                LogUtil.info(logger, "支付宝撤销失败");
-                cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_FAILED.getCode());
-            }
-
-            cancelOrder.setRetryFlag(cancelResponse.getRetryFlag());
-            cancelOrder.setAction(cancelResponse.getAction());
-            cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
-        }
 
         cancelOrder.setGmtUpdate(new Date());
 
@@ -105,34 +77,6 @@ public class CancelRepositoryImpl implements CancelRepository {
         LogUtil.info(logger, "撤销订单查询结果,cancelOrders={0}", cancelOrders);
 
         return cancelOrders;
-    }
-
-    /**
-     * 将cancelRequest转换成domian对象
-     * @param oriOrder
-     * @param cancelRequest
-     * @return
-     */
-    private BizAlipayCancelOrder convert2CancelOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest) {
-        BizAlipayCancelOrder cancelOrder = new BizAlipayCancelOrder();
-
-        cancelOrder.setId(UUIDUtil.geneId());
-        cancelOrder.setAcquirerId(cancelRequest.getAcquirerId());
-        cancelOrder.setMerchantId(cancelRequest.getMerchantId());
-        cancelOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
-
-        //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
-        cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
-
-        cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
-
-        //TODO:时间从配置中读取
-        cancelOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
-
-        cancelOrder.setGmtCreate(new Date());
-
-        return cancelOrder;
-
     }
 
 }

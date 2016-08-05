@@ -7,6 +7,8 @@ package org.tradecore.alipay.trade.request;
 import org.apache.commons.lang3.StringUtils;
 import org.tradecore.common.util.AssertUtil;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * 撤销请求
  * @author HuHui
@@ -18,24 +20,29 @@ public class CancelRequest extends BaseRequest {
     private static final long serialVersionUID = -467059391745534004L;
 
     /** (必填)收单机构编号 */
+    @JSONField(name = "acquirer_id")
     private String            acquirerId;
 
     /** (必填)商户识别号 */
+    @JSONField(name = "merchant_id")
     private String            merchantId;
 
     /**
      * (特殊可选)商户网站订单系统中唯一订单号，和支付宝交易号不能同时为空
      */
+    @JSONField(name = "out_trade_no")
     private String            outTradeNo;
 
     /**
      * (特殊可选)支付宝交易号，和商户订单号不能同时为空
      */
+    @JSONField(name = "trade_no")
     private String            alipayTradeNo;
 
     /**
      * 应用授权令牌
      */
+    @JSONField(name = "app_auth_token")
     private String            appAuthToken;
 
     /**

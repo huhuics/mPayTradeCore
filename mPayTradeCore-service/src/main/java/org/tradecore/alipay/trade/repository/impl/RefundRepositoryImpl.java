@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
@@ -35,7 +36,6 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 
 /**
  * 
@@ -53,18 +53,16 @@ public class RefundRepositoryImpl implements RefundRepository {
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
 
     @Override
-    public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayF2FRefundResult alipayF2FRefundResult) {
+    public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse response) {
 
         LogUtil.info(logger, "收到退款订单持久化请求");
-
-        AlipayTradeRefundResponse response = alipayF2FRefundResult.getResponse();
 
         //将公共参数封装成Domain对象
         BizAlipayRefundOrder refundOrder = convert2RefundOrder(refundRequest, oriOrder);
 
         LogUtil.info(logger, "退款请求对象refundRequest转换成refundOrder对象成功,refundOrder={0}", refundOrder);
 
-        if (alipayF2FRefundResult.isTradeSuccess()) {
+        if (response != null && StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             LogUtil.info(logger, "支付宝退款成功");
 
             //判断金额是否为空
@@ -87,8 +85,14 @@ public class RefundRepositoryImpl implements RefundRepository {
             }
 
         } else {
-            LogUtil.info(logger, "支付宝退款失败");
-            refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_FAILED.getCode());
+
+            if (response == null || StringUtils.equals(response.getCode(), AlipayBizResultEnum.UNKNOW.getCode())) {
+                LogUtil.info(logger, "订单退款返回系统错误");
+                refundOrder.setRefundStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
+            } else {
+                LogUtil.info(logger, "订单退款返回失败");
+                refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_FAILED.getCode());
+            }
 
             //当前订单已经成功退款的金额
             Money refundedMoney = getRefundedMoney(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
@@ -180,11 +184,6 @@ public class RefundRepositoryImpl implements RefundRepository {
      * <li>本次退款金额=订单总金额</li>
      * <li>本次退款金额+历史退款成功总金额=订单总金额</li>
      * </ul>
-     * @param outTradeNo
-     * @param alipayTradeNo
-     * @param totalAmount
-     * @param refundAmount
-     * @return
      */
     private boolean isTotalRefund(String merchantId, String outTradeNo, String alipayTradeNo, Money totalAmount, Money refundAmount) {
 
@@ -205,7 +204,8 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     /**
-     * 将refundRequest转换成domian对象
+     * 将refundRequest转换成domian对象<br>
+     * 只转化公共参数，有些参数，如状态、支付宝返回字段此处不转化
      * @param refundRequest
      * @return
      */
