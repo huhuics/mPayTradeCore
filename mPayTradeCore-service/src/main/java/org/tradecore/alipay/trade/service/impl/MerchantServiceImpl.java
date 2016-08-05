@@ -22,7 +22,6 @@ import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
-import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
@@ -35,8 +34,6 @@ import org.tradecore.dao.domain.BizMerchantInfo;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.AlipayApiException;
-import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayBossProdSubmerchantCreateRequest;
 import com.alipay.api.request.AlipayBossProdSubmerchantQueryRequest;
 import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
@@ -48,13 +45,10 @@ import com.alipay.api.response.AlipayBossProdSubmerchantQueryResponse;
  * @version $Id: MerchantServiceImpl.java, v 0.1 2016年7月13日 下午7:52:55 HuHui Exp $
  */
 @Service
-public class MerchantServiceImpl implements MerchantService {
+public class MerchantServiceImpl extends AbstractAlipayService implements MerchantService {
 
     /** 日志 */
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
-
-    /** 公共请求方法类 */
-    private static AlipayClient alipayClient;
 
     @Resource
     private BizMerchantInfoDAO  bizMerchantInfoDAO;
@@ -63,18 +57,9 @@ public class MerchantServiceImpl implements MerchantService {
     @Resource
     private AcquirerService     acquirerService;
 
-    /**
-     * 构造方法
-     */
-    public MerchantServiceImpl() {
-
-        //实例化AlipayClient
-        alipayClient = AlipayClientFactory.getAlipayClientInstance();
-    }
-
     @Override
     @Transactional
-    public MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) {
+    public MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) throws Exception {
 
         LogUtil.info(logger, "收到商户入驻请求参数,merchantCreateRequest={0}", merchantCreateRequest);
 
@@ -100,8 +85,8 @@ public class MerchantServiceImpl implements MerchantService {
         //4.调用支付宝商户入驻接口
         AlipayBossProdSubmerchantCreateResponse alipayResponse = null;
         try {
-            alipayResponse = alipayClient.execute(alipayCreateRequest);
-        } catch (AlipayApiException e) {
+            alipayResponse = (AlipayBossProdSubmerchantCreateResponse) getResponse(alipayCreateRequest);
+        } catch (Exception e) {
             LogUtil.error(e, logger, "调用支付宝商户入驻接口异常,alipayCreateRequest={0}", JSON.toJSONString(alipayCreateRequest, SerializerFeature.UseSingleQuotes));
             throw new RuntimeException("调用支付宝商户入驻接口异常", e);
         }
@@ -119,7 +104,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) {
+    public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) throws Exception {
 
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
 
@@ -142,7 +127,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) {
+    public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) throws Exception {
 
         LogUtil.info(logger, "收到商户信息修改请求参数,merchantModifyRequest={0}", merchantModifyRequest);
 

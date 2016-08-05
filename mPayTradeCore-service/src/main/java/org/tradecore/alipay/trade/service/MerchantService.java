@@ -24,20 +24,20 @@ public interface MerchantService {
      * @param merchantCreateRequest   请求参数
      * @return                        返回对象
      */
-    MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest);
+    MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) throws Exception;
 
     /**
      * 商户信息查询接口<br>
      * @param merchantQueryRequest
      * @return
      */
-    MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest);
+    MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) throws Exception;
 
     /**
      * 商户信息修改接口
      * @param merchantModifyRequest
      * @return
      */
-    MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest);
+    MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) throws Exception;
 
 }

@@ -43,9 +43,10 @@ public class MerchantServiceTest extends BaseTest {
 
     /**
      * 测试商户入驻
+     * @throws Exception 
      */
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception {
 
         Assert.assertNotNull(merchantService);
 
@@ -73,7 +74,7 @@ public class MerchantServiceTest extends BaseTest {
     }
 
     @Test
-    public void testQuery() {
+    public void testQuery() throws Exception {
 
         Assert.assertNotNull(merchantService);
 
@@ -90,7 +91,7 @@ public class MerchantServiceTest extends BaseTest {
     }
 
     @Test
-    public void testModify() {
+    public void testModify() throws Exception {
 
         Assert.assertNotNull(merchantService);
 
