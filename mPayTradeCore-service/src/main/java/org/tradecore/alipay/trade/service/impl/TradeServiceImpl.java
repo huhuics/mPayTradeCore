@@ -49,15 +49,13 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
-import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 import com.alipay.demo.trade.service.AlipayTradeService;
 
@@ -110,8 +108,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 
         //1.校验参数
-        AssertUtil.assertNotNull(payRequest, "条码支付请求不能为空");
-        payRequest.validate();
+        validateRequest(payRequest);
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
@@ -130,7 +127,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回条码支付响应payResponse={0}", JSON.toJSONString(payResponse));
 
-        //5.创建交易订单对象
+        //5.创建条码交易订单对象
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
 
         //6.根据调用结果分别处理
@@ -161,6 +158,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             //6.4 其它情况明确支付失败
             LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+            payOrder.setReturnDetail(JSON.toJSONString(payResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
         //7.保存交易数据
@@ -171,68 +169,95 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest) {
+    public AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) throws Exception {
 
         LogUtil.info(logger, "收到扫码支付请求参数,precreateRequest={0}", precreateRequest);
 
         //1.参数校验
-        AssertUtil.assertNotNull(precreateRequest, "扫码支付请求不能为空");
-        AssertUtil.assertTrue(precreateRequest.validate(), "扫码支付请求参数不合法");
+        validateRequest(precreateRequest);
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
-        //1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = null;
-        try {
-            nativePayOrder = payRepository.selectPayOrder(precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo(), null);
-        } catch (SQLException e) {
-            LogUtil.error(e, logger, "查询数据异常");
-            throw new RuntimeException("查询数据异常");
-        }
+        //  1.2幂等判断
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(),
+            precreateRequest.getOutTradeNo());
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
-        AlipayTradePrecreateRequestBuilder builder = convert2Builder(precreateRequest);
+        AlipayTradePrecreateRequest alipayPrecreateRequest = createAlipayPrecreateRequest(precreateRequest);
 
         //3.调用支付宝扫码支付接口
-        AlipayF2FPrecreateResult alipayF2FPrecreateResult = alipayTradeService.tradePrecreate(builder);
+        AlipayTradePrecreateResponse precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest);
 
-        LogUtil.info(logger, "支付宝返回扫码支付业务结果alipayF2FPrecreateResult={0}", JSON.toJSONString(alipayF2FPrecreateResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "支付宝返回扫码支付业务结果precreateResponse={0}", JSON.toJSONString(precreateResponse));
 
-        AssertUtil.assertNotNull(alipayF2FPrecreateResult, "支付宝返回扫码业务结果为空");
+        //4.创建扫码支付订单
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
 
-        //4.根据支付宝返回结果持久化本地订单数据
-        precreateRepository.savePrecreateOrder(precreateRequest, alipayF2FPrecreateResult);
+        //5.根据调用结果分别处理
+        if (precreateResponse != null && StringUtils.equals(precreateResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
+            LogUtil.info(logger, "扫码支付返回成功");
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
+            payOrder.setQrCode(precreateResponse.getQrCode());
+        } else if (isResponseError(precreateResponse)) {
+            LogUtil.info(logger, "扫码支付返回系统错误,outTradeNo={0}", precreateRequest.getOutTradeNo());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
+        } else {
+            LogUtil.info(logger, "扫码支付返回失败,outTradeNo={0}", precreateRequest.getOutTradeNo());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+        }
 
-        return alipayF2FPrecreateResult;
+        //6.根据支付宝返回结果持久化本地订单数据
+        if (precreateResponse != null) {
+            payOrder.setReturnDetail(JSON.toJSONString(precreateResponse.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+        precreateRepository.savePrecreateOrder(payOrder);
+
+        return precreateResponse;
     }
 
     @Override
     @Transactional
-    public AlipayF2FQueryResult query(QueryRequest queryRequest) {
+    public AlipayTradeQueryResponse query(QueryRequest queryRequest) throws Exception {
 
         LogUtil.info(logger, "收到订单查询请求,queryRequest={0}", queryRequest);
 
         //1.校验参数
-        AssertUtil.assertNotNull(queryRequest, "查询请求不能为空");
-        AssertUtil.assertTrue(queryRequest.validate(), "查询请求参数不合法");
+        validateRequest(queryRequest);
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(queryRequest.getAcquirerId(), queryRequest.getMerchantId()), "商户不存在或状态非法");
 
-        //2.转换成支付宝查询请求参数
-        AlipayTradeQueryRequestBuilder builder = convert2Builder(queryRequest);
+        //2.查询本地订单
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(),
+            queryRequest.getAlipayTradeNo());
+        AssertUtil.assertNotNull(nativePayOrder, "原订单查询为空");
 
-        //3.调用支付宝接口
-        AlipayF2FQueryResult alipayF2FQueryResult = alipayTradeService.queryTradeResult(builder);
+        //3.转换成支付宝查询请求参数
+        AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(queryRequest);
 
-        LogUtil.info(logger, "支付宝返回查询业务结果alipayF2FQueryResult={0}", JSON.toJSONString(alipayF2FQueryResult, SerializerFeature.UseSingleQuotes));
+        //4.调用支付宝接口
+        AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
 
-        //4.如果业务成功，则修改本地订单状态
-        payRepository.updateOrderStatus(queryRequest, alipayF2FQueryResult);
+        LogUtil.info(logger, "支付宝返回订单查询结果queryResponse={0}", JSON.toJSONString(queryResponse));
 
-        return alipayF2FQueryResult;
+        if (isQuerySuccess(queryResponse)) {
+            LogUtil.info(logger, "订单查询返回成功");
+            //如果支付宝返回订单状态与本地订单不一致，则修改本地
+            if (!StringUtils.equals(nativePayOrder.getOrderStatus(), queryResponse.getTradeStatus())) {
+                nativePayOrder.setOrderStatus(queryResponse.getTradeStatus());
+                nativePayOrder.setAlipayTradeNo(queryResponse.getTradeNo());
+                //修改本地订单
+                payRepository.updateOrderStatus(nativePayOrder);
+            }
+        } else if (isResponseError(queryResponse)) {
+            LogUtil.info(logger, "订单查询返回系统错误,outTradeNo={0},alipayTradeNo={0}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
+        } else {
+            LogUtil.info(logger, "订单查询返回失败,outTradeNo={0},alipayTradeNo={0}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
+        }
+
+        return queryResponse;
     }
 
     @Override
@@ -378,9 +403,14 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param queryRequest
      * @return
      */
-    private AlipayTradeQueryRequestBuilder convert2Builder(QueryRequest queryRequest) {
-        return new AlipayTradeQueryRequestBuilder().setOutTradeNo(queryRequest.getOutTradeNo()).setTradeNo(queryRequest.getAlipayTradeNo())
-            .setAppAuthToken(queryRequest.getAppAuthToken());
+    private AlipayTradeQueryRequest createAlipayQueryRequest(QueryRequest queryRequest) {
+
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, queryRequest.getAppAuthToken());
+        request.setBizContent(JSON.toJSONString(queryRequest));
+
+        return null;
     }
 
     /**
@@ -426,15 +456,15 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param precreateRequest
      * @return
      */
-    private AlipayTradePrecreateRequestBuilder convert2Builder(PrecreateRequest precreateRequest) {
-        return new AlipayTradePrecreateRequestBuilder().setSubMerchantId(precreateRequest.getMerchantId()).setOutTradeNo(precreateRequest.getOutTradeNo())
-            .setSellerId(precreateRequest.getSellerId()).setTotalAmount(precreateRequest.getTotalAmount())
-            .setDiscountableAmount(precreateRequest.getDiscountableAmount()).setUndiscountableAmount(precreateRequest.getUndiscountableAmount())
-            .setSubject(precreateRequest.getSubject()).setBody(precreateRequest.getBody()).setAppAuthToken(precreateRequest.getAppAuthToken())
-            .setGoodsDetailList(precreateRequest.getGoodsDetailList()).setOperatorId(precreateRequest.getOperatorId())
-            .setStoreId(precreateRequest.getStoreId()).setAlipayStoreId(precreateRequest.getAlipayStoreId()).setTerminalId(precreateRequest.getTerminalId())
-            .setExtendParams(precreateRequest.getExtendParams()).setTimeoutExpress(precreateRequest.getTimeoutExpress())
-            .setNotifyUrl(precreateRequest.getNotifyUrl());
+    private AlipayTradePrecreateRequest createAlipayPrecreateRequest(PrecreateRequest precreateRequest) {
+
+        AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
+
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, precreateRequest.getAppAuthToken());
+        request.setNotifyUrl(precreateRequest.getNotifyUrl());
+        request.setBizContent(JSON.toJSONString(precreateRequest));
+
+        return request;
     }
 
     /**

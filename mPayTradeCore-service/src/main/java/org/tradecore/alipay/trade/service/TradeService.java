@@ -12,8 +12,8 @@ import org.tradecore.alipay.trade.request.RefundRequest;
 
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 
 /**
@@ -36,14 +36,14 @@ public interface TradeService {
      * @param precreateRequest
      * @return
      */
-    AlipayF2FPrecreateResult precreate(PrecreateRequest precreateRequest);
+    AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) throws Exception;
 
     /**
      * 订单查询
      * @param queryRequest  请求参数
      * @return              订单查询结果信息
      */
-    AlipayF2FQueryResult query(QueryRequest queryRequest);
+    AlipayTradeQueryResponse query(QueryRequest queryRequest) throws Exception;
 
     /**
      * 订单退款

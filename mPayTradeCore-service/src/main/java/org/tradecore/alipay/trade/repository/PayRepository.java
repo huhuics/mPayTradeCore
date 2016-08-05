@@ -7,11 +7,8 @@ package org.tradecore.alipay.trade.repository;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
-
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
  * 条码支付仓储服务接口
@@ -28,10 +25,9 @@ public interface PayRepository {
 
     /**
      * 如果查询支付宝端的订单状态与本地订单状态不一致，则修改本地订单状态
-     * @param queryRequest           订单查询请求对象
-     * @param alipayF2FQueryResult   支付宝返回订单查询结果对象
+     * @param payOrder           订单对象
      */
-    void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult);
+    void updateOrderStatus(BizAlipayPayOrder payOrder) throws Exception;
 
     /**
      * 更新交易订单中的交易状态和退款状态

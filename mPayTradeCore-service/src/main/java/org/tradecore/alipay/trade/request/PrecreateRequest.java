@@ -6,6 +6,8 @@ package org.tradecore.alipay.trade.request;
 
 import org.tradecore.common.util.AssertUtil;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /**
  * 预下单(生成二维码)请求
  * @author HuHui
@@ -24,6 +26,7 @@ public class PrecreateRequest extends DefaultPayRequest {
     /**
      * (必填)支付结果通知URL，此URL是由结算中心填写，并传给支付宝
      */
+    @JSONField(name = "notify_url")
     private String            notifyUrl;
 
     /**

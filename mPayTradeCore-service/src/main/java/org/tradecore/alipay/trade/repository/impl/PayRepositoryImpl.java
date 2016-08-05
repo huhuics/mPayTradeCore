@@ -15,11 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
-import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
@@ -31,8 +29,6 @@ import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
 
 /**
  * 条码支付仓储服务接口实现类<br>
@@ -66,39 +62,17 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public void updateOrderStatus(QueryRequest queryRequest, AlipayF2FQueryResult alipayF2FQueryResult) {
+    public void updateOrderStatus(BizAlipayPayOrder payOrder) throws Exception {
 
         LogUtil.info(logger, "收到订单状态更新请求");
 
-        if (alipayF2FQueryResult != null && alipayF2FQueryResult.getResponse() != null) {
-            AlipayTradeQueryResponse response = alipayF2FQueryResult.getResponse();
-
-            //判断业务是否业务成功
-            if (StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
-                //1.加锁查询本地订单数据
-                BizAlipayPayOrder order = null;
-                try {
-                    order = selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
-                } catch (SQLException e) {
-                    LogUtil.error(e, logger, "查询数据异常");
-                    throw new RuntimeException("查询数据异常");
-                }
-
-                AssertUtil.assertNotNull(order, "原订单查询为空");
-
-                //2.判断订单状态是否一致，如果不一致则更新本地订单状态
-                if (!StringUtils.equals(order.getOrderStatus(), response.getTradeStatus())) {
-                    order.setOrderStatus(response.getTradeStatus());
-                    order.setAlipayTradeNo(response.getTradeNo());
-                    order.setGmtUpdate(new Date());
-
-                    //更新订单
-                    AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(order) > 0, "支付订单更新失败");
-                }
-
-            }
+        try {
+            payOrder.setGmtUpdate(new Date());
+            bizAlipayPayOrderDAO.updateByPrimaryKey(payOrder);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "支付订单更新失败,message={0}", e.getMessage());
+            throw new RuntimeException("支付订单更新失败", e);
         }
-
     }
 
     @Override

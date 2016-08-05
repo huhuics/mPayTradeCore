@@ -4,10 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository;
 
-import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
-
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 
 /**
  * 扫码支付仓储服务接口
@@ -17,11 +14,10 @@ import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
 public interface PrecreateRepository {
 
     /**
-     * 根据支付宝调用结果，将扫码支付请求本地持久化
-     * @param precreateRequest           扫码支付请求
-     * @param alipayF2FPrecreateResult   支付宝返回调用结果
+     * 扫码支付请求本地持久化
+     * @param payOrder           
      * @return 持久化之后的Domian对象
      */
-    BizAlipayPayOrder savePrecreateOrder(PrecreateRequest precreateRequest, AlipayF2FPrecreateResult alipayF2FPrecreateResult);
+    BizAlipayPayOrder savePrecreateOrder(BizAlipayPayOrder payOrder);
 
 }
