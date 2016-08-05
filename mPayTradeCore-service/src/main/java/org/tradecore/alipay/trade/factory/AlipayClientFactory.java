@@ -9,8 +9,6 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.demo.trade.config.Configs;
-import com.alipay.demo.trade.service.AlipayTradeService;
-import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 
 /**
  * Alipay交易相关工厂类
@@ -19,23 +17,17 @@ import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
  */
 public class AlipayClientFactory {
 
-    /** 支付宝交易接口 */
-    private static final AlipayTradeService alipayTradeService;
-
     /**
      *  SDK 公共请求类，包含公共请求参数，以及封装了签名与验签，开发者无需关注签名与验签
      */
-    private static final AlipayClient       alipayClient;
+    private static final AlipayClient alipayClient;
 
     static {
 
         //1.读取配置文件
         Configs.init("config/zfbinfo.properties");
 
-        //2.工厂方法创建静态支付服务类
-        alipayTradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
-
-        //3.实例化AlipayClient
+        //2.实例化AlipayClient
         alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain(), Configs.getAppid(), Configs.getPrivateKey(), ParamConstant.ALIPAY_CONFIG_FORMAT,
             ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
     }
@@ -48,11 +40,4 @@ public class AlipayClientFactory {
         return alipayClient;
     }
 
-    /**
-     * 返回alipayTradeService实例
-     * @return
-     */
-    public static AlipayTradeService getAlipayTradeServiceInstance() {
-        return alipayTradeService;
-    }
 }

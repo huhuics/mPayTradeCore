@@ -325,6 +325,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         precreateRequest.setAcquirerId(acquirerId);
         precreateRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
 
         //此处统一为SCAN_CODE
         precreateRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());

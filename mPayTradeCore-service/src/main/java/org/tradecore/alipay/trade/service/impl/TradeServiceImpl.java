@@ -21,7 +21,6 @@ import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
-import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.PrecreateRepository;
@@ -54,7 +53,6 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.service.AlipayTradeService;
 
 /**
  * 支付宝交易服务类
@@ -65,38 +63,27 @@ import com.alipay.demo.trade.service.AlipayTradeService;
 public class TradeServiceImpl extends AbstractAlipayTradeService implements TradeService {
 
     /** 日志 */
-    private static final Logger       logger = LoggerFactory.getLogger(TradeServiceImpl.class);
-
-    /** 支付宝交易接口 */
-    private static AlipayTradeService alipayTradeService;
+    private static final Logger logger = LoggerFactory.getLogger(TradeServiceImpl.class);
 
     /** 支付仓储服务 */
     @Resource
-    private PayRepository             payRepository;
+    private PayRepository       payRepository;
 
     /** 扫码支付仓储服务 */
     @Resource
-    private PrecreateRepository       precreateRepository;
+    private PrecreateRepository precreateRepository;
 
     /** 退款仓储服务 */
     @Resource
-    private RefundRepository          refundRepository;
+    private RefundRepository    refundRepository;
 
     /** 撤销仓储服务 */
     @Resource
-    private CancelRepository          cancelRepository;
+    private CancelRepository    cancelRepository;
 
     /** 收单机构服务接口 */
     @Resource
-    private AcquirerService           acquirerService;
-
-    /** 构造方法，初始化支付宝服务类 */
-    public TradeServiceImpl() {
-
-        //工厂方法创建静态支付服务类
-        alipayTradeService = AlipayClientFactory.getAlipayTradeServiceInstance();
-
-    }
+    private AcquirerService     acquirerService;
 
     @Override
     @Transactional
