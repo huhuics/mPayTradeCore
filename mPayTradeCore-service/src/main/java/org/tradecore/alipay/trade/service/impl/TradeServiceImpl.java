@@ -52,6 +52,7 @@ import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.demo.trade.model.builder.AlipayTradePrecreateRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeQueryRequestBuilder;
 import com.alipay.demo.trade.model.builder.AlipayTradeRefundRequestBuilder;
@@ -141,6 +142,10 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             //6.2 返回处理中，则轮询查询交易是否成功，如果超时，则调用撤销
             LogUtil.info(logger, "条码支付返回业务处理中");
             AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
+
+            AlipayTradeQueryResponse loopQueryResponse = loopQuery(alipayQueryRequest);
+
+            LogUtil.info(logger, "轮询订单结果loopQueryResponse={0}", loopQueryResponse);
 
         }
 
@@ -433,29 +438,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
         return queryRequest;
-    }
-
-    /**
-     * 条码支付成功时设置交易数据
-     */
-    private void setPayOrderSuccess(BizAlipayPayOrder payOrder, AlipayTradePayResponse payResponse) {
-
-        payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
-        payOrder.setAlipayTradeNo(payResponse.getTradeNo());
-
-        if (StringUtils.isNotBlank(payResponse.getReceiptAmount())) {
-            payOrder.setReceiptAmount(new Money(payResponse.getReceiptAmount()));
-        }
-
-        payOrder.setFundBillList(JSON.toJSONString(payResponse.getFundBillList()));
-        payOrder.setDiscountGoodsDetail(payResponse.getDiscountGoodsDetail());
-        payOrder.setGmtPayment(payResponse.getGmtPayment());
-        payOrder.setCheckDate(DateUtil.format(payResponse.getGmtPayment(), DateUtil.shortFormat));
-
-        //支付宝返回消息体
-        payOrder.setReturnDetail(payResponse.getBody());
-
-        payOrder.setGmtUpdate(new Date());
     }
 
     /**

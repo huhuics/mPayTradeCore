@@ -34,6 +34,12 @@ public enum AlipayTradeStatusEnum {
      */
     TRADE_FINISHED("TRADE_FINISHED", "交易结束"),
 
+    /**
+     * 业务交易状态未知<br>
+     * 此时不清楚该业务是否成功或者失败，需要商户自行确认
+     */
+    UNKNOWN("UNKNOWN", "状态未知"),
+
     /** 撤销成功 */
     CANCEL_SUCCESS("CANCEL_SUCCESS", "撤销成功"),
 
