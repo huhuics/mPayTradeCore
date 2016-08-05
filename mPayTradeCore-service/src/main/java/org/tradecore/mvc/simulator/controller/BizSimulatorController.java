@@ -77,6 +77,8 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT = "mechQueryResult";
 
+    private static final String MERCHANT_ID       = "196";
+
     /** 交易服务接口 */
     @Resource
     private TradeService        tradeService;
@@ -107,7 +109,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "196");
+        map.put("merchant_id", MERCHANT_ID);
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");
@@ -121,7 +123,7 @@ public class BizSimulatorController {
 
         //组织参数
         map.put("acquirer_id", "10880010001");
-        map.put("merchant_id", "196");
+        map.put("merchant_id", MERCHANT_ID);
         map.put("out_trade_no", "out_trade_no_" + geneRandomId());
         map.put("subject", "结算中心条码交易测试_" + geneRandomId());
         map.put("body", "购买商品3件共20.00元");
@@ -276,10 +278,10 @@ public class BizSimulatorController {
             String filePath = classPath.substring(5, classPath.length() - 8);
 
             //线上使用这个
-            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+            //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
 
             //本地使用这个
-            //            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
+            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
             LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
@@ -636,6 +638,7 @@ public class BizSimulatorController {
         PayRequest payRequest = new PayRequest();
         payRequest.setAcquirerId(request.getParameter("acquirer_id"));
         payRequest.setMerchantId(request.getParameter("merchant_id"));
+        payRequest.setSubMerchantId(payRequest.getMerchantId());
         payRequest.setScene(request.getParameter("scene"));
         payRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         payRequest.setSellerId(request.getParameter("seller_id"));

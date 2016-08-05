@@ -382,6 +382,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         payRequest.setAcquirerId(acquirerId);
         payRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        payRequest.setSubMerchantId(payRequest.getMerchantId());
 
         //此处统一为BAR_CODE
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());

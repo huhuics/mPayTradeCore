@@ -122,7 +122,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝条码支付接口
         AlipayTradePayResponse payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
 
-        LogUtil.info(logger, "支付宝返回条码支付响应payResponse={0}", JSON.toJSONString(payResponse));
+        LogUtil.info(logger, "支付宝返回条码支付响应payResponse={0}", JSON.toJSONString(payResponse, SerializerFeature.UseSingleQuotes));
 
         //5.创建条码交易订单对象
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
@@ -139,7 +139,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             AlipayTradeQueryResponse loopQueryResponse = loopQuery(alipayQueryRequest);
 
-            LogUtil.info(logger, "轮询订单结果loopQueryResponse={0}", loopQueryResponse);
+            LogUtil.info(logger, "轮询订单结果loopQueryResponse={0}", JSON.toJSONString(loopQueryResponse, SerializerFeature.UseSingleQuotes));
 
             checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, loopQueryResponse);
 
@@ -187,7 +187,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //3.调用支付宝扫码支付接口
         AlipayTradePrecreateResponse precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest);
 
-        LogUtil.info(logger, "支付宝返回扫码支付业务结果precreateResponse={0}", JSON.toJSONString(precreateResponse));
+        LogUtil.info(logger, "支付宝返回扫码支付业务结果precreateResponse={0}", JSON.toJSONString(precreateResponse, SerializerFeature.UseSingleQuotes));
 
         //4.创建扫码支付订单
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
@@ -237,7 +237,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝接口
         AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
 
-        LogUtil.info(logger, "支付宝返回订单查询结果queryResponse={0}", JSON.toJSONString(queryResponse));
+        LogUtil.info(logger, "支付宝返回订单查询结果queryResponse={0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
 
         //5.根据调用结果分别处理
         if (isQuerySuccess(queryResponse)) {
@@ -452,6 +452,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, payRequest.getAppAuthToken());
 
         request.setBizContent(JSON.toJSONString(payRequest));
+
+        LogUtil.info(logger, "pay bizContent:{0}", request.getBizContent());
 
         return request;
     }

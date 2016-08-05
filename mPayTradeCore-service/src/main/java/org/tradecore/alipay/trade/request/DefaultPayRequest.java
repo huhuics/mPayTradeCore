@@ -6,6 +6,7 @@ package org.tradecore.alipay.trade.request;
 
 import java.util.List;
 
+import org.tradecore.alipay.trade.model.SubMerchant;
 import org.tradecore.common.util.AssertUtil;
 
 import com.alibaba.fastjson.annotation.JSONField;
@@ -129,6 +130,10 @@ public class DefaultPayRequest extends BaseRequest {
      */
     @JSONField(name = "timeout_express")
     protected String            timeoutExpress;
+
+    /** 二级商户 */
+    @JSONField(name = "sub_merchant")
+    protected SubMerchant       subMerchant;
 
     /**
      * 参数校验
@@ -294,6 +299,20 @@ public class DefaultPayRequest extends BaseRequest {
 
     public void setTimeoutExpress(String timeoutExpress) {
         this.timeoutExpress = timeoutExpress;
+    }
+
+    public SubMerchant getSubMerchant() {
+        return subMerchant;
+    }
+
+    public void setSubMerchant(SubMerchant subMerchant) {
+        this.subMerchant = subMerchant;
+    }
+
+    public void setSubMerchantId(String merchantId) {
+        SubMerchant subMerchant = new SubMerchant();
+        subMerchant.setMerchantId(merchantId);
+        this.subMerchant = subMerchant;
     }
 
 }
