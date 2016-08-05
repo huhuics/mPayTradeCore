@@ -14,8 +14,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -29,12 +29,11 @@ import org.tradecore.service.test.BaseTest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradePayResponse;
+import com.alipay.api.response.AlipayTradePrecreateResponse;
+import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.demo.trade.model.GoodsDetail;
-import com.alipay.demo.trade.model.TradeStatus;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 import com.alipay.demo.trade.utils.ZxingUtils;
 
 /**
@@ -82,17 +81,18 @@ public class TradeServiceTest extends BaseTest {
         goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
-        AlipayF2FPayResult ret = tradeService.pay(payRequest);
+        AlipayTradePayResponse ret = tradeService.pay(payRequest);
 
-        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+        Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
 
     }
 
     /**
      * 测试扫码支付
+     * @throws Exception 
      */
     @Test
-    public void testPrecreate() {
+    public void testPrecreate() throws Exception {
 
         Assert.assertNotNull(tradeService);
 
@@ -120,23 +120,24 @@ public class TradeServiceTest extends BaseTest {
         payRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
         payRequest.setOutNotifyUrl("http://www.notify.url.out");
 
-        AlipayF2FPrecreateResult ret = tradeService.precreate(payRequest);
+        AlipayTradePrecreateResponse ret = tradeService.precreate(payRequest);
 
-        String qrFilePath = String.format("F:/qr/%s.png", ret.getResponse().getOutTradeNo());
+        String qrFilePath = String.format("F:/qr/%s.png", ret.getOutTradeNo());
 
         LogUtil.info(logger, "qrFilePath={0}", qrFilePath);
 
         //生成二维码图片
-        ZxingUtils.getQRCodeImge(ret.getResponse().getQrCode(), 256, qrFilePath);
+        ZxingUtils.getQRCodeImge(ret.getQrCode(), 256, qrFilePath);
 
-        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+        Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
     }
 
     /**
      * 测试订单查询
+     * @throws Exception 
      */
     @Test
-    public void testQuery() {
+    public void testQuery() throws Exception {
         Assert.assertNotNull(tradeService);
 
         //组装参数
@@ -146,18 +147,19 @@ public class TradeServiceTest extends BaseTest {
         queryRequest.setOutTradeNo("tradepay1468509260030");
         queryRequest.setAlipayTradeNo("");
 
-        AlipayF2FQueryResult ret = tradeService.query(queryRequest);
+        AlipayTradeQueryResponse ret = tradeService.query(queryRequest);
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(StringUtils.equals(ret.getResponse().getCode(), AlipayBizResultEnum.SUCCESS.getCode()));
+        Assert.assertTrue(StringUtils.equals(ret.getCode(), AlipayBizResultEnum.SUCCESS.getCode()));
     }
 
     /**
      * 测试订单退款
+     * @throws Exception 
      */
     @Test
-    public void testRefund() {
+    public void testRefund() throws Exception {
         Assert.assertNotNull(tradeService);
 
         //组装参数
@@ -170,19 +172,20 @@ public class TradeServiceTest extends BaseTest {
         refundRequest.setStoreId("store_id_" + geneRandomId());
         refundRequest.setOutRequestNo("out_request_no_" + geneRandomId());
 
-        AlipayF2FRefundResult ret = tradeService.refund(refundRequest);
+        AlipayTradeRefundResponse ret = tradeService.refund(refundRequest);
 
         LogUtil.info(logger, "订单退款结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
 
-        Assert.assertTrue(ret.getTradeStatus().equals(TradeStatus.SUCCESS));
+        Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
 
     }
 
     /**
      * 测试订单撤销
+     * @throws Exception 
      */
     @Test
-    public void testCancel() {
+    public void testCancel() throws Exception {
         Assert.assertNotNull(tradeService);
 
         //组装参数

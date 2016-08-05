@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
-import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -40,10 +40,6 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.model.result.AlipayF2FPayResult;
-import com.alipay.demo.trade.model.result.AlipayF2FPrecreateResult;
-import com.alipay.demo.trade.model.result.AlipayF2FQueryResult;
-import com.alipay.demo.trade.model.result.AlipayF2FRefundResult;
 import com.alipay.demo.trade.utils.ZxingUtils;
 
 /**
@@ -195,21 +191,20 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到条码支付HTTP请求");
 
-        AlipayF2FPayResult payResult = null;
+        AlipayTradePayResponse response = null;
 
         PayRequest payRequest = buildPayRequest(request);
 
         try {
-            payResult = tradeService.pay(payRequest);
+            response = tradeService.pay(payRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
             setErrorResult(map, e.getMessage());
         }
 
-        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,payResult={0}", JSON.toJSONString(payResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (payResult != null && payResult.getResponse() != null) {
-            AlipayTradePayResponse response = payResult.getResponse();
+        if (response != null) {
             map.put("code", response.getCode());
             map.put("msg", response.getMsg());
             map.put("subCode", response.getSubCode());
@@ -229,20 +224,20 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到条码支付HTTP请求");
 
-        AlipayF2FPayResult payResult = null;
+        AlipayTradePayResponse response = null;
 
         PayRequest payRequest = buildPayRequest(request);
 
         try {
-            payResult = tradeService.pay(payRequest);
+            response = tradeService.pay(payRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
         }
 
-        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,payResult={0}", JSON.toJSONString(payResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (payResult != null && payResult.getResponse() != null) {
-            return payResult.getResponse().getCode();
+        if (response != null) {
+            return response.getCode();
         } else {
             return "40004";
         }
@@ -254,21 +249,20 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到扫码支付HTTP请求");
 
-        AlipayF2FPrecreateResult precreateResult = null;
+        AlipayTradePrecreateResponse response = null;
 
         PrecreateRequest precreateRequest = buildPrecreateRequest(request);
 
         try {
-            precreateResult = tradeService.precreate(precreateRequest);
+            response = tradeService.precreate(precreateRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器扫码支付HTTP调用异常");
             setErrorResult(map, e.getMessage());
         }
 
-        LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,precreateResult={0}", JSON.toJSONString(precreateResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (precreateResult != null && precreateResult.getResponse() != null) {
-            AlipayTradePrecreateResponse response = precreateResult.getResponse();
+        if (response != null) {
             map.put("code", response.getCode());
             map.put("msg", response.getMsg());
             map.put("subCode", response.getSubCode());
@@ -303,21 +297,20 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到订单查询HTTP请求");
 
-        AlipayF2FQueryResult queryResult = null;
+        AlipayTradeQueryResponse response = null;
 
         QueryRequest queryRequest = buildQueryRequest(request);
 
         try {
-            queryResult = tradeService.query(queryRequest);
+            response = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
             setErrorResult(map, e.getMessage());
         }
 
-        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (queryResult != null && queryResult.getResponse() != null) {
-            AlipayTradeQueryResponse response = queryResult.getResponse();
+        if (response != null) {
             map.put("buyerLogonId", response.getBuyerLogonId());
             map.put("outTradeNo", response.getOutTradeNo());
             if (StringUtils.isNotBlank(response.getTradeStatus())) {
@@ -340,19 +333,19 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到订单查询HTTP请求");
 
-        AlipayF2FQueryResult queryResult = null;
+        AlipayTradeQueryResponse response = null;
 
         QueryRequest queryRequest = buildQueryRequest(request);
 
         try {
-            queryResult = tradeService.query(queryRequest);
+            response = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
         }
 
-        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(queryResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,queryResult={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        return queryResult.getResponse().getCode();
+        return response.getCode();
 
     }
 
@@ -361,21 +354,20 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到退款HTTP请求");
 
-        AlipayF2FRefundResult refundResult = null;
+        AlipayTradeRefundResponse response = null;
 
         RefundRequest refundRequest = buildRefundRequest(request);
 
         try {
-            refundResult = tradeService.refund(refundRequest);
+            response = tradeService.refund(refundRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器退款HTTP调用异常");
             setErrorResult(map, e.getMessage());
         }
 
-        LogUtil.info(logger, "模拟器退款HTTP调用结果,refundResult={0}", JSON.toJSONString(refundResult, SerializerFeature.UseSingleQuotes));
+        LogUtil.info(logger, "模拟器退款HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (refundResult != null && refundResult.getResponse() != null) {
-            AlipayTradeRefundResponse response = refundResult.getResponse();
+        if (response != null) {
             map.put("code", response.getCode());
             map.put("msg", response.getMsg());
             map.put("subCode", response.getSubCode());
