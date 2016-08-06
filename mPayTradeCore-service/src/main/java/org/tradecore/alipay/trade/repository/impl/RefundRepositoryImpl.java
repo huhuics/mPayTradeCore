@@ -112,6 +112,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setReturnDetail(JSON.toJSONString(response.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
+        refundOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
         refundOrder.setGmtUpdate(new Date());
 
         AssertUtil.assertTrue(bizAlipayRefundOrderDAO.insert(refundOrder) > 0, "退款请求数据持久化失败");

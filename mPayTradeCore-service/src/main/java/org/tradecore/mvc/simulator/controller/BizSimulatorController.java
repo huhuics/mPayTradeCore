@@ -79,6 +79,8 @@ public class BizSimulatorController {
 
     private static final String MERCHANT_ID       = "196";
 
+    private static final String OUT_NOTIFY_URL    = "http://168.33.50.230:8088/mPay/simulator/receive";
+
     /** 交易服务接口 */
     @Resource
     private TradeService        tradeService;
@@ -292,6 +294,13 @@ public class BizSimulatorController {
         }
 
         return RESULT;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/receive", method = RequestMethod.POST)
+    public String receive(WebRequest request, ModelMap map) {
+        LogUtil.info(logger, "模拟器收到异步通知,返回success");
+        return ParamConstant.NOTIFY_SUCCESS;
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST)
@@ -599,6 +608,7 @@ public class BizSimulatorController {
         PrecreateRequest precreateRequest = new PrecreateRequest();
         precreateRequest.setAcquirerId(request.getParameter("acquirer_id"));
         precreateRequest.setMerchantId(request.getParameter("merchant_id"));
+        precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
         precreateRequest.setScene(request.getParameter("scene"));
         precreateRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         precreateRequest.setSellerId(request.getParameter("seller_id"));
@@ -617,7 +627,7 @@ public class BizSimulatorController {
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(request.getParameter("notify_url"));
 
-        precreateRequest.setOutNotifyUrl("http://www.notify.url.out");
+        precreateRequest.setOutNotifyUrl(OUT_NOTIFY_URL);
 
         LogUtil.info(logger, "创建扫码支付请求成功,precreateRequest={0}", precreateRequest);
 
