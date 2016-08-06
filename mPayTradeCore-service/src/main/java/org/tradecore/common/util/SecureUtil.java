@@ -67,8 +67,13 @@ public class SecureUtil {
      * 对支付宝的异步通知进行验签
      * @throws AlipayApiException 
      */
-    public static boolean verifyAlipayNotify(Map<String, String> paraMap) throws AlipayApiException {
-        return AlipaySignature.rsaCheckV1(paraMap, Configs.getAlipayPublicKey(), StandardCharsets.UTF_8.displayName());
+    public static boolean verifyAlipayNotify(Map<String, String> paraMap) {
+        try {
+            return AlipaySignature.rsaCheckV1(paraMap, Configs.getAlipayPublicKey(), StandardCharsets.UTF_8.displayName());
+        } catch (AlipayApiException e) {
+            LogUtil.error(e, logger, "验证支付宝异步通知签名失败");
+        }
+        return false;
     }
 
 }
