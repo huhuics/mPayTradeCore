@@ -37,6 +37,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
+import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
@@ -96,9 +97,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
 
         //2.幂等判断
-        BizAlipayPayOrder nativePayOrder = null;
-
-        nativePayOrder = payRepository.selectPayOrderByTradeNo(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo());
+        //组装结算中心订单号
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(payRequest.getAcquirerId(), payRequest.getMerchantId(),
+            payRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
@@ -162,8 +163,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getAcquirerId(), createRequest.getMerchantId(),
-            createRequest.getOutTradeNo());
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(createRequest.getAcquirerId(),
+            createRequest.getMerchantId(), createRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
 
         //2.请求参数转换为支付宝请求参数
@@ -214,8 +215,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(),
-            precreateRequest.getOutTradeNo());
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(precreateRequest.getAcquirerId(),
+            precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
@@ -509,7 +510,18 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeCreateRequest request = new AlipayTradeCreateRequest();
 
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, createRequest.getAppAuthToken());
+        request.setNotifyUrl(createRequest.getNotifyUrl());
+
+        //1.结算中心订单号
+        String tradeNo = TradeNoFormater.format(createRequest.getAcquirerId(), createRequest.getMerchantId(), createRequest.getOutTradeNo());
+        //2.商户的订单号
+        String tempOutTradeNo = createRequest.getOutTradeNo();
+        //3.将传给支付宝的外部订单号改为结算中心订单号
+        createRequest.setOutTradeNo(tradeNo);
+        //4.设置支付宝参数
         request.setBizContent(JSON.toJSONString(createRequest));
+        //5.将参数改回来
+        createRequest.setOutTradeNo(tempOutTradeNo);
 
         LogUtil.info(logger, "create.bizContent:{0}", request.getBizContent());
 
@@ -527,7 +539,17 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, precreateRequest.getAppAuthToken());
         request.setNotifyUrl(precreateRequest.getNotifyUrl());
+
+        //1.结算中心订单号
+        String tradeNo = TradeNoFormater.format(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo());
+        //2.商户的订单号
+        String tempOutTradeNo = precreateRequest.getOutTradeNo();
+        //3.将传给支付宝的外部订单号改为结算中心订单号
+        precreateRequest.setOutTradeNo(tradeNo);
+        //4.设置支付宝参数
         request.setBizContent(JSON.toJSONString(precreateRequest));
+        //5.将参数改回来
+        precreateRequest.setOutTradeNo(tempOutTradeNo);
 
         LogUtil.info(logger, "precreate.bizContent:{0}", request.getBizContent());
 

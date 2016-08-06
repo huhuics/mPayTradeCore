@@ -5,6 +5,7 @@
 package org.tradecore.alipay.trade.request;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tradecore.common.util.AssertUtil;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -30,6 +31,17 @@ public class CreateRequest extends DefaultPayRequest {
     @JSONField(name = "buyer_id")
     private String            buyerId;
 
+    /**
+     * (必填)支付结果通知URL，此URL是由收单机构传给结算中心，结算中心将此URL保留
+     */
+    private String            outNotifyUrl;
+
+    /**
+     * (必填)支付结果通知URL，此URL是由结算中心填写，并传给支付宝
+     */
+    @JSONField(name = "notify_url")
+    private String            notifyUrl;
+
     @Override
     public boolean validate() {
 
@@ -38,6 +50,10 @@ public class CreateRequest extends DefaultPayRequest {
         if (StringUtils.isBlank(buyerLogonId) && StringUtils.isBlank(buyerId)) {
             throw new RuntimeException("买家支付宝账号和买家用户号不能同时为空");
         }
+
+        AssertUtil.assertNotEmpty(outNotifyUrl, "商户支付结果通知URL不能为空");
+
+        AssertUtil.assertNotEmpty(notifyUrl, "结算中心支付结果通知URL不能为空");
 
         return true;
     }
@@ -56,6 +72,22 @@ public class CreateRequest extends DefaultPayRequest {
 
     public void setBuyerId(String buyerId) {
         this.buyerId = buyerId;
+    }
+
+    public String getOutNotifyUrl() {
+        return outNotifyUrl;
+    }
+
+    public void setOutNotifyUrl(String outNotifyUrl) {
+        this.outNotifyUrl = outNotifyUrl;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
     }
 
 }

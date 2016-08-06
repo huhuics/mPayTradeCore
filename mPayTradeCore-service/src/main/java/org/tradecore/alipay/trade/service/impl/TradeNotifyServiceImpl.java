@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,48 +46,48 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
     @Override
     @Transactional
-    public boolean receiveAndSend(Map<String, String> paraMap) {
+    public boolean receiveAndSend(Map<String, String> paraMap) throws Exception {
 
         LogUtil.info(logger, "收到扫码支付异步通知请求参数");
 
         //1.校验参数
         AssertUtil.assertNotNull(paraMap, "异步通知参数不能为空");
 
-        //TODO:外部商户号
-        String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
+        //对支付宝而言，外部商户号就是结算中心订单号
+        String tradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = null;
-        try {
-            oriOrder = payRepository.selectPayOrder(null, outTradeNo, null);
-        } catch (SQLException e) {
-            LogUtil.error(e, logger, "查询数据异常");
-            throw new RuntimeException("查询数据异常");
-        }
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderByTradeNo(tradeNo);
+
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //幂等控制，如果原始订单为支付成功、关闭、完成三种状态之一，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构
         if (isTradeNotTerminate(oriOrder.getOrderStatus())) {
-            LogUtil.info(logger, "异步通知修改原始订单幂等,outTradeNo={0}", outTradeNo);
+            LogUtil.info(logger, "异步通知修改原始订单幂等,tradeNo={0}", tradeNo);
             //3.修改原始订单
             payRepository.updatePayOrder(oriOrder, paraMap);
         }
 
         //4.发送给收单机构
-        return send(paraMap, oriOrder.getOutNotifyUrl());
+        return send(paraMap, oriOrder);
 
     }
 
     /**
      * 发送扫码支付响应到收单机构
      * @param notifyRequest  支付宝异步通知请求参数
-     * @param outNotifyUrl   收单机构异步通知地址
+     * @param oriOrder       原始订单
      */
-    public boolean send(Map<String, String> paraMap, String outNotifyUrl) {
+    public boolean send(Map<String, String> paraMap, BizAlipayPayOrder oriOrder) {
+
+        String outNotifyUrl = oriOrder.getOutNotifyUrl();
 
         LogUtil.info(logger, "开始发送扫码支付响应到收单机构,outNotifyUrl={0}", outNotifyUrl);
 
         AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空,发送消息失败");
+
+        //将paraMap中的outTradeNo替换成商户订单号
+        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, oriOrder.getOutTradeNo());
 
         //签名
         paraMap.remove(ParamConstant.SIGN_TYPE);

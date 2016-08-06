@@ -23,7 +23,6 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.dao.BizAlipayPayOrderDAO;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -124,10 +123,7 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrderByTradeNo(String acquirerId, String merchantId, String outTradeNo) throws SQLException {
-
-        //组装结算中心订单号
-        String tradeNo = TradeNoFormater.format(acquirerId, merchantId, outTradeNo);
+    public BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo) throws SQLException {
 
         LogUtil.info(logger, "收到订单查询请求,tradeNo={0}", tradeNo);
 

@@ -121,6 +121,8 @@ public class Convertor {
 
         payOrder.setAccountDetail(reCreateAccountDetail(payOrder.getAccountDetail(), createRequest.getBuyerLogonId(), createRequest.getBuyerId()));
 
+        payOrder.setOutNotifyUrl(createRequest.getOutNotifyUrl());
+
         return payOrder;
     }
 

@@ -53,14 +53,12 @@ public interface PayRepository {
     BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) throws SQLException;
 
     /**
-     * 根据订单号查询支付订单
-     * @param acquirerId      收单机构编号
-     * @param merchantId      商户标识号
-     * @param outTradeNo      外部商户号
+     * 根据结算中心订单号查询支付订单
+     * @param tradeNo         结算中心订单号
      * @return                订单对象
      * @throws SQLException
      */
-    BizAlipayPayOrder selectPayOrderByTradeNo(String acquirerId, String merchantId, String outTradeNo) throws SQLException;
+    BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo) throws SQLException;
 
     /**
      * 根据支付宝异步通知参数更新本地支付订单
