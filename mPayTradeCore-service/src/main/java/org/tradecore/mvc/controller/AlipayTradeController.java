@@ -22,6 +22,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
@@ -90,6 +91,10 @@ public class AlipayTradeController extends AbstractBizController {
 
         return payResponseStr;
     }
+
+    /**
+     * 处理
+     */
 
     /**
      * 处理扫码支付请求
@@ -323,40 +328,15 @@ public class AlipayTradeController extends AbstractBizController {
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        precreateRequest.setAcquirerId(acquirerId);
-        precreateRequest.setMerchantId(bizParaMap.get("merchant_id"));
-        precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
+        //设置公共参数
+        setCommonPayRequestParas(precreateRequest, acquirerId, bizParaMap);
 
         //此处统一为SCAN_CODE
         precreateRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
 
-        precreateRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
-        precreateRequest.setSellerId(bizParaMap.get("seller_id"));
-        precreateRequest.setTotalAmount(bizParaMap.get("total_amount"));
-        precreateRequest.setDiscountableAmount(bizParaMap.get("discountable_amount"));
-        precreateRequest.setUndiscountableAmount(bizParaMap.get("undiscountable_amount"));
-        precreateRequest.setSubject(bizParaMap.get("subject"));
-        precreateRequest.setBody(bizParaMap.get("body"));
-        precreateRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
-
-        //封装成List
-        if (StringUtils.isNotBlank(bizParaMap.get("goods_detail"))) {
-            precreateRequest.setGoodsDetailList(parseGoodsDetailList(bizParaMap.get("goods_detail")));
-        }
-
-        precreateRequest.setOperatorId(bizParaMap.get("operator_id"));
-        precreateRequest.setStoreId(bizParaMap.get("store_id"));
-        precreateRequest.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
-        precreateRequest.setTerminalId(bizParaMap.get("terminal_id"));
-
-        if (StringUtils.isNotBlank(bizParaMap.get("extend_params"))) {
-            precreateRequest.setExtendParams(parseExtendParams(bizParaMap.get("extend_params")));
-        }
-
-        precreateRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
-
         //结算中心通知商户地址
         precreateRequest.setOutNotifyUrl(notifyUrl);
+
         //支付宝通知结算中心地址
         precreateRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
@@ -381,44 +361,55 @@ public class AlipayTradeController extends AbstractBizController {
         Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
         });
 
-        payRequest.setAcquirerId(acquirerId);
-        payRequest.setMerchantId(bizParaMap.get("merchant_id"));
-        payRequest.setSubMerchantId(payRequest.getMerchantId());
+        //设置公共参数
+        setCommonPayRequestParas(payRequest, acquirerId, bizParaMap);
 
         //此处统一为BAR_CODE
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
-
-        payRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
-        payRequest.setSellerId(bizParaMap.get("seller_id"));
-        payRequest.setTotalAmount(bizParaMap.get("total_amount"));
-        payRequest.setDiscountableAmount(bizParaMap.get("discountable_amount"));
-        payRequest.setUndiscountableAmount(bizParaMap.get("undiscountable_amount"));
-        payRequest.setSubject(bizParaMap.get("subject"));
-        payRequest.setBody(bizParaMap.get("body"));
-        payRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
-
-        //封装成List
-        if (StringUtils.isNotBlank(bizParaMap.get("goods_detail"))) {
-            payRequest.setGoodsDetailList(parseGoodsDetailList(bizParaMap.get("goods_detail")));
-        }
-
-        payRequest.setOperatorId(bizParaMap.get("operator_id"));
-        payRequest.setStoreId(bizParaMap.get("store_id"));
-        payRequest.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
-        payRequest.setTerminalId(bizParaMap.get("terminal_id"));
-
-        //获取ExtendParams
-        if (StringUtils.isNotBlank(bizParaMap.get("extend_params"))) {
-            payRequest.setExtendParams(parseExtendParams(bizParaMap.get("extend_params")));
-        }
-
-        payRequest.setTimeoutExpress(bizParaMap.get("timeout_express"));
 
         payRequest.setAuthCode(bizParaMap.get("auth_code"));
 
         LogUtil.info(logger, "条码支付请求参数转换完成");
 
         return payRequest;
+    }
+
+    /**
+     * 设置支付请求公共参数
+     * @param request
+     * @param acquirerId
+     * @param bizParaMap
+     */
+    private void setCommonPayRequestParas(DefaultPayRequest request, String acquirerId, Map<String, String> bizParaMap) {
+
+        request.setAcquirerId(acquirerId);
+        request.setMerchantId(bizParaMap.get("merchant_id"));
+        request.setSubMerchantId(request.getMerchantId());
+
+        request.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        request.setSellerId(bizParaMap.get("seller_id"));
+        request.setTotalAmount(bizParaMap.get("total_amount"));
+        request.setDiscountableAmount(bizParaMap.get("discountable_amount"));
+        request.setUndiscountableAmount(bizParaMap.get("undiscountable_amount"));
+        request.setSubject(bizParaMap.get("subject"));
+        request.setBody(bizParaMap.get("body"));
+        request.setAppAuthToken(bizParaMap.get("app_auth_token"));
+
+        //封装成List
+        if (StringUtils.isNotBlank(bizParaMap.get("goods_detail"))) {
+            request.setGoodsDetailList(parseGoodsDetailList(bizParaMap.get("goods_detail")));
+        }
+
+        request.setOperatorId(bizParaMap.get("operator_id"));
+        request.setStoreId(bizParaMap.get("store_id"));
+        request.setAlipayStoreId(bizParaMap.get("alipay_store_id"));
+        request.setTerminalId(bizParaMap.get("terminal_id"));
+
+        if (StringUtils.isNotBlank(bizParaMap.get("extend_params"))) {
+            request.setExtendParams(parseExtendParams(bizParaMap.get("extend_params")));
+        }
+
+        request.setTimeoutExpress(bizParaMap.get("timeout_express"));
     }
 
     /**
