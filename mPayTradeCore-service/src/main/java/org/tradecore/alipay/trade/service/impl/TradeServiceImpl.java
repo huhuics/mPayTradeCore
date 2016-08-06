@@ -190,7 +190,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        //6.根据支付宝返回结果持久化本地订单数据
+        //6.保存支付宝返回信息
         if (createResponse != null) {
             payOrder.setReturnDetail(JSON.toJSONString(createResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
@@ -242,7 +242,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        //6.根据支付宝返回结果持久化本地订单数据
+        //6.保存支付宝返回信息
         if (precreateResponse != null) {
             payOrder.setReturnDetail(JSON.toJSONString(precreateResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }

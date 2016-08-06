@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
+import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
@@ -150,6 +151,8 @@ public class PayRepositoryImpl implements PayRepository {
         LogUtil.info(logger, "收到异步响应订单更新请求");
 
         oriOrder.setOrderStatus(paraMap.get("trade_status"));
+
+        oriOrder.setAccountDetail(Convertor.reCreateAccountDetail(oriOrder.getAccountDetail(), paraMap.get("buyer_logon_id"), paraMap.get("buyer_id")));
 
         if (StringUtils.isNotBlank(paraMap.get("receipt_amount"))) {
             oriOrder.setReceiptAmount(new Money(paraMap.get("receipt_amount")));

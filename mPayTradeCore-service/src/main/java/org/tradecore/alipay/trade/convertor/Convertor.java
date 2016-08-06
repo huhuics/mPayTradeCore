@@ -119,14 +119,25 @@ public class Convertor {
 
         BizAlipayPayOrder payOrder = convertCommonFields(createRequest);
 
-        Map<String, Object> accountDetailMap = JSON.parseObject(payOrder.getAccountDetail(), new TypeReference<Map<String, Object>>() {
-        });
-        accountDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, createRequest.getBuyerLogonId());
-        accountDetailMap.put(JSONFieldConstant.BUYER_ID, createRequest.getBuyerId());
-
-        payOrder.setAccountDetail(JSON.toJSONString(accountDetailMap));
+        payOrder.setAccountDetail(reCreateAccountDetail(payOrder.getAccountDetail(), createRequest.getBuyerLogonId(), createRequest.getBuyerId()));
 
         return payOrder;
+    }
+
+    /**
+     * 向accountDetail中增加buyerLogonId和buyerId字段，并返回序列化之后的字符串
+     * @param accountDetail    当前accountDetail数据，json格式
+     * @param buyerLogonId
+     * @param buyerId
+     * @return                 json格式
+     */
+    public static String reCreateAccountDetail(String accountDetail, String buyerLogonId, String buyerId) {
+        Map<String, Object> accountDetailMap = JSON.parseObject(accountDetail, new TypeReference<Map<String, Object>>() {
+        });
+        accountDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, buyerLogonId);
+        accountDetailMap.put(JSONFieldConstant.BUYER_ID, buyerId);
+
+        return JSON.toJSONString(accountDetailMap);
     }
 
     /**

@@ -17,6 +17,7 @@ import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
@@ -270,6 +271,8 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
 
         payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_SUCCESS.getCode());
         payOrder.setAlipayTradeNo(payResponse.getTradeNo());
+
+        payOrder.setAccountDetail(Convertor.reCreateAccountDetail(payOrder.getAccountDetail(), payResponse.getBuyerLogonId(), payResponse.getBuyerUserId()));
 
         if (StringUtils.isNotBlank(payResponse.getReceiptAmount())) {
             payOrder.setReceiptAmount(new Money(payResponse.getReceiptAmount()));
