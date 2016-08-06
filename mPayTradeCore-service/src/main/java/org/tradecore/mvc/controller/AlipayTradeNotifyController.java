@@ -50,7 +50,6 @@ public class AlipayTradeNotifyController extends AbstractBizController {
 
         LogUtil.info(logger, "收到支付宝扫码支付HTTP异步通知");
 
-        //TODO:参数中文乱码
         Map<String, String> paraMap = getParameters(request);
 
         LogUtil.info(logger, "扫码支付结果通知原始报文参数paraMap={0}", paraMap);
@@ -107,4 +106,5 @@ public class AlipayTradeNotifyController extends AbstractBizController {
 
         return notifyRequest;
     }
+
 }

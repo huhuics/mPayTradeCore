@@ -4,6 +4,8 @@
  */
 package org.tradecore.alipay.trade.constants;
 
+import java.nio.charset.StandardCharsets;
+
 import org.tradecore.common.config.Resources;
 
 /**
@@ -19,7 +21,7 @@ public class ParamConstant {
     public static final String ALIPAY_CONFIG_FORMAT            = "JSON";
 
     /** 支付宝配置信息编码格式 */
-    public static final String ALIPAY_CONFIG_CHARSET           = "gbk";
+    public static final String ALIPAY_CONFIG_CHARSET           = StandardCharsets.UTF_8.displayName();
 
     /** 扫码支付结果回调地址(结算中心端) */
     public static final String NOTIFY_URL                      = Resources.NOTIFY_URL.getString("notify_url");
