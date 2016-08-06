@@ -28,9 +28,7 @@ import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
-import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.utils.Utils;
 
@@ -119,7 +117,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
         AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest);
 
         //1.撤销成功，则直接返回
-        if (isCancelSuccess(cancelResponse)) {
+        if (isResponseSuccess(cancelResponse)) {
             return cancelResponse;
         }
 
@@ -151,7 +149,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
                     AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest);
 
                     //如果撤销成功或者响应告知不需要重试撤销，则返回(无论撤销是成功还是失败，都需要人工处理)
-                    if (isCancelSuccess(cancelResponse) || !isNeedCancelRetry(cancelResponse)) {
+                    if (isResponseSuccess(cancelResponse) || !isNeedCancelRetry(cancelResponse)) {
                         return;
                     }
 
@@ -289,15 +287,6 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
-     * 条码支付是否返回成功
-     * @param payResponse
-     * @return
-     */
-    protected boolean isPaySuccess(AlipayTradePayResponse payResponse) {
-        return payResponse != null && StringUtils.equals(payResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
-    }
-
-    /**
      * 条码支付是否返回正在处理中
      * @param payResponse
      * @return
@@ -319,33 +308,6 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
-     * 条码支付是否返回成功
-     * @param precreateResponse
-     * @return
-     */
-    protected boolean isPrecreateSuccess(AlipayTradePrecreateResponse precreateResponse) {
-        return precreateResponse != null && StringUtils.equals(precreateResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
-    }
-
-    /**
-     * 订单撤销是否返回成功
-     * @param cancelResponse
-     * @return
-     */
-    protected boolean isCancelSuccess(AlipayTradeCancelResponse cancelResponse) {
-        return cancelResponse != null && StringUtils.equals(cancelResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
-    }
-
-    /**
-     * 订单退款请求是否返回成功
-     * @param refundResponse
-     * @return
-     */
-    protected boolean isRefundSuccess(AlipayTradeRefundResponse refundResponse) {
-        return refundResponse != null && StringUtils.equals(refundResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
-    }
-
-    /**
      * 撤销是否需要重试
      * @param cancelResponse
      * @return
@@ -355,9 +317,14 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     }
 
     /**
+     * 支付宝响应是否成功
+     */
+    protected boolean isResponseSuccess(AlipayResponse response) {
+        return response != null && StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode());
+    }
+
+    /**
      * 支付宝响应是否异常或发生系统错误
-     * @param response
-     * @return
      */
     protected boolean isResponseError(AlipayResponse response) {
         return response == null || StringUtils.equals(response.getCode(), AlipayBizResultEnum.UNKNOW.getCode());

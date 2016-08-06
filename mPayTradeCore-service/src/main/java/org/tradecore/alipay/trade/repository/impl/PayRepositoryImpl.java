@@ -47,18 +47,18 @@ public class PayRepositoryImpl implements PayRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public void savePayOrder(BizAlipayPayOrder payOrder) {
+    public BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) {
 
-        LogUtil.info(logger, "收到条码支付持久化请求");
+        LogUtil.info(logger, "收到支付订单持久化请求");
 
         try {
-            payOrder.setGmtUpdate(new Date());
             bizAlipayPayOrderDAO.insert(payOrder);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "条码支付订单持久化失败,message={0}", e.getMessage());
-            throw new RuntimeException("条码支付订单持久化失败", e);
+            LogUtil.error(e, logger, "支付订单持久化失败,message={0}", e.getMessage());
+            throw new RuntimeException("支付订单持久化失败", e);
         }
 
+        return payOrder;
     }
 
     @Override
@@ -89,6 +89,7 @@ public class PayRepositoryImpl implements PayRepository {
         LogUtil.info(logger, "收到订单撤销状态更新请求");
 
         oriOrder.setCancelStatus(cancelOrder.getCancelStatus());
+        oriOrder.setGmtUpdate(new Date());
 
         AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单撤销状态修改失败");
 

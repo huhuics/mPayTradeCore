@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,6 @@ public class CancelRepositoryImpl implements CancelRepository {
     public BizAlipayCancelOrder saveCancelOrder(BizAlipayCancelOrder cancelOrder) {
 
         LogUtil.info(logger, "收到撤销订单持久化请求");
-
-        cancelOrder.setGmtUpdate(new Date());
 
         //持久化撤销订单数据
         AssertUtil.assertTrue(bizAlipayCancelOrderDAO.insert(cancelOrder) > 0, "撤销请求数据持久化失败");

@@ -171,6 +171,7 @@ public class Convertor {
         cancelOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
 
         cancelOrder.setGmtCreate(new Date());
+        cancelOrder.setGmtUpdate(new Date());
 
         return cancelOrder;
 

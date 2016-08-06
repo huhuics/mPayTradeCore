@@ -21,7 +21,7 @@ public interface PayRepository {
      * 并持久化交易对象
      * @param   payOrder       交易对象
      */
-    void savePayOrder(BizAlipayPayOrder payOrder);
+    BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder);
 
     /**
      * 如果查询支付宝端的订单状态与本地订单状态不一致，则修改本地订单状态

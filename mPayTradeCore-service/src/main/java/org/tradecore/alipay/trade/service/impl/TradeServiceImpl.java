@@ -23,7 +23,6 @@ import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.alipay.trade.repository.CancelRepository;
 import org.tradecore.alipay.trade.repository.PayRepository;
-import org.tradecore.alipay.trade.repository.PrecreateRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.CreateRequest;
@@ -72,10 +71,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     @Resource
     private PayRepository       payRepository;
 
-    /** 扫码支付仓储服务 */
-    @Resource
-    private PrecreateRepository precreateRepository;
-
     /** 退款仓储服务 */
     @Resource
     private RefundRepository    refundRepository;
@@ -118,7 +113,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
 
         //6.根据调用结果分别处理
-        if (isPaySuccess(payResponse)) {
+        if (isResponseSuccess(payResponse)) {
             //6.1 支付明确成功
             LogUtil.info(logger, "条码支付返回成功");
             setPayOrderSuccess(payOrder, payResponse);
@@ -142,13 +137,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, queryResponse);
         } else {
-            //6.4 其它情况明确支付失败
+            //6.4 其它情况可以明确支付失败
             LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
             payOrder.setReturnDetail(JSON.toJSONString(payResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
-        //7.保存交易数据
+        //7.保存订单数据
         payRepository.savePayOrder(payOrder);
 
         return payResponse;
@@ -182,6 +177,27 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.创建支付订单
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(createRequest);
 
+        //5.根据调用结果分别处理
+        if (isResponseSuccess(createResponse)) {
+            LogUtil.info(logger, "订单创建返回成功");
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
+            payOrder.setAlipayTradeNo(createResponse.getTradeNo());
+        } else if (isResponseError(createResponse)) {
+            LogUtil.info(logger, "订单创建返回系统错误,outTradeNo={0}", createRequest.getOutTradeNo());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
+        } else {
+            LogUtil.info(logger, "订单创建返回失败,outTradeNo={0}", createRequest.getOutTradeNo());
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
+        }
+
+        //6.根据支付宝返回结果持久化本地订单数据
+        if (createResponse != null) {
+            payOrder.setReturnDetail(JSON.toJSONString(createResponse.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+
+        //7.保存订单数据
+        payRepository.savePayOrder(payOrder);
+
         return createResponse;
     }
 
@@ -214,7 +230,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
 
         //5.根据调用结果分别处理
-        if (isPrecreateSuccess(precreateResponse)) {
+        if (isResponseSuccess(precreateResponse)) {
             LogUtil.info(logger, "扫码支付返回成功");
             payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setQrCode(precreateResponse.getQrCode());
@@ -230,7 +246,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (precreateResponse != null) {
             payOrder.setReturnDetail(JSON.toJSONString(precreateResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
-        precreateRepository.savePrecreateOrder(payOrder);
+
+        //7.保存订单数据
+        payRepository.savePayOrder(payOrder);
 
         return precreateResponse;
     }
@@ -355,7 +373,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayCancelOrder cancelOrder = Convertor.convert2CancelOrder(oriOrder, cancelRequest);
 
         //7.根据响应分别处理
-        if (isCancelSuccess(cancelResponse)) {
+        if (isResponseSuccess(cancelResponse)) {
             LogUtil.info(logger, "订单撤销返回成功");
             cancelOrder.setCancelStatus(AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
             //撤销完成，交易状态改为TRADE_CLOSED
