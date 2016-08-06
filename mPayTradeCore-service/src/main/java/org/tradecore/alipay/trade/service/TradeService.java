@@ -5,12 +5,14 @@
 package org.tradecore.alipay.trade.service;
 
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -30,6 +32,14 @@ public interface TradeService {
      * @throws Exception 
      */
     AlipayTradePayResponse pay(PayRequest payRequest) throws Exception;
+
+    /**
+     * 线上支付，创建订单接口
+     * @param createRequest
+     * @return
+     * @throws Exception
+     */
+    AlipayTradeCreateResponse create(CreateRequest createRequest) throws Exception;
 
     /**
      * 扫码支付，预下单(生成二维码)接口

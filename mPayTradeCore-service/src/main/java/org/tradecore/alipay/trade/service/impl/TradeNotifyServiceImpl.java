@@ -54,6 +54,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //1.校验参数
         AssertUtil.assertNotNull(paraMap, "异步通知参数不能为空");
 
+        //TODO:外部商户号
         String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.查询原始订单

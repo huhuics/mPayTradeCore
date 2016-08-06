@@ -26,6 +26,7 @@ import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.PrecreateRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
@@ -44,11 +45,13 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.request.AlipayTradeCancelRequest;
+import com.alipay.api.request.AlipayTradeCreateRequest;
 import com.alipay.api.request.AlipayTradePayRequest;
 import com.alipay.api.request.AlipayTradePrecreateRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -149,6 +152,37 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         payRepository.savePayOrder(payOrder);
 
         return payResponse;
+    }
+
+    @Override
+    @Transactional
+    public AlipayTradeCreateResponse create(CreateRequest createRequest) throws Exception {
+
+        LogUtil.info(logger, "收到订单创建请求,createRequest={0}", createRequest);
+
+        //1.参数校验
+        validateRequest(createRequest);
+
+        //  1.1判断商户是否可用
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "商户不存在或状态非法");
+
+        //  1.2幂等判断
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getAcquirerId(), createRequest.getMerchantId(),
+            createRequest.getOutTradeNo());
+        AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
+
+        //2.请求参数转换为支付宝请求参数
+        AlipayTradeCreateRequest alipayCreateRequest = createAlipayCreateRequest(createRequest);
+
+        //3.调用支付宝订单创建接口
+        AlipayTradeCreateResponse createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest);
+
+        LogUtil.info(logger, "支付宝返回订单创建业务结果createResponse:{0}", JSON.toJSONString(createResponse, SerializerFeature.UseSingleQuotes));
+
+        //4.创建支付订单
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(createRequest);
+
+        return createResponse;
     }
 
     @Override
@@ -450,6 +484,21 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     /**
+     * 创建支付宝请求
+     */
+    private AlipayTradeCreateRequest createAlipayCreateRequest(CreateRequest createRequest) {
+
+        AlipayTradeCreateRequest request = new AlipayTradeCreateRequest();
+
+        request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, createRequest.getAppAuthToken());
+        request.setBizContent(JSON.toJSONString(createRequest));
+
+        LogUtil.info(logger, "create.bizContent:{0}", request.getBizContent());
+
+        return request;
+    }
+
+    /**
      * 将扫码支付请求转换成支付宝请求
      * @param precreateRequest
      * @return
@@ -538,4 +587,5 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         return endDate.after(new Date());
     }
+
 }

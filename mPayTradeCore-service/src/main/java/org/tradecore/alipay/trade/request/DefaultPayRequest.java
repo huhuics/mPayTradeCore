@@ -6,6 +6,7 @@ package org.tradecore.alipay.trade.request;
 
 import java.util.List;
 
+import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.model.SubMerchant;
 import org.tradecore.common.util.AssertUtil;
 
@@ -14,8 +15,8 @@ import com.alipay.demo.trade.model.ExtendParams;
 import com.alipay.demo.trade.model.GoodsDetail;
 
 /**
- * 支付宝条码支付和扫码支付请求参数的父类<br>
- * 必填都是只商户必填
+ * 支付宝条码支付、扫码支付、线上支付请求参数的父类<br>
+ * 必填都是指商户必填
  * @author HuHui
  * @version $Id: DefaultPayRequest.java, v 0.1 2016年7月12日 下午9:43:35 HuHui Exp $
  */
@@ -32,7 +33,7 @@ public class DefaultPayRequest extends BaseRequest {
     @JSONField(name = "merchant_id")
     protected String            merchantId;
 
-    /** (必填)支付场景，条码支付场景为bar_code，扫码支付为scan_code */
+    /** (必填)支付场景{@link AlipaySceneEnum} */
     @JSONField(name = "scene")
     protected String            scene;
 

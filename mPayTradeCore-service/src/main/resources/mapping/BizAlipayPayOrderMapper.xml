@@ -13,7 +13,7 @@
     <result column="REFUND_STATUS" jdbcType="VARCHAR" property="refundStatus" />
     <result column="SCENE" jdbcType="VARCHAR" property="scene" />
     <result column="AUTH_CODE" jdbcType="VARCHAR" property="authCode" />
-    <result column="SELLER_ID" jdbcType="VARCHAR" property="sellerId" />
+    <result column="ACCOUNT_DETAIL" jdbcType="VARCHAR" property="accountDetail" />
     <result column="TOTAL_AMOUNT" jdbcType="DECIMAL" property="totalAmount" />
     <result column="RECEIPT_AMOUNT" jdbcType="DECIMAL" property="receiptAmount" />
     <result column="DISCOUNTABLE_AMOUNT" jdbcType="DECIMAL" property="discountableAmount" />
@@ -40,7 +40,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     ID, ACQUIRER_ID, MERCHANT_ID, TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, ORDER_STATUS, 
-    CANCEL_STATUS, REFUND_STATUS, SCENE, AUTH_CODE, SELLER_ID, TOTAL_AMOUNT, RECEIPT_AMOUNT, 
+    CANCEL_STATUS, REFUND_STATUS, SCENE, AUTH_CODE, ACCOUNT_DETAIL, TOTAL_AMOUNT, RECEIPT_AMOUNT, 
     DISCOUNTABLE_AMOUNT, UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, APP_AUTH_TOKEN, GOODS_DETAIL, 
     MERCHANT_DETAIL, EXTEND_PARAMS, TIMEOUT_EXPRESS, FUND_BILL_LIST, DISCOUNT_GOODS_DETAIL, 
     QR_CODE, RETURN_DETAIL, OUT_NOTIFY_URL, NOTIFY_BODY, CHECK_STATUS, CHECK_DATE, CREATE_DATE, 
@@ -60,7 +60,7 @@
     insert into BIZ_ALIPAY_PAY_ORDER (ID, ACQUIRER_ID, MERCHANT_ID, 
       TRADE_NO, ALIPAY_TRADE_NO, OUT_TRADE_NO, 
       ORDER_STATUS, CANCEL_STATUS, REFUND_STATUS, 
-      SCENE, AUTH_CODE, SELLER_ID, 
+      SCENE, AUTH_CODE, ACCOUNT_DETAIL, 
       TOTAL_AMOUNT, RECEIPT_AMOUNT, DISCOUNTABLE_AMOUNT, 
       UNDISCOUNTABLE_AMOUNT, SUBJECT, BODY, 
       APP_AUTH_TOKEN, GOODS_DETAIL, MERCHANT_DETAIL, 
@@ -72,7 +72,7 @@
     values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, 
       #{tradeNo,jdbcType=VARCHAR}, #{alipayTradeNo,jdbcType=VARCHAR}, #{outTradeNo,jdbcType=VARCHAR}, 
       #{orderStatus,jdbcType=VARCHAR}, #{cancelStatus,jdbcType=VARCHAR}, #{refundStatus,jdbcType=VARCHAR}, 
-      #{scene,jdbcType=VARCHAR}, #{authCode,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, 
+      #{scene,jdbcType=VARCHAR}, #{authCode,jdbcType=VARCHAR}, #{accountDetail,jdbcType=VARCHAR}, 
       #{totalAmount,jdbcType=DECIMAL}, #{receiptAmount,jdbcType=DECIMAL}, #{discountableAmount,jdbcType=DECIMAL}, 
       #{undiscountableAmount,jdbcType=DECIMAL}, #{subject,jdbcType=VARCHAR}, #{body,jdbcType=VARCHAR}, 
       #{appAuthToken,jdbcType=VARCHAR}, #{goodsDetail,jdbcType=VARCHAR}, #{merchantDetail,jdbcType=VARCHAR}, 
@@ -118,8 +118,8 @@
       <if test="authCode != null">
         AUTH_CODE,
       </if>
-      <if test="sellerId != null">
-        SELLER_ID,
+      <if test="accountDetail != null">
+        ACCOUNT_DETAIL,
       </if>
       <if test="totalAmount != null">
         TOTAL_AMOUNT,
@@ -225,8 +225,8 @@
       <if test="authCode != null">
         #{authCode,jdbcType=VARCHAR},
       </if>
-      <if test="sellerId != null">
-        #{sellerId,jdbcType=VARCHAR},
+      <if test="accountDetail != null">
+        #{accountDetail,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
         #{totalAmount,jdbcType=DECIMAL},
@@ -332,8 +332,8 @@
       <if test="authCode != null">
         AUTH_CODE = #{authCode,jdbcType=VARCHAR},
       </if>
-      <if test="sellerId != null">
-        SELLER_ID = #{sellerId,jdbcType=VARCHAR},
+      <if test="accountDetail != null">
+        ACCOUNT_DETAIL = #{accountDetail,jdbcType=VARCHAR},
       </if>
       <if test="totalAmount != null">
         TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
@@ -419,7 +419,7 @@
       REFUND_STATUS = #{refundStatus,jdbcType=VARCHAR},
       SCENE = #{scene,jdbcType=VARCHAR},
       AUTH_CODE = #{authCode,jdbcType=VARCHAR},
-      SELLER_ID = #{sellerId,jdbcType=VARCHAR},
+      ACCOUNT_DETAIL = #{accountDetail,jdbcType=VARCHAR},
       TOTAL_AMOUNT = #{totalAmount,jdbcType=DECIMAL},
       RECEIPT_AMOUNT = #{receiptAmount,jdbcType=DECIMAL},
       DISCOUNTABLE_AMOUNT = #{discountableAmount,jdbcType=DECIMAL},

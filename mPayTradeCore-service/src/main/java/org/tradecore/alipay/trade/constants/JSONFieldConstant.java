@@ -14,8 +14,14 @@ public class JSONFieldConstant {
     /** 支付场景 */
     public static final String SCENE           = "scene";
 
+    /** 买家支付宝用户号 */
+    public static final String SELLER_ID       = "sellerId";
+
     /** 买家支付宝账号 */
     public static final String BUYER_LOGON_ID  = "buyerLogonId";
+
+    /** 买家支付宝用户号 */
+    public static final String BUYER_ID        = "buyerId";
 
     /** 商户操作员编号 */
     public static final String OPERATOR_ID     = "operatorId";

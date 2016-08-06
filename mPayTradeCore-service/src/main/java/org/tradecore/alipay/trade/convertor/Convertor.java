@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.CreateRequest;
+import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.common.util.DateUtil;
@@ -22,6 +24,7 @@ import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 /**
  * 将请求转换为Domian对象
@@ -31,6 +34,68 @@ import com.alibaba.fastjson.JSON;
 public class Convertor {
 
     /**
+     * 支付类的请求公共字段转换
+     * @param request
+     * @return
+     */
+    private static BizAlipayPayOrder convertCommonFields(DefaultPayRequest request) {
+
+        BizAlipayPayOrder payOrder = new BizAlipayPayOrder();
+
+        payOrder.setId(UUIDUtil.geneId());
+        payOrder.setAcquirerId(request.getAcquirerId());
+        payOrder.setMerchantId(request.getMerchantId());
+        payOrder.setOutTradeNo(request.getOutTradeNo());
+        payOrder.setTradeNo(TradeNoFormater.format(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
+
+        payOrder.setScene(request.getScene());
+
+        //封装账号信息
+        Map<String, Object> accountDetailMap = new HashMap<String, Object>();
+        accountDetailMap.put(JSONFieldConstant.SELLER_ID, request.getSellerId());
+        payOrder.setAccountDetail(JSON.toJSONString(accountDetailMap));
+
+        payOrder.setTotalAmount(new Money(request.getTotalAmount()));
+
+        //判断金额是否为空
+        if (StringUtils.isNotBlank(request.getDiscountableAmount())) {
+            payOrder.setDiscountableAmount(new Money(request.getDiscountableAmount()));
+        }
+
+        if (StringUtils.isNotBlank(request.getUndiscountableAmount())) {
+            payOrder.setUndiscountableAmount(new Money(request.getUndiscountableAmount()));
+        }
+
+        payOrder.setSubject(request.getSubject());
+        payOrder.setBody(request.getBody());
+        payOrder.setAppAuthToken(request.getAppAuthToken());
+        payOrder.setGoodsDetail(JSON.toJSONString(request.getGoodsDetailList()));
+
+        //封装merchantDetail
+        Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
+        merchantDetailMap.put(JSONFieldConstant.OPERATOR_ID, request.getOperatorId());
+        merchantDetailMap.put(JSONFieldConstant.STORE_ID, request.getStoreId());
+        merchantDetailMap.put(JSONFieldConstant.TERMINAL_ID, request.getTerminalId());
+        merchantDetailMap.put(JSONFieldConstant.ALIPAY_STORE_ID, request.getAlipayStoreId());
+        payOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
+
+        if (request.getExtendParams() != null) {
+            payOrder.setExtendParams(request.getExtendParams().toString());
+        }
+
+        payOrder.setTimeoutExpress(request.getTimeoutExpress());
+        payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
+
+        // TODO: 创建日期要改成从配置参数中读取
+        payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+
+        payOrder.setGmtCreate(new Date());
+        payOrder.setGmtUpdate(new Date());
+
+        return payOrder;
+    }
+
+    /**
      * 将payRequest转化为domian对象<br>
      * 只转化公共参数，有些参数，如状态、支付宝返回字段此处不转化
      * @param payRequest
@@ -38,53 +103,28 @@ public class Convertor {
      */
     public static BizAlipayPayOrder convert2PayOrder(PayRequest payRequest) {
 
-        BizAlipayPayOrder payOrder = new BizAlipayPayOrder();
-        payOrder.setId(UUIDUtil.geneId());
-        payOrder.setAcquirerId(payRequest.getAcquirerId());
-        payOrder.setMerchantId(payRequest.getMerchantId());
-        payOrder.setOutTradeNo(payRequest.getOutTradeNo());
-        payOrder.setTradeNo(TradeNoFormater.format(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo()));
-
-        //封装payDetail
-        payOrder.setScene(payRequest.getScene());
+        BizAlipayPayOrder payOrder = convertCommonFields(payRequest);
 
         payOrder.setAuthCode(payRequest.getAuthCode());
-        payOrder.setSellerId(payRequest.getSellerId());
-        payOrder.setTotalAmount(new Money(payRequest.getTotalAmount()));
 
-        //判断金额是否为空
-        if (StringUtils.isNotBlank(payRequest.getDiscountableAmount())) {
-            payOrder.setDiscountableAmount(new Money(payRequest.getDiscountableAmount()));
-        }
+        return payOrder;
+    }
 
-        if (StringUtils.isNotBlank(payRequest.getUndiscountableAmount())) {
-            payOrder.setUndiscountableAmount(new Money(payRequest.getUndiscountableAmount()));
-        }
+    /**
+     * 将createRequest转换成domian对象
+     * @param createRequest
+     * @return
+     */
+    public static BizAlipayPayOrder convert2PayOrder(CreateRequest createRequest) {
 
-        payOrder.setSubject(payRequest.getSubject());
-        payOrder.setBody(payRequest.getBody());
-        payOrder.setAppAuthToken(payRequest.getAppAuthToken());
-        payOrder.setGoodsDetail(JSON.toJSONString(payRequest.getGoodsDetailList()));
+        BizAlipayPayOrder payOrder = convertCommonFields(createRequest);
 
-        //封装merchantDetail
-        Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
-        merchantDetailMap.put(JSONFieldConstant.OPERATOR_ID, payRequest.getOperatorId());
-        merchantDetailMap.put(JSONFieldConstant.STORE_ID, payRequest.getStoreId());
-        merchantDetailMap.put(JSONFieldConstant.TERMINAL_ID, payRequest.getTerminalId());
-        merchantDetailMap.put(JSONFieldConstant.ALIPAY_STORE_ID, payRequest.getAlipayStoreId());
-        payOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
+        Map<String, Object> accountDetailMap = JSON.parseObject(payOrder.getAccountDetail(), new TypeReference<Map<String, Object>>() {
+        });
+        accountDetailMap.put(JSONFieldConstant.BUYER_LOGON_ID, createRequest.getBuyerLogonId());
+        accountDetailMap.put(JSONFieldConstant.BUYER_ID, createRequest.getBuyerId());
 
-        if (payRequest.getExtendParams() != null) {
-            payOrder.setExtendParams(payRequest.getExtendParams().toString());
-        }
-
-        payOrder.setTimeoutExpress(payRequest.getTimeoutExpress());
-        payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
-
-        // TODO: 创建日期要改成从配置参数中读取
-        payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
-
-        payOrder.setGmtCreate(new Date());
+        payOrder.setAccountDetail(JSON.toJSONString(accountDetailMap));
 
         return payOrder;
     }
@@ -97,52 +137,7 @@ public class Convertor {
      */
     public static BizAlipayPayOrder convert2PayOrder(PrecreateRequest precreateRequest) {
 
-        BizAlipayPayOrder payOrder = new BizAlipayPayOrder();
-        payOrder.setId(UUIDUtil.geneId());
-        payOrder.setAcquirerId(precreateRequest.getAcquirerId());
-        payOrder.setMerchantId(precreateRequest.getMerchantId());
-        payOrder.setOutTradeNo(precreateRequest.getOutTradeNo());
-        payOrder.setTradeNo(TradeNoFormater.format(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
-
-        //封装payDetail
-        payOrder.setScene(precreateRequest.getScene());
-
-        payOrder.setSellerId(precreateRequest.getSellerId());
-        payOrder.setTotalAmount(new Money(precreateRequest.getTotalAmount()));
-
-        //判断金额是否为空
-        if (StringUtils.isNotBlank(precreateRequest.getDiscountableAmount())) {
-            payOrder.setDiscountableAmount(new Money(precreateRequest.getDiscountableAmount()));
-        }
-
-        if (StringUtils.isNotBlank(precreateRequest.getUndiscountableAmount())) {
-            payOrder.setUndiscountableAmount(new Money(precreateRequest.getUndiscountableAmount()));
-        }
-
-        payOrder.setSubject(precreateRequest.getSubject());
-        payOrder.setBody(precreateRequest.getBody());
-        payOrder.setAppAuthToken(precreateRequest.getAppAuthToken());
-        payOrder.setGoodsDetail(JSON.toJSONString(precreateRequest.getGoodsDetailList()));
-
-        //封装merchantDetail
-        Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
-        merchantDetailMap.put(JSONFieldConstant.OPERATOR_ID, precreateRequest.getOperatorId());
-        merchantDetailMap.put(JSONFieldConstant.STORE_ID, precreateRequest.getStoreId());
-        merchantDetailMap.put(JSONFieldConstant.TERMINAL_ID, precreateRequest.getTerminalId());
-        merchantDetailMap.put(JSONFieldConstant.ALIPAY_STORE_ID, precreateRequest.getAlipayStoreId());
-        payOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
-
-        if (precreateRequest.getExtendParams() != null) {
-            payOrder.setExtendParams(precreateRequest.getExtendParams().toString());
-        }
-
-        payOrder.setTimeoutExpress(precreateRequest.getTimeoutExpress());
-        payOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
-
-        // TODO: 创建日期要改成从配置参数中读取
-        payOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
-
-        payOrder.setGmtCreate(new Date());
+        BizAlipayPayOrder payOrder = convertCommonFields(precreateRequest);
 
         //设置out_notify_url
         payOrder.setOutNotifyUrl(precreateRequest.getOutNotifyUrl());
