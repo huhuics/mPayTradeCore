@@ -22,6 +22,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
@@ -35,6 +36,7 @@ import org.tradecore.common.util.ResponseUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -83,9 +85,7 @@ public class AlipayTradeController extends AbstractBizController {
             LogUtil.error(e, logger, "条码支付HTTP调用异常,Message={0}", e.getMessage());
         }
 
-        String body = payResponse.getBody();
-
-        String payResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
+        String payResponseStr = ResponseUtil.buildResponse(payResponse.getBody(), ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
 
         LogUtil.info(logger, "条码支付HTTP调用结果,payResponseStr={0}", payResponseStr);
 
@@ -93,8 +93,38 @@ public class AlipayTradeController extends AbstractBizController {
     }
 
     /**
-     * 处理
+     * 处理订单创建请求
      */
+    @ResponseBody
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "收到订单创建HTTP请求");
+
+        AlipayTradeCreateResponse createResponse = new AlipayTradeCreateResponse();
+
+        try {
+            Map<String, String> paraMap = getParameters(request);
+
+            LogUtil.info(logger, "订单创建原始报文参数paraMap={0}", paraMap);
+
+            AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
+            CreateRequest createRequest = buildCreateRequest(paraMap);
+
+            createResponse = tradeService.create(createRequest);
+
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "订单创建HTTP调用异常,Message={0}", e.getMessage());
+        }
+
+        String createResponseStr = ResponseUtil.buildResponse(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE);
+
+        LogUtil.info(logger, "订单创建HTTP调用结果,createResponseStr={0}", createResponseStr);
+
+        return createResponseStr;
+
+    }
 
     /**
      * 处理扫码支付请求
@@ -117,13 +147,12 @@ public class AlipayTradeController extends AbstractBizController {
             PrecreateRequest precreateRequest = buildPrecreateRequest(paraMap);
 
             precreateResponse = tradeService.precreate(precreateRequest);
+
         } catch (Exception e) {
             LogUtil.error(e, logger, "扫码支付HTTP调用异常,Message={0}", e.getMessage());
         }
 
-        String body = precreateResponse.getBody();
-
-        String precreateResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
+        String precreateResponseStr = ResponseUtil.buildResponse(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
 
         LogUtil.info(logger, "扫码支付HTTP调用结果,precreateResponseStr={0}", precreateResponseStr);
 
@@ -153,9 +182,7 @@ public class AlipayTradeController extends AbstractBizController {
             LogUtil.error(e, logger, "订单查询HTTP调用异常,Message={0}", e.getMessage());
         }
 
-        String body = queryResponse.getBody();
-
-        String queryResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
+        String queryResponseStr = ResponseUtil.buildResponse(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
 
         LogUtil.info(logger, "订单查询HTTP调用结果,queryResponse={0}", queryResponseStr);
 
@@ -186,9 +213,7 @@ public class AlipayTradeController extends AbstractBizController {
             LogUtil.error(e, logger, "退款HTTP调用异常,Message={0}", e.getMessage());
         }
 
-        String body = refundResponse.getBody();
-
-        String refundResponseStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
+        String refundResponseStr = ResponseUtil.buildResponse(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
 
         LogUtil.info(logger, "退款HTTP调用结果,refundResponse={0}", refundResponseStr);
 
@@ -219,9 +244,7 @@ public class AlipayTradeController extends AbstractBizController {
             LogUtil.error(e, logger, "撤销HTTP调用异常,Message={0}", e.getMessage());
         }
 
-        String body = cancelResponse.getBody();
-
-        String cancelRespStr = ResponseUtil.buildResponse(body, ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE);
+        String cancelRespStr = ResponseUtil.buildResponse(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE);
 
         LogUtil.info(logger, "撤销HTTP调用结果,cancelRespStr={0}", cancelRespStr);
 
@@ -343,6 +366,35 @@ public class AlipayTradeController extends AbstractBizController {
         LogUtil.info(logger, "扫码支付请求参数转换完成");
 
         return precreateRequest;
+    }
+
+    private CreateRequest buildCreateRequest(Map<String, String> paraMap) {
+
+        LogUtil.info(logger, "收单订单创建报文转换请求");
+
+        CreateRequest createRequest = new CreateRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
+        String notifyUrl = paraMap.get(OUT_NOTIFY_URL);
+
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        });
+
+        setCommonPayRequestParas(createRequest, acquirerId, bizParaMap);
+
+        //此处统一为ONLINE
+        createRequest.setScene(AlipaySceneEnum.ONLINE.getCode());
+
+        //结算中心通知商户地址
+        createRequest.setOutNotifyUrl(notifyUrl);
+
+        //支付宝通知结算中心地址
+        createRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
+
+        LogUtil.info(logger, "订单创建请求参数转换完成");
+
+        return createRequest;
     }
 
     /**

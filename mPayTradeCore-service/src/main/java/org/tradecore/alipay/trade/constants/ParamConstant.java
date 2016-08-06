@@ -74,6 +74,9 @@ public class ParamConstant {
     /** 条码交易返回json字段名 */
     public static final String ALIPAY_TRADE_PAY_RESPONSE       = "alipay_trade_pay_response";
 
+    /** 订单创建返回json字段名 */
+    public static final String ALIPAY_TRADE_CREATE_RESPONSE    = "alipay_trade_create_response";
+
     /** 扫码交易返回json字段名 */
     public static final String ALIPAY_TRADE_PRECREATE_RESPONSE = "alipay_trade_precreate_response";
 
