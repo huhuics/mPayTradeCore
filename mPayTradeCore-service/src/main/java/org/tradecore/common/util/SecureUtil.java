@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.demo.trade.config.Configs;
 
@@ -60,6 +61,14 @@ public class SecureUtil {
         }
 
         return sign;
+    }
+
+    /**
+     * 对支付宝的异步通知进行验签
+     * @throws AlipayApiException 
+     */
+    public static boolean verifyAlipayNotify(Map<String, String> paraMap) throws AlipayApiException {
+        return AlipaySignature.rsaCheckV1(paraMap, Configs.getAlipayPublicKey(), StandardCharsets.UTF_8.displayName());
     }
 
 }

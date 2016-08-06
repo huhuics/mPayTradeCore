@@ -19,8 +19,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.NotifyRequest;
 import org.tradecore.alipay.trade.service.TradeNotifyService;
+import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.SecureUtil;
 
 /**
  * 接收支付宝扫码支付结果通知
@@ -56,6 +58,11 @@ public class AlipayTradeNotifyController extends AbstractBizController {
 
         Boolean result = null;
         try {
+            //验签
+            boolean verifyRet = SecureUtil.verifyAlipayNotify(paraMap);
+
+            AssertUtil.assertTrue(verifyRet, "验证支付宝异步通知签名失败");
+
             result = tradeNotifyService.receiveAndSend(paraMap);
         } catch (Exception e) {
             LogUtil.error(e, logger, "接收支付宝扫码支付异步通知并发送收单机构失败,{0}", e.getMessage());
