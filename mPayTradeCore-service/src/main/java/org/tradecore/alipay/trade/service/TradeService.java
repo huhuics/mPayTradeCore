@@ -9,10 +9,12 @@ import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -54,6 +56,15 @@ public interface TradeService {
      * @return              订单查询结果信息
      */
     AlipayTradeQueryResponse query(QueryRequest queryRequest) throws Exception;
+
+    /**
+     * 退款订单查询<br>
+     * 可查询使用refund接口退款的订单信息
+     * @param refundQueryRequest        请求参数
+     * @return                          退款订单查询结果信息
+     * @throws Exception                
+     */
+    AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) throws Exception;
 
     /**
      * 订单退款

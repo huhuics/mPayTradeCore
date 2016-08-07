@@ -22,7 +22,7 @@ import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.RefundRepository;
-import org.tradecore.alipay.trade.request.RefundOrderQueryRequest;
+import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
@@ -123,7 +123,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public List<BizAlipayRefundOrder> selectRefundOrders(RefundOrderQueryRequest queryRequest) {
+    public List<BizAlipayRefundOrder> selectRefundOrders(RefundQueryRequest queryRequest) {
 
         LogUtil.info(logger, "收到查询退款订单请求,refundOrderQueryRequest={0}", queryRequest);
 
@@ -161,13 +161,13 @@ public class RefundRepositoryImpl implements RefundRepository {
         Money totalRefundedAmount = new Money(0);
 
         //根据商户订单号获取该订单下所有退款成功的退款订单
-        RefundOrderQueryRequest queryRequest = new RefundOrderQueryRequest();
-        queryRequest.setMerchantId(merchantId);
-        queryRequest.setOutTradeNo(outTradeNo);
-        queryRequest.setAlipayTradeNo(alipayTradeNo);
-        queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        RefundQueryRequest refundQueryRequest = new RefundQueryRequest();
+        refundQueryRequest.setMerchantId(merchantId);
+        refundQueryRequest.setOutTradeNo(outTradeNo);
+        refundQueryRequest.setAlipayTradeNo(alipayTradeNo);
+        refundQueryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
-        List<BizAlipayRefundOrder> refundOrders = selectRefundOrders(queryRequest);
+        List<BizAlipayRefundOrder> refundOrders = selectRefundOrders(refundQueryRequest);
 
         if (CollectionUtils.isNotEmpty(refundOrders)) {
             for (BizAlipayRefundOrder order : refundOrders) {

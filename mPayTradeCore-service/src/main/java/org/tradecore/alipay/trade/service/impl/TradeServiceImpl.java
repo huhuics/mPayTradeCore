@@ -29,7 +29,7 @@ import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
-import org.tradecore.alipay.trade.request.RefundOrderQueryRequest;
+import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.alipay.trade.service.TradeService;
@@ -52,6 +52,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -299,6 +300,11 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
+    public AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) throws Exception {
+        return null;
+    }
+
+    @Override
     @Transactional
     public AlipayTradeRefundResponse refund(RefundRequest refundRequest) throws Exception {
 
@@ -328,7 +334,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         LogUtil.info(logger, "支付宝返回退款业务结果refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
 
         //5.幂等控制。如果查询到退款成功记录，则不修改本地退款订单；如果没查询到，则持久化退款记录
-        RefundOrderQueryRequest queryRequest = buildRefundOrderQueryRequest(refundRequest);
+        RefundQueryRequest queryRequest = buildRefundOrderQueryRequest(refundRequest);
         List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrders(queryRequest);
         if (CollectionUtils.isEmpty(refundOrders)) {
             //5.1根据支付宝返回结果持久化退款订单，修改原订单状态
@@ -543,16 +549,16 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param refundRequest
      * @return
      */
-    private RefundOrderQueryRequest buildRefundOrderQueryRequest(RefundRequest refundRequest) {
-        RefundOrderQueryRequest queryRequest = new RefundOrderQueryRequest();
+    private RefundQueryRequest buildRefundOrderQueryRequest(RefundRequest refundRequest) {
+        RefundQueryRequest refundQueryRequest = new RefundQueryRequest();
 
-        queryRequest.setAlipayTradeNo(refundRequest.getAlipayTradeNo());
-        queryRequest.setMerchantId(refundRequest.getMerchantId());
-        queryRequest.setOutRequestNo(refundRequest.getOutRequestNo());
-        queryRequest.setOutTradeNo(refundRequest.getOutTradeNo());
-        queryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        refundQueryRequest.setAlipayTradeNo(refundRequest.getAlipayTradeNo());
+        refundQueryRequest.setMerchantId(refundRequest.getMerchantId());
+        refundQueryRequest.setOutRequestNo(refundRequest.getOutRequestNo());
+        refundQueryRequest.setOutTradeNo(refundRequest.getOutTradeNo());
+        refundQueryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
-        return queryRequest;
+        return refundQueryRequest;
     }
 
     /**
