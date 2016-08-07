@@ -512,16 +512,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, createRequest.getAppAuthToken());
         request.setNotifyUrl(createRequest.getNotifyUrl());
 
-        //1.结算中心订单号
-        String tradeNo = TradeNoFormater.format(createRequest.getAcquirerId(), createRequest.getMerchantId(), createRequest.getOutTradeNo());
-        //2.商户的订单号
-        String tempOutTradeNo = createRequest.getOutTradeNo();
-        //3.将传给支付宝的外部订单号改为结算中心订单号
-        createRequest.setOutTradeNo(tradeNo);
-        //4.设置支付宝参数
         request.setBizContent(JSON.toJSONString(createRequest));
-        //5.将参数改回来
-        createRequest.setOutTradeNo(tempOutTradeNo);
 
         LogUtil.info(logger, "create.bizContent:{0}", request.getBizContent());
 
@@ -540,16 +531,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, precreateRequest.getAppAuthToken());
         request.setNotifyUrl(precreateRequest.getNotifyUrl());
 
-        //1.结算中心订单号
-        String tradeNo = TradeNoFormater.format(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo());
-        //2.商户的订单号
-        String tempOutTradeNo = precreateRequest.getOutTradeNo();
-        //3.将传给支付宝的外部订单号改为结算中心订单号
-        precreateRequest.setOutTradeNo(tradeNo);
-        //4.设置支付宝参数
         request.setBizContent(JSON.toJSONString(precreateRequest));
-        //5.将参数改回来
-        precreateRequest.setOutTradeNo(tempOutTradeNo);
 
         LogUtil.info(logger, "precreate.bizContent:{0}", request.getBizContent());
 

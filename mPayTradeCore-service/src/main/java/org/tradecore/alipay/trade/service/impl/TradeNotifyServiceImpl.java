@@ -54,16 +54,16 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         AssertUtil.assertNotNull(paraMap, "异步通知参数不能为空");
 
         //对支付宝而言，外部商户号就是结算中心订单号
-        String tradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
+        String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrderByTradeNo(tradeNo);
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(null, outTradeNo, null);
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //幂等控制，如果原始订单为支付成功、关闭、完成三种状态之一，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构
         if (isTradeNotTerminate(oriOrder.getOrderStatus())) {
-            LogUtil.info(logger, "异步通知修改原始订单幂等,tradeNo={0}", tradeNo);
+            LogUtil.info(logger, "异步通知修改原始订单幂等,outTradeNo={0}", outTradeNo);
             //3.修改原始订单
             payRepository.updatePayOrder(oriOrder, paraMap);
         }

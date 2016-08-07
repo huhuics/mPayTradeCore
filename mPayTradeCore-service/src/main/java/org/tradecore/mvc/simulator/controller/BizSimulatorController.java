@@ -23,6 +23,7 @@ import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
+import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
@@ -36,6 +37,7 @@ import org.tradecore.common.util.LogUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradeCancelResponse;
+import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -59,6 +61,8 @@ public class BizSimulatorController {
 
     private static final String TO_BAR_CODE       = "toBarCode";
 
+    private static final String TO_CREATE         = "toCreate";
+
     private static final String TO_SCAN_CODE      = "toScanCode";
 
     private static final String TO_QUERY          = "toQuery";
@@ -78,6 +82,8 @@ public class BizSimulatorController {
     private static final String MECH_QUERY_RESULT = "mechQueryResult";
 
     private static final String MERCHANT_ID       = "196";
+
+    private static final String BUYER_ID          = "2088502948618313";
 
     private static final String OUT_NOTIFY_URL    = "http://168.33.50.230:8088/mPay/simulator/receive";
 
@@ -118,6 +124,22 @@ public class BizSimulatorController {
         map.put("store_id", "store_id_" + geneRandomId());
 
         return TO_BAR_CODE;
+    }
+
+    @RequestMapping(value = "/toCreate", method = RequestMethod.GET)
+    public String toCreate(WebRequest request, ModelMap map) {
+
+        //组织参数
+        map.put("acquirer_id", "10880010001");
+        map.put("merchant_id", MERCHANT_ID);
+        map.put("out_trade_no", "out_trade_no_" + geneRandomId());
+        map.put("subject", "结算中心条码交易测试_" + geneRandomId());
+        map.put("body", "购买商品3件共20.00元");
+        map.put("store_id", "store_id_" + geneRandomId());
+        map.put("notify_url", ParamConstant.NOTIFY_URL);
+        map.put("buyer_id", BUYER_ID);
+
+        return TO_CREATE;
     }
 
     @RequestMapping(value = "/toScanCode", method = RequestMethod.GET)
@@ -246,6 +268,38 @@ public class BizSimulatorController {
             return "40004";
         }
 
+    }
+
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String create(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "模拟器收到订单创建HTTP请求");
+
+        AlipayTradeCreateResponse response = null;
+
+        CreateRequest createRequest = buildCreateRequest(request);
+
+        try {
+            response = tradeService.create(createRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "模拟器订单创建HTTP调用异常");
+            setErrorResult(map, e.getMessage());
+        }
+
+        LogUtil.info(logger, "模拟器订单创建HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
+
+        if (response != null) {
+            map.put("code", response.getCode());
+            map.put("msg", response.getMsg());
+            map.put("subCode", response.getSubCode());
+            map.put("subMsg", response.getSubMsg());
+            map.put("acquirerId", createRequest.getAcquirerId());
+            map.put("merchantId", createRequest.getMerchantId());
+            map.put("outTradeNo", createRequest.getOutTradeNo());
+            map.put("tradeNo", response.getTradeNo());
+        }
+
+        return RESULT;
     }
 
     @RequestMapping(value = "/precreate", method = RequestMethod.POST)
@@ -433,7 +487,7 @@ public class BizSimulatorController {
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
         //参数转换
-        MerchantCreateRequest merchantCreateRequest = buildCreateRequest(request);
+        MerchantCreateRequest merchantCreateRequest = buildMerchantCreateRequest(request);
 
         try {
             createResponse = merchantService.create(merchantCreateRequest);
@@ -511,7 +565,7 @@ public class BizSimulatorController {
      * @param request
      * @return
      */
-    private MerchantCreateRequest buildCreateRequest(WebRequest request) {
+    private MerchantCreateRequest buildMerchantCreateRequest(WebRequest request) {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 
@@ -596,6 +650,37 @@ public class BizSimulatorController {
         LogUtil.info(logger, "创建订单查询请求成功,queryRequest={0}", queryRequest);
 
         return queryRequest;
+    }
+
+    private CreateRequest buildCreateRequest(WebRequest request) {
+        CreateRequest createRequest = new CreateRequest();
+        createRequest.setAcquirerId(request.getParameter("acquirer_id"));
+        createRequest.setMerchantId(request.getParameter("merchant_id"));
+        createRequest.setSubMerchantId(createRequest.getMerchantId());
+        createRequest.setBuyerId(request.getParameter("buyer_id"));
+        createRequest.setScene(request.getParameter("scene"));
+        createRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        createRequest.setSellerId(request.getParameter("seller_id"));
+        createRequest.setTotalAmount(request.getParameter("total_amount"));
+        createRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
+        createRequest.setUndiscountableAmount(request.getParameter("undiscountable_amount"));
+        createRequest.setSubject(request.getParameter("subject"));
+        createRequest.setBody(request.getParameter("body"));
+        createRequest.setAppAuthToken(request.getParameter("app_auth_token"));
+        createRequest.setOperatorId(request.getParameter("operator_id"));
+        createRequest.setStoreId(request.getParameter("store_id"));
+        createRequest.setAlipayStoreId(request.getParameter("alipay_store_id"));
+        createRequest.setTerminalId(request.getParameter("terminal_id"));
+        createRequest.setTimeoutExpress(request.getParameter("timeout_express"));
+
+        //支付宝通知结算中心地址
+        createRequest.setNotifyUrl(request.getParameter("notify_url"));
+
+        createRequest.setOutNotifyUrl(OUT_NOTIFY_URL);
+
+        LogUtil.info(logger, "创建订单创建请求成功,precreateRequest={0}", createRequest);
+
+        return createRequest;
     }
 
     /**
