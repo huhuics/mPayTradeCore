@@ -474,7 +474,7 @@ public class BizSimulatorController {
         map.put("subMsg", response.getSubMsg());
         map.put("acquirerId", refundRequest.getAcquirerId());
         map.put("merchantId", refundRequest.getMerchantId());
-        map.put("outTradeNo", refundRequest.getOutTradeNo());
+        map.put("outTradeNo", response.getOutTradeNo());
         map.put("tradeNo", response.getTradeNo());
 
         return RESULT;

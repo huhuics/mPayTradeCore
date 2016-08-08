@@ -69,7 +69,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         LogUtil.info(logger, "退款请求对象refundRequest转换成refundOrder对象成功,refundOrder={0}", refundOrder);
 
         if (response != null && StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
-            LogUtil.info(logger, "支付宝退款成功");
+            LogUtil.info(logger, "支付宝退款业务成功");
 
             //判断金额是否为空
             if (StringUtils.isNotBlank(response.getSendBackFee())) {
@@ -180,7 +180,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             }
         }
 
-        LogUtil.info(logger, "已成功退款总金额totalRefundedAmount={0}", totalRefundedAmount);
+        LogUtil.info(logger, "该订单历史已成功退款总金额totalRefundedAmount={0}", totalRefundedAmount);
 
         return totalRefundedAmount;
     }
@@ -194,12 +194,9 @@ public class RefundRepositoryImpl implements RefundRepository {
         BizAlipayRefundOrder refundOrder = null;
 
         boolean isPayOrderModified = false;
-        boolean isRefundOrderModified = false;
 
         //1.支付宝返回退款成功
         if (StringUtils.isNotBlank(refundQueryResponse.getOutRequestNo()) && StringUtils.isNotBlank(refundQueryResponse.getRefundAmount())) {
-
-            LogUtil.info(logger, "支付宝返回退款订单查询存在");
 
             //1.1 本地无此退款订单
             if (CollectionUtils.isEmpty(refundOrders)) {
@@ -210,6 +207,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
                 bizAlipayRefundOrderDAO.insert(refundOrder);
             } else {//1.2 本地有此退款订单
+                LogUtil.info(logger, "支付宝返回退款订单存在,且本地有此订单");
                 refundOrder = refundOrders.get(FIRST_INDEX);
 
                 //修改本地退款订单状态为退款成功，并填充信息
@@ -218,7 +216,7 @@ public class RefundRepositoryImpl implements RefundRepository {
                     refundOrder.setRefundReason(refundQueryResponse.getRefundReason());
                     refundOrder.setRefundAmount(new Money(refundQueryResponse.getRefundAmount()));
 
-                    isRefundOrderModified = true;
+                    updateRefundOrder(refundOrder);
                 }
             }
 
@@ -251,10 +249,6 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         if (isPayOrderModified) {
             payRepository.updatePayOrder(payOrder);
-        }
-
-        if (isRefundOrderModified && refundOrder != null) {
-            updateRefundOrder(refundOrder);
         }
 
     }
@@ -318,7 +312,10 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
         //TODO:时间从配置中读取
         refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        //TODO:待确认
+        refundOrder.setCheckDate(DateUtil.format(new Date(), DateUtil.shortFormat));
         refundOrder.setGmtCreate(new Date());
+        refundOrder.setGmtUpdate(new Date());
 
         return refundOrder;
     }
