@@ -87,9 +87,7 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT   = "mechQueryResult";
 
-    private static final String MERCHANT_ID         = "196";
-
-    private static final String BUYER_ID            = "2088502948618313";
+    private static final String MERCHANT_ID         = "27375";
 
     private static final String OUT_NOTIFY_URL      = "http://168.33.50.230:8088/mPay/simulator/receive";
 
@@ -143,7 +141,6 @@ public class BizSimulatorController {
         map.put("body", "购买商品3件共20.00元");
         map.put("store_id", "store_id_" + geneRandomId());
         map.put("notify_url", ParamConstant.NOTIFY_URL);
-        map.put("buyer_id", BUYER_ID);
 
         return TO_CREATE;
     }
@@ -343,10 +340,10 @@ public class BizSimulatorController {
         String filePath = classPath.substring(5, classPath.length() - 8);
 
         //线上使用这个
-        //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+        String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
 
         //本地使用这个
-        String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
+        //        String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
         LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
@@ -705,6 +702,7 @@ public class BizSimulatorController {
         createRequest.setMerchantId(request.getParameter("merchant_id"));
         createRequest.setSubMerchantId(createRequest.getMerchantId());
         createRequest.setBuyerId(request.getParameter("buyer_id"));
+        createRequest.setBuyerLogonId(request.getParameter("buyer_logon_id"));
         createRequest.setScene(request.getParameter("scene"));
         createRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         createRequest.setSellerId(request.getParameter("seller_id"));

@@ -30,9 +30,9 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>买家用户号：</label>
+		  <label class="control-label"><s>*</s>买家支付宝账号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="buyer_id" value="${buyer_id}">
+			<input type="text" class="input-large" name="buyer_logon_id">
 		  </div>
 		</div>
 		<div class="control-group">

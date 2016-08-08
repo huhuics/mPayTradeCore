@@ -25,7 +25,7 @@ import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.SecureUtil;
 
 /**
- * 接收支付宝扫码支付结果通知
+ * 接收支付宝异步结果通知
  * @author HuHui
  * @version $Id: AlipayNotifyController.java, v 0.1 2016年7月13日 下午2:27:48 HuHui Exp $
  */
@@ -41,7 +41,7 @@ public class AlipayTradeNotifyController extends AbstractBizController {
     private TradeNotifyService  tradeNotifyService;
 
     /**
-     * 接收支付宝扫码支付结果通知
+     * 接收支付宝异步通知
      * @param request
      * @param map
      * @return
@@ -50,11 +50,11 @@ public class AlipayTradeNotifyController extends AbstractBizController {
     @RequestMapping(value = "/receive", method = RequestMethod.POST)
     public String receive(WebRequest request, ModelMap map) {
 
-        LogUtil.info(logger, "收到支付宝扫码支付HTTP异步通知");
+        LogUtil.info(logger, "收到支付宝HTTP异步通知");
 
         Map<String, String> paraMap = getParameters(request);
 
-        LogUtil.info(logger, "扫码支付结果通知原始报文参数paraMap={0}", paraMap);
+        LogUtil.info(logger, "异步通知原始报文参数paraMap={0}", paraMap);
 
         Boolean result = null;
         try {
@@ -65,7 +65,7 @@ public class AlipayTradeNotifyController extends AbstractBizController {
 
             result = tradeNotifyService.receiveAndSend(paraMap);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "接收支付宝扫码支付异步通知并发送收单机构失败,{0}", e.getMessage());
+            LogUtil.error(e, logger, "接收支付宝异步通知并发送收单机构失败,{0}", e.getMessage());
             result = Boolean.FALSE;
         }
 
