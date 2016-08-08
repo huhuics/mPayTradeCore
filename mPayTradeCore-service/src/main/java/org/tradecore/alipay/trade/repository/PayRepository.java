@@ -24,10 +24,10 @@ public interface PayRepository {
     BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder);
 
     /**
-     * 如果查询支付宝端的订单状态与本地订单状态不一致，则修改本地订单状态
+     * 修改本地订单
      * @param payOrder           订单对象
      */
-    void updateOrderStatus(BizAlipayPayOrder payOrder) throws Exception;
+    void updatePayOrder(BizAlipayPayOrder payOrder) throws Exception;
 
     /**
      * 更新交易订单中的交易状态和退款状态

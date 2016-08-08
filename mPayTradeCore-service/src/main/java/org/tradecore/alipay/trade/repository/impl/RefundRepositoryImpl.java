@@ -21,6 +21,7 @@ import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
+import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
@@ -36,6 +37,7 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
@@ -47,11 +49,14 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 public class RefundRepositoryImpl implements RefundRepository {
 
     /** 日志 */
-    private static final Logger     logger = LoggerFactory.getLogger(RefundRepositoryImpl.class);
+    private static final Logger     logger      = LoggerFactory.getLogger(RefundRepositoryImpl.class);
 
     /** 退款DAO */
     @Resource
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
+
+    /** 第一个元素 */
+    private static final int        FIRST_INDEX = 0;
 
     @Override
     public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse response) {
@@ -180,6 +185,95 @@ public class RefundRepositoryImpl implements RefundRepository {
         return totalRefundedAmount;
     }
 
+    @Override
+    public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
+                                   AlipayTradeFastpayRefundQueryResponse refundQueryResponse) throws Exception {
+
+        LogUtil.info(logger, "收到退款状态更新请求");
+
+        BizAlipayRefundOrder refundOrder = null;
+
+        boolean isPayOrderModified = false;
+        boolean isRefundOrderModified = false;
+
+        //1.支付宝返回退款成功
+        if (StringUtils.isNotBlank(refundQueryResponse.getOutRequestNo()) && StringUtils.isNotBlank(refundQueryResponse.getRefundAmount())) {
+
+            LogUtil.info(logger, "支付宝返回退款订单查询存在");
+
+            //1.1 本地无此退款订单
+            if (CollectionUtils.isEmpty(refundOrders)) {
+                LogUtil.warn(logger, "支付宝返回退款订单存在,但本地无此退款订单,outRequestNo={0}", refundQueryResponse.getOutRequestNo());
+
+                //构造一笔退款订单并保存
+                refundOrder = buildRefundOrder(payOrder, refundQueryResponse);
+
+                bizAlipayRefundOrderDAO.insert(refundOrder);
+            } else {//1.2 本地有此退款订单
+                refundOrder = refundOrders.get(FIRST_INDEX);
+
+                //修改本地退款订单状态为退款成功，并填充信息
+                if (!StringUtils.equals(refundOrder.getRefundStatus(), AlipayTradeStatusEnum.REFUND_SUCCESS.getCode())) {
+                    refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+                    refundOrder.setRefundReason(refundQueryResponse.getRefundReason());
+                    refundOrder.setRefundAmount(new Money(refundQueryResponse.getRefundAmount()));
+
+                    isRefundOrderModified = true;
+                }
+            }
+
+            //1.3 修改本地交易订单退款状态为退款成功
+            if (!StringUtils.equals(payOrder.getRefundStatus(), AlipayTradeStatusEnum.REFUND_SUCCESS.getCode())) {
+                payOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+                isPayOrderModified = true;
+            }
+
+            //1.4 如果是完全退款，交易状态必须是TRADE_CLOSED
+            if (payOrder.getTotalAmount().equals(new Money(refundQueryResponse.getRefundAmount()))) {
+                if (!StringUtils.equals(payOrder.getOrderStatus(), AlipayTradeStatusEnum.TRADE_CLOSED.getCode())) {
+                    payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
+                    isPayOrderModified = true;
+                }
+            }
+
+        } else {//2.支付宝返回退款失败(支付宝端无此退款记录)
+            LogUtil.info(logger, "支付宝返回退款订单查询不存在");
+
+            //2.1 如果退款订单为成功
+            if (CollectionUtils.isNotEmpty(refundOrders)) {
+                BizAlipayRefundOrder needlessRefundOrder = refundOrders.get(FIRST_INDEX);
+                if (StringUtils.equals(needlessRefundOrder.getRefundStatus(), AlipayTradeStatusEnum.REFUND_SUCCESS.getCode())) {
+                    LogUtil.warn(logger, "支付宝返回退款订单查询不存在,但本地退款订单为退款成功,outRequestNo={0}", needlessRefundOrder.getOutRequestNo());
+                }
+            }
+
+        }
+
+        if (isPayOrderModified) {
+            payRepository.updatePayOrder(payOrder);
+        }
+
+        if (isRefundOrderModified && refundOrder != null) {
+            updateRefundOrder(refundOrder);
+        }
+
+    }
+
+    @Override
+    public void updateRefundOrder(BizAlipayRefundOrder refundOrder) throws Exception {
+
+        LogUtil.info(logger, "收到退款订单更新请求");
+
+        try {
+            refundOrder.setGmtUpdate(new Date());
+            bizAlipayRefundOrderDAO.updateByPrimaryKey(refundOrder);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "退款订单更新失败,message={0}", e.getMessage());
+            throw new RuntimeException("退款订单更新失败", e);
+        }
+
+    }
+
     /**
      * 是否完全退款<br>
      * 分两种请情况<ul>
@@ -203,6 +297,30 @@ public class RefundRepositoryImpl implements RefundRepository {
         }
 
         return false;
+    }
+
+    /**
+     * 创建一笔退款订单
+     */
+    private BizAlipayRefundOrder buildRefundOrder(BizAlipayPayOrder payOrder, AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
+        BizAlipayRefundOrder refundOrder = new BizAlipayRefundOrder();
+        refundOrder.setId(UUIDUtil.geneId());
+        refundOrder.setAcquirerId(payOrder.getAcquirerId());
+        refundOrder.setMerchantId(payOrder.getMerchantId());
+        refundOrder.setAlipayTradeNo(payOrder.getAlipayTradeNo());
+        refundOrder.setOutTradeNo(payOrder.getOutTradeNo());
+        refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        refundOrder.setTotalAmount(payOrder.getTotalAmount());
+        refundOrder.setTradeNo(TradeNoFormater.format(payOrder.getAcquirerId(), payOrder.getMerchantId(), payOrder.getOutTradeNo()));
+        refundOrder.setRefundAmount(new Money(refundQueryResponse.getRefundAmount()));
+        refundOrder.setRefundReason(refundQueryResponse.getRefundReason());
+        refundOrder.setOutRequestNo(refundQueryResponse.getOutRequestNo());
+        refundOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
+        //TODO:时间从配置中读取
+        refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        refundOrder.setGmtCreate(new Date());
+
+        return refundOrder;
     }
 
     /**

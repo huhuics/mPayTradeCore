@@ -12,6 +12,7 @@ import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
@@ -46,5 +47,21 @@ public interface RefundRepository {
      * @return
      */
     Money getRefundedMoney(String merchantId, String outTradeNo, String alipayTradeNo);
+
+    /**
+     * 根据退款订单查询修改本地订单的退款状态（包括交易订单和退款订单的退款状态）
+     * @param payOrder
+     * @param refundOrders
+     * @param payRepository
+     * @param refundQueryResponse
+     */
+    void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
+                            AlipayTradeFastpayRefundQueryResponse refundQueryResponse) throws Exception;
+
+    /**
+     * 修改退款订单
+     * @param refundOrder
+     */
+    void updateRefundOrder(BizAlipayRefundOrder refundOrder) throws Exception;
 
 }

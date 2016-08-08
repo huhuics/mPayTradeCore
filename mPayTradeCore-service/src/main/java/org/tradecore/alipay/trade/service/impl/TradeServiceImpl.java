@@ -129,7 +129,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             LogUtil.info(logger, "轮询订单结果,loopQueryResponse={0}", JSON.toJSONString(loopQueryResponse, SerializerFeature.UseSingleQuotes));
 
-            checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, loopQueryResponse);
+            checkQueryAndCancel(payOrder, payRequest, payResponse, loopQueryResponse);
 
         } else if (isResponseError(payResponse)) {
             //6.3 系统错误，则查询一次交易，如果交易没有支付成功，则调用撤销
@@ -138,7 +138,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
 
-            checkQueryAndCancel(payOrder, payRequest.getOutTradeNo(), payRequest.getAppAuthToken(), payResponse, queryResponse);
+            checkQueryAndCancel(payOrder, payRequest, payResponse, queryResponse);
         } else {
             //6.4 其它情况可以明确支付失败
             LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
@@ -289,7 +289,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
                 nativePayOrder.setOrderStatus(queryResponse.getTradeStatus());
                 nativePayOrder.setAlipayTradeNo(queryResponse.getTradeNo());
                 //修改本地订单
-                payRepository.updateOrderStatus(nativePayOrder);
+                payRepository.updatePayOrder(nativePayOrder);
             }
         } else if (isResponseError(queryResponse)) {
             LogUtil.warn(logger, "订单查询返回系统错误,outTradeNo={0},alipayTradeNo={0}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
@@ -326,7 +326,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回退款查询业务结果,refundQueryResponse={0}", JSON.toJSONString(refundQueryResponse, SerializerFeature.UseSingleQuotes));
 
-        //5.查询本地是否有该退款请求号对应的退款订单
+        //5.查询本地是否有该退款请求号对应的退款订单(如果有，只能有一条记录)
         List<BizAlipayRefundOrder> nativeRefundOrders = refundRepository.selectRefundOrders(refundQueryRequest);
 
         //6.处理不同响应
@@ -334,13 +334,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             LogUtil.info(logger, "支付宝返回退款查询成功");
 
-            //6.1支付宝退款成功
-            if (StringUtils.isNotBlank(refundQueryResponse.getOutRequestNo())) {
-                //修改本地订单退款状态为退款成功
-
-            } else {//6.2支付宝退款失败(支付宝端无此退款记录)
-                //修改本地订单退款状体为退款失败
-            }
+            refundRepository.updateRefundStatus(oriOrder, nativeRefundOrders, payRepository, refundQueryResponse);
 
         } else if (isResponseError(refundQueryResponse)) {
             LogUtil.warn(logger, "退款订单查询返回系统错误,outRequestNo={0}", refundQueryRequest.getOutRequestNo());

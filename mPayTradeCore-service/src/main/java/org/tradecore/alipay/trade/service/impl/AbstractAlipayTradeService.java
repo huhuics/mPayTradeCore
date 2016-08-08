@@ -18,6 +18,7 @@ import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
+import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
@@ -58,10 +59,10 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @param queryResponse
      * @return
      */
-    protected BizAlipayPayOrder checkQueryAndCancel(BizAlipayPayOrder payOrder, String outTradeNo, String appAuthToken, AlipayTradePayResponse payResponse,
+    protected BizAlipayPayOrder checkQueryAndCancel(BizAlipayPayOrder payOrder, PayRequest payRequest, AlipayTradePayResponse payResponse,
                                                     AlipayTradeQueryResponse queryResponse) {
 
-        LogUtil.info(logger, "收到订单查询结果校验请求,outTradeNo={0}", outTradeNo);
+        LogUtil.info(logger, "收到订单查询结果校验请求,outTradeNo={0}", payRequest.getOutTradeNo());
 
         //1.查询为支付成功
         if (isQuerySuccess(queryResponse)) {
@@ -81,11 +82,11 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
 
         //2.查询为支付失败
         AlipayTradeCancelRequest cancelRequest = new AlipayTradeCancelRequest();
-        cancelRequest.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, appAuthToken);
+        cancelRequest.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, payRequest.getAppAuthToken());
 
         //封装查询参数并序列化
         Map<String, Object> paraMap = new HashMap<String, Object>();
-        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, outTradeNo);
+        paraMap.put(JSONFieldConstant.OUT_TRADE_NO, payRequest.getOutTradeNo());
 
         cancelRequest.setBizContent(JSON.toJSONString(paraMap));
 

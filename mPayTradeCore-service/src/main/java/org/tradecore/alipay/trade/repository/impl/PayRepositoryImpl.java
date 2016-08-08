@@ -62,9 +62,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public void updateOrderStatus(BizAlipayPayOrder payOrder) throws Exception {
+    public void updatePayOrder(BizAlipayPayOrder payOrder) throws Exception {
 
-        LogUtil.info(logger, "收到订单状态更新请求");
+        LogUtil.info(logger, "收到订单更新请求");
 
         try {
             payOrder.setGmtUpdate(new Date());
