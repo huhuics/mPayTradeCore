@@ -29,6 +29,7 @@ import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.alipay.trade.service.TradeService;
@@ -38,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -55,37 +57,41 @@ import com.alipay.demo.trade.utils.ZxingUtils;
 public class BizSimulatorController {
 
     /** 日志 */
-    private static final Logger logger            = LoggerFactory.getLogger(BizSimulatorController.class);
+    private static final Logger logger              = LoggerFactory.getLogger(BizSimulatorController.class);
 
-    private static final String MENU              = "menu";
+    private static final String MENU                = "menu";
 
-    private static final String TO_BAR_CODE       = "toBarCode";
+    private static final String TO_BAR_CODE         = "toBarCode";
 
-    private static final String TO_CREATE         = "toCreate";
+    private static final String TO_CREATE           = "toCreate";
 
-    private static final String TO_SCAN_CODE      = "toScanCode";
+    private static final String TO_SCAN_CODE        = "toScanCode";
 
-    private static final String TO_QUERY          = "toQuery";
+    private static final String TO_QUERY            = "toQuery";
 
-    private static final String TO_REFUND         = "toRefund";
+    private static final String TO_REFUND_QUERY     = "toRefundQuery";
 
-    private static final String TO_CANCEL         = "toCancel";
+    private static final String TO_REFUND           = "toRefund";
 
-    private static final String TO_MECH_CREATE    = "toMechCreate";
+    private static final String TO_CANCEL           = "toCancel";
 
-    private static final String TO_MECH_QUERY     = "toMechQuery";
+    private static final String TO_MECH_CREATE      = "toMechCreate";
 
-    private static final String RESULT            = "result";
+    private static final String TO_MECH_QUERY       = "toMechQuery";
 
-    private static final String QUERY_RESULT      = "queryResult";
+    private static final String RESULT              = "result";
 
-    private static final String MECH_QUERY_RESULT = "mechQueryResult";
+    private static final String QUERY_RESULT        = "queryResult";
 
-    private static final String MERCHANT_ID       = "196";
+    private static final String REFUND_QUERY_RESULT = "refundQueryResult";
 
-    private static final String BUYER_ID          = "2088502948618313";
+    private static final String MECH_QUERY_RESULT   = "mechQueryResult";
 
-    private static final String OUT_NOTIFY_URL    = "http://168.33.50.230:8088/mPay/simulator/receive";
+    private static final String MERCHANT_ID         = "196";
+
+    private static final String BUYER_ID            = "2088502948618313";
+
+    private static final String OUT_NOTIFY_URL      = "http://168.33.50.230:8088/mPay/simulator/receive";
 
     /** 交易服务接口 */
     @Resource
@@ -161,6 +167,12 @@ public class BizSimulatorController {
     public String toQuery(WebRequest request, ModelMap map) {
 
         return TO_QUERY;
+    }
+
+    @RequestMapping(value = "/toRefundQuery", method = RequestMethod.GET)
+    public String toRefundQuery(WebRequest request, ModelMap map) {
+
+        return TO_REFUND_QUERY;
     }
 
     @ResponseBody
@@ -250,7 +262,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到条码支付HTTP请求");
 
-        AlipayTradePayResponse response = null;
+        AlipayTradePayResponse response = new AlipayTradePayResponse();
 
         PayRequest payRequest = buildPayRequest(request);
 
@@ -275,7 +287,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到订单创建HTTP请求");
 
-        AlipayTradeCreateResponse response = null;
+        AlipayTradeCreateResponse response = new AlipayTradeCreateResponse();
 
         CreateRequest createRequest = buildCreateRequest(request);
 
@@ -288,16 +300,14 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器订单创建HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (response != null) {
-            map.put("code", response.getCode());
-            map.put("msg", response.getMsg());
-            map.put("subCode", response.getSubCode());
-            map.put("subMsg", response.getSubMsg());
-            map.put("acquirerId", createRequest.getAcquirerId());
-            map.put("merchantId", createRequest.getMerchantId());
-            map.put("outTradeNo", createRequest.getOutTradeNo());
-            map.put("tradeNo", response.getTradeNo());
-        }
+        map.put("code", response.getCode());
+        map.put("msg", response.getMsg());
+        map.put("subCode", response.getSubCode());
+        map.put("subMsg", response.getSubMsg());
+        map.put("acquirerId", createRequest.getAcquirerId());
+        map.put("merchantId", createRequest.getMerchantId());
+        map.put("outTradeNo", createRequest.getOutTradeNo());
+        map.put("tradeNo", response.getTradeNo());
 
         return RESULT;
     }
@@ -307,7 +317,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到扫码支付HTTP请求");
 
-        AlipayTradePrecreateResponse response = null;
+        AlipayTradePrecreateResponse response = new AlipayTradePrecreateResponse();
 
         PrecreateRequest precreateRequest = buildPrecreateRequest(request);
 
@@ -320,32 +330,29 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (response != null) {
-            map.put("code", response.getCode());
-            map.put("msg", response.getMsg());
-            map.put("subCode", response.getSubCode());
-            map.put("subMsg", response.getSubMsg());
-            map.put("acquirerId", precreateRequest.getAcquirerId());
-            map.put("merchantId", precreateRequest.getMerchantId());
-            map.put("outTradeNo", precreateRequest.getOutTradeNo());
+        map.put("code", response.getCode());
+        map.put("msg", response.getMsg());
+        map.put("subCode", response.getSubCode());
+        map.put("subMsg", response.getSubMsg());
+        map.put("acquirerId", precreateRequest.getAcquirerId());
+        map.put("merchantId", precreateRequest.getMerchantId());
+        map.put("outTradeNo", precreateRequest.getOutTradeNo());
 
-            //拼装二维码图片在服务器端的绝对地址
-            String classPath = this.getClass().getResource("/").toString();
-            String filePath = classPath.substring(5, classPath.length() - 8);
+        //拼装二维码图片在服务器端的绝对地址
+        String classPath = this.getClass().getResource("/").toString();
+        String filePath = classPath.substring(5, classPath.length() - 8);
 
-            //线上使用这个
-            //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
+        //线上使用这个
+        //            String qrFilePath = String.format(filePath + "qr/%s.png", response.getOutTradeNo());
 
-            //本地使用这个
-            String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
+        //本地使用这个
+        String qrFilePath = String.format("src/main/webapp/WEB-INF/qr/%s.png", response.getOutTradeNo());
 
-            LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
+        LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
-            //生成二维码图片
-            ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
-            map.put("qrFileName", response.getOutTradeNo() + ".png");
-
-        }
+        //生成二维码图片
+        ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
+        map.put("qrFileName", response.getOutTradeNo() + ".png");
 
         return RESULT;
     }
@@ -362,7 +369,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到订单查询HTTP请求");
 
-        AlipayTradeQueryResponse response = null;
+        AlipayTradeQueryResponse response = new AlipayTradeQueryResponse();
 
         QueryRequest queryRequest = buildQueryRequest(request);
 
@@ -375,20 +382,52 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (response != null) {
-            map.put("buyerLogonId", response.getBuyerLogonId());
-            map.put("outTradeNo", response.getOutTradeNo());
-            if (StringUtils.isNotBlank(response.getTradeStatus())) {
-                map.put("tradeStatus", AlipayTradeStatusEnum.getByCode(response.getTradeStatus()).getDesc());
-            }
-            map.put("totalAmount", response.getTotalAmount());
-            map.put("code", response.getCode());
-            map.put("msg", response.getMsg());
-            map.put("subCode", response.getSubCode());
-            map.put("subMsg", response.getSubMsg());
+        map.put("buyerLogonId", response.getBuyerLogonId());
+        map.put("outTradeNo", response.getOutTradeNo());
+        if (StringUtils.isNotBlank(response.getTradeStatus())) {
+            map.put("tradeStatus", AlipayTradeStatusEnum.getByCode(response.getTradeStatus()).getDesc());
         }
+        map.put("totalAmount", response.getTotalAmount());
+        map.put("code", response.getCode());
+        map.put("msg", response.getMsg());
+        map.put("subCode", response.getSubCode());
+        map.put("subMsg", response.getSubMsg());
 
         return QUERY_RESULT;
+
+    }
+
+    @RequestMapping(value = "/refundQuery", method = RequestMethod.POST)
+    public String refundQuery(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "模拟器收到退款订单查询HTTP请求");
+
+        AlipayTradeFastpayRefundQueryResponse response = new AlipayTradeFastpayRefundQueryResponse();
+
+        RefundQueryRequest queryRequest = buildRefundQueryRequest(request);
+
+        try {
+            response = tradeService.refundQuery(queryRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "模拟器退款订单查询HTTP调用异常");
+            setErrorResult(map, e.getMessage());
+        }
+
+        LogUtil.info(logger, "模拟器退款订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
+
+        map.put("alipayTradeNo", response.getTradeNo());
+        map.put("outTradeNo", response.getOutTradeNo());
+        map.put("outRequestNo", response.getOutRequestNo());
+        map.put("refundReason", response.getRefundReason());
+        map.put("totalAmount", response.getTotalAmount());
+        map.put("refundAmount", response.getRefundAmount());
+
+        map.put("code", response.getCode());
+        map.put("msg", response.getMsg());
+        map.put("subCode", response.getSubCode());
+        map.put("subMsg", response.getSubMsg());
+
+        return REFUND_QUERY_RESULT;
 
     }
 
@@ -419,7 +458,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到退款HTTP请求");
 
-        AlipayTradeRefundResponse response = null;
+        AlipayTradeRefundResponse response = new AlipayTradeRefundResponse();
 
         RefundRequest refundRequest = buildRefundRequest(request);
 
@@ -432,16 +471,14 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器退款HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
-        if (response != null) {
-            map.put("code", response.getCode());
-            map.put("msg", response.getMsg());
-            map.put("subCode", response.getSubCode());
-            map.put("subMsg", response.getSubMsg());
-            map.put("acquirerId", refundRequest.getAcquirerId());
-            map.put("merchantId", refundRequest.getMerchantId());
-            map.put("outTradeNo", refundRequest.getOutTradeNo());
-            map.put("tradeNo", response.getTradeNo());
-        }
+        map.put("code", response.getCode());
+        map.put("msg", response.getMsg());
+        map.put("subCode", response.getSubCode());
+        map.put("subMsg", response.getSubMsg());
+        map.put("acquirerId", refundRequest.getAcquirerId());
+        map.put("merchantId", refundRequest.getMerchantId());
+        map.put("outTradeNo", refundRequest.getOutTradeNo());
+        map.put("tradeNo", response.getTradeNo());
 
         return RESULT;
 
@@ -452,7 +489,7 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器收到撤销HTTP请求");
 
-        AlipayTradeCancelResponse cancelResponse = null;
+        AlipayTradeCancelResponse cancelResponse = new AlipayTradeCancelResponse();
 
         CancelRequest cancelRequest = buildCancelRequest(request);
 
@@ -465,16 +502,14 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
-        if (cancelResponse != null) {
-            map.put("code", cancelResponse.getCode());
-            map.put("msg", cancelResponse.getMsg());
-            map.put("subCode", cancelResponse.getSubCode());
-            map.put("subMsg", cancelResponse.getSubMsg());
-            map.put("acquirerId", cancelRequest.getAcquirerId());
-            map.put("merchantId", cancelRequest.getMerchantId());
-            map.put("outTradeNo", cancelRequest.getOutTradeNo());
-            map.put("tradeNo", cancelResponse.getTradeNo());
-        }
+        map.put("code", cancelResponse.getCode());
+        map.put("msg", cancelResponse.getMsg());
+        map.put("subCode", cancelResponse.getSubCode());
+        map.put("subMsg", cancelResponse.getSubMsg());
+        map.put("acquirerId", cancelRequest.getAcquirerId());
+        map.put("merchantId", cancelRequest.getMerchantId());
+        map.put("outTradeNo", cancelRequest.getOutTradeNo());
+        map.put("tradeNo", cancelResponse.getTradeNo());
 
         return RESULT;
     }
@@ -645,11 +680,23 @@ public class BizSimulatorController {
         queryRequest.setOutTradeNo(request.getParameter("out_trade_no"));
         queryRequest.setAlipayTradeNo(request.getParameter("trade_no"));
         queryRequest.setAppAuthToken(request.getParameter("app_auth_token"));
-        queryRequest.setAlipayTradeNo(request.getParameter("trade_no"));
 
         LogUtil.info(logger, "创建订单查询请求成功,queryRequest={0}", queryRequest);
 
         return queryRequest;
+    }
+
+    private RefundQueryRequest buildRefundQueryRequest(WebRequest request) {
+
+        RefundQueryRequest refundQueryRequest = new RefundQueryRequest();
+
+        refundQueryRequest.setAcquirerId(request.getParameter("acquirer_id"));
+        refundQueryRequest.setMerchantId(request.getParameter("merchant_id"));
+        refundQueryRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        refundQueryRequest.setAlipayTradeNo(request.getParameter("trade_no"));
+        refundQueryRequest.setOutRequestNo(request.getParameter("out_request_no"));
+
+        return refundQueryRequest;
     }
 
     private CreateRequest buildCreateRequest(WebRequest request) {

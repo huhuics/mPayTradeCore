@@ -88,10 +88,10 @@ public class RefundRepositoryImpl implements RefundRepository {
         } else {
 
             if (response == null || StringUtils.equals(response.getCode(), AlipayBizResultEnum.UNKNOW.getCode())) {
-                LogUtil.info(logger, "订单退款返回系统错误");
+                LogUtil.warn(logger, "订单退款返回系统错误");
                 refundOrder.setRefundStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
             } else {
-                LogUtil.info(logger, "订单退款返回失败");
+                LogUtil.warn(logger, "订单退款返回失败");
                 refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_FAILED.getCode());
             }
 
