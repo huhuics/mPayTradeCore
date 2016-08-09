@@ -20,6 +20,7 @@ import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
@@ -27,9 +28,9 @@ import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.TradeNoFormater;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.BizAlipayRefundOrderDAO;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -49,14 +50,11 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 public class RefundRepositoryImpl implements RefundRepository {
 
     /** 日志 */
-    private static final Logger     logger      = LoggerFactory.getLogger(RefundRepositoryImpl.class);
+    private static final Logger     logger = LoggerFactory.getLogger(RefundRepositoryImpl.class);
 
     /** 退款DAO */
     @Resource
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
-
-    /** 第一个元素 */
-    private static final int        FIRST_INDEX = 0;
 
     @Override
     public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse response) {
@@ -208,7 +206,7 @@ public class RefundRepositoryImpl implements RefundRepository {
                 bizAlipayRefundOrderDAO.insert(refundOrder);
             } else {//1.2 本地有此退款订单
                 LogUtil.info(logger, "支付宝返回退款订单存在,且本地有此订单");
-                refundOrder = refundOrders.get(FIRST_INDEX);
+                refundOrder = refundOrders.get(ParamConstant.FIRST_INDEX);
 
                 //修改本地退款订单状态为退款成功，并填充信息
                 if (!StringUtils.equals(refundOrder.getRefundStatus(), AlipayTradeStatusEnum.REFUND_SUCCESS.getCode())) {
@@ -239,7 +237,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
             //2.1 如果退款订单为成功
             if (CollectionUtils.isNotEmpty(refundOrders)) {
-                BizAlipayRefundOrder needlessRefundOrder = refundOrders.get(FIRST_INDEX);
+                BizAlipayRefundOrder needlessRefundOrder = refundOrders.get(ParamConstant.FIRST_INDEX);
                 if (StringUtils.equals(needlessRefundOrder.getRefundStatus(), AlipayTradeStatusEnum.REFUND_SUCCESS.getCode())) {
                     LogUtil.warn(logger, "支付宝返回退款订单查询不存在,但本地退款订单为退款成功,outRequestNo={0}", needlessRefundOrder.getOutRequestNo());
                 }
@@ -305,7 +303,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setOutTradeNo(payOrder.getOutTradeNo());
         refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
         refundOrder.setTotalAmount(payOrder.getTotalAmount());
-        refundOrder.setTradeNo(TradeNoFormater.format(payOrder.getAcquirerId(), payOrder.getMerchantId(), payOrder.getOutTradeNo()));
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(payOrder.getAcquirerId(), payOrder.getMerchantId(), payOrder.getOutTradeNo()));
         refundOrder.setRefundAmount(new Money(refundQueryResponse.getRefundAmount()));
         refundOrder.setRefundReason(refundQueryResponse.getRefundReason());
         refundOrder.setOutRequestNo(refundQueryResponse.getOutRequestNo());
@@ -336,7 +334,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
         refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
-        refundOrder.setTradeNo(TradeNoFormater.format(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
 
         refundOrder.setTotalAmount(oriOrder.getTotalAmount());
 

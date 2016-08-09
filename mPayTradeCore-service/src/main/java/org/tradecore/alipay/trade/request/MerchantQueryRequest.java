@@ -23,9 +23,14 @@ public class MerchantQueryRequest extends BaseRequest {
     private String            acquirer_id;
 
     /**
-     * (特殊可选)商户外部编号
+     * (结算中心生成)结算中心商户外部编号，全局唯一。生成规则：收单机构号+商户外部编号
      */
     private String            external_id;
+
+    /**
+     * (必填)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
+     */
+    private String            out_external_id;
 
     /**
      * (特殊可选)商户标识号<br>
@@ -41,7 +46,7 @@ public class MerchantQueryRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(acquirer_id, "收单机构编号不能为空");
 
-        if (StringUtils.isBlank(external_id) && StringUtils.isBlank(merchant_id)) {
+        if (StringUtils.isBlank(out_external_id) && StringUtils.isBlank(merchant_id)) {
             throw new RuntimeException("商户外部编号和商户标识号不能同时为空");
         }
 
@@ -56,6 +61,14 @@ public class MerchantQueryRequest extends BaseRequest {
         this.acquirer_id = acquirer_id;
     }
 
+    public String getMerchant_id() {
+        return merchant_id;
+    }
+
+    public void setMerchant_id(String merchant_id) {
+        this.merchant_id = merchant_id;
+    }
+
     public String getExternal_id() {
         return external_id;
     }
@@ -64,12 +77,12 @@ public class MerchantQueryRequest extends BaseRequest {
         this.external_id = external_id;
     }
 
-    public String getMerchant_id() {
-        return merchant_id;
+    public String getOut_external_id() {
+        return out_external_id;
     }
 
-    public void setMerchant_id(String merchant_id) {
-        this.merchant_id = merchant_id;
+    public void setOut_external_id(String out_external_id) {
+        this.out_external_id = out_external_id;
     }
 
 }

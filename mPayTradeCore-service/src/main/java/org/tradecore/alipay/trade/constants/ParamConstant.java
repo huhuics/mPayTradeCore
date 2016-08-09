@@ -62,6 +62,9 @@ public class ParamConstant {
     /** 字符Y */
     public static final String Y                               = "Y";
 
+    /** 第一个元素 */
+    public static final int    FIRST_INDEX                     = 0;
+
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE        = "merchant_create_response";
 

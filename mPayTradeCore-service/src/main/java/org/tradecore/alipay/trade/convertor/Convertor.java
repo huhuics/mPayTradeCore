@@ -18,7 +18,7 @@ import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.TradeNoFormater;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -46,7 +46,7 @@ public class Convertor {
         payOrder.setAcquirerId(request.getAcquirerId());
         payOrder.setMerchantId(request.getMerchantId());
         payOrder.setOutTradeNo(request.getOutTradeNo());
-        payOrder.setTradeNo(TradeNoFormater.format(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
+        payOrder.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
 
         payOrder.setScene(request.getScene());
 
@@ -176,7 +176,7 @@ public class Convertor {
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
         cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
 
-        cancelOrder.setTradeNo(TradeNoFormater.format(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+        cancelOrder.setTradeNo(FormaterUtil.tradeNoFormat(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId(), oriOrder.getOutTradeNo()));
 
         cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
 

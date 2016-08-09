@@ -25,6 +25,7 @@ import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.AssertUtil;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.ResponseUtil;
 import org.tradecore.common.util.SecureUtil;
@@ -184,6 +185,10 @@ public class MerchantController extends AbstractBizController {
         modifyRequest = JSON.parseObject(bizContent, MerchantModifyRequest.class);
         modifyRequest.setAcquirer_id(acquirerId);
 
+        //对external_id和out_external_id进行转化
+        modifyRequest.setOut_external_id(modifyRequest.getExternal_id());
+        modifyRequest.setExternal_id(FormaterUtil.externalIdFormat(modifyRequest.getAcquirer_id(), modifyRequest.getOut_external_id()));
+
         LogUtil.info(logger, "商户信息修改参数转换完成");
 
         return modifyRequest;
@@ -200,6 +205,10 @@ public class MerchantController extends AbstractBizController {
 
         queryRequest = JSON.parseObject(bizContent, MerchantQueryRequest.class);
         queryRequest.setAcquirer_id(acquirerId);
+
+        //对external_id和out_external_id进行转化
+        queryRequest.setOut_external_id(queryRequest.getExternal_id());
+        queryRequest.setExternal_id(FormaterUtil.externalIdFormat(queryRequest.getAcquirer_id(), queryRequest.getOut_external_id()));
 
         LogUtil.info(logger, "商户查询参数转换完成");
 
@@ -223,6 +232,10 @@ public class MerchantController extends AbstractBizController {
 
         createRequest = JSON.parseObject(bizContent, MerchantCreateRequest.class);
         createRequest.setAcquirer_id(acquirerId);
+
+        //对external_id和out_external_id进行转化
+        createRequest.setOut_external_id(createRequest.getExternal_id());
+        createRequest.setExternal_id(FormaterUtil.externalIdFormat(createRequest.getAcquirer_id(), createRequest.getOut_external_id()));
 
         LogUtil.info(logger, "商户入驻参数转换完成");
 

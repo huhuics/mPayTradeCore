@@ -19,25 +19,25 @@ public interface BizMerchantInfoDAO {
     int updateByPrimaryKey(BizMerchantInfo record);
 
     /**
-     * 条件加锁查询单条记录<br>
-     * 如果需要增加查询条件，需要在对应的mapper文件中增加
-     * @param paraMap
-     * @return
-     */
-    BizMerchantInfo selectForUpdate(Map<String, Object> paraMap);
-
-    /**
      * 查询商户信息<br>
      * 如果需要增加查询条件，需要在对应的mapper文件中增加
      * @param paraMap
-     * @return
      */
     List<BizMerchantInfo> selectMerchant(Map<String, Object> paraMap);
 
     /**
-     * 查询商户状态是否合法
+     * 查询商户状态是否合法<br>
+     * 两方面判断:<ul>
+     * <li>商户对应的收单机构状态是否合法</li>
+     * <li>商户是否合法</li>
+     * </ul>
      * @param paraMap
-     * @return
      */
     BizMerchantInfo selectNormalMerchant(Map<String, Object> paraMap);
+
+    /**
+     * 通过结算中心商户外部编号查询商户信息
+     * @param externalId    结算中心商户外部编号
+     */
+    BizMerchantInfo selectByExternalId(String externalId);
 }

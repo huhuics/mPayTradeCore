@@ -6,10 +6,12 @@ package org.tradecore.alipay.trade.service.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,7 @@ import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
+import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantModifyRequest;
@@ -64,14 +67,13 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         LogUtil.info(logger, "收到商户入驻请求参数,merchantCreateRequest={0}", merchantCreateRequest);
 
         //1.参数校验
-        AssertUtil.assertNotNull(merchantCreateRequest, "商户入驻请求不能为空");
-        AssertUtil.assertTrue(merchantCreateRequest.validate(), "商户入驻请求参数不合法");
+        validateRequest(merchantCreateRequest);
 
         //  1.1判断收单机构是否存在
         AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantCreateRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
-        //2.根据收单机构号和商户外部编号查询
-        BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getAcquirer_id(), merchantCreateRequest.getExternal_id());
+        //2.根据结算中心商户外部编号查询
+        BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getExternal_id());
 
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
@@ -109,15 +111,14 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
 
         //1.参数校验
-        AssertUtil.assertNotNull(merchantQueryRequest, "商户查询请求不能为空");
-        AssertUtil.assertTrue(merchantQueryRequest.validate(), "商户查询请求参数不合法");
+        validateRequest(merchantQueryRequest);
 
         //  1.1判断收单机构是否存在
         AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantQueryRequest.getAcquirer_id(), merchantQueryRequest.getMerchant_id(),
-            merchantQueryRequest.getExternal_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(),
+            merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getOut_external_id());
 
         LogUtil.info(logger, "本地查询商户信息结果merchantInfo={0}", merchantInfo);
 
@@ -132,15 +133,14 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         LogUtil.info(logger, "收到商户信息修改请求参数,merchantModifyRequest={0}", merchantModifyRequest);
 
         //1.参数校验
-        AssertUtil.assertNotNull(merchantModifyRequest, "商户信息修改请求不能为空");
-        AssertUtil.assertTrue(merchantModifyRequest.validate(), "商户信息修改请求参数不合法");
+        validateRequest(merchantModifyRequest);
 
         //2.校验收单机构
         AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantModifyRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //3.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrExternalId(merchantModifyRequest.getAcquirer_id(),
-            merchantModifyRequest.getMerchant_id(), merchantModifyRequest.getExternal_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(),
+            merchantModifyRequest.getMerchant_id(), merchantModifyRequest.getOut_external_id());
 
         AssertUtil.assertNotNull(merchantInfo, "商户信息查询为空,商户修改失败");
 
@@ -161,7 +161,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         response.setAcquirer_id(merchantInfo.getAcquirerId());
         response.setMerchant_id(merchantInfo.getMerchantId());
-        response.setExternal_id(merchantInfo.getExternalId());
+        response.setExternal_id(merchantInfo.getOutExternalId());
 
         if (bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo) > 0) {
             response.setModify_result(DefaultBizResultEnum.SUCCESS.getCode());
@@ -278,8 +278,10 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         //业务成功，封装参数
         BizMerchantInfo merchantInfo = new BizMerchantInfo();
-        merchantInfo.setExternalId(merchantCreateRequest.getExternal_id());
+
         merchantInfo.setAcquirerId(merchantCreateRequest.getAcquirer_id());
+        merchantInfo.setExternalId(merchantCreateRequest.getExternal_id());
+        merchantInfo.setOutExternalId(merchantCreateRequest.getOut_external_id());
         merchantInfo.setMerchantId(alipayResponse.getSubMerchantId());
         merchantInfo.setName(merchantCreateRequest.getName());
         merchantInfo.setAliasName(merchantCreateRequest.getAlias_name());
@@ -326,27 +328,22 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
     /**
      * 通过externalId加锁查询
-     * @param acquirerId
      * @param externalId
      * @return
      */
-    private BizMerchantInfo selectMerchantInfoByExternalId(String acquirerId, String externalId) {
+    private BizMerchantInfo selectMerchantInfoByExternalId(String externalId) {
 
-        Map<String, Object> paraMap = new HashMap<String, Object>();
-        paraMap.put(QueryFieldConstant.ACQUIRER_ID, acquirerId);
-        paraMap.put(QueryFieldConstant.EXTERNAL_ID, externalId);
-
-        return bizMerchantInfoDAO.selectForUpdate(paraMap);
+        return bizMerchantInfoDAO.selectByExternalId(externalId);
 
     }
 
     /**
-     * 通过merchantId或者externalId加锁查询
+     * 通过merchantId或者outExternalId查询
      * @param acquirerId
-     * @param externalId
+     * @param outExternalId
      * @return
      */
-    private BizMerchantInfo selectMerchantInfoByMerchantIdOrExternalId(String acquirerId, String merchantId, String externalId) {
+    private BizMerchantInfo selectMerchantInfoByMerchantIdOrOutExternalId(String acquirerId, String merchantId, String outExternalId) {
 
         Map<String, Object> paraMap = new HashMap<String, Object>();
         paraMap.put(QueryFieldConstant.ACQUIRER_ID, acquirerId);
@@ -355,11 +352,17 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
             paraMap.put(QueryFieldConstant.MERCHANT_ID, merchantId);
         }
 
-        if (StringUtils.isNotBlank(externalId)) {
-            paraMap.put(QueryFieldConstant.EXTERNAL_ID, externalId);
+        if (StringUtils.isNotBlank(outExternalId)) {
+            paraMap.put(QueryFieldConstant.OUT_EXTERNAL_ID, outExternalId);
         }
 
-        return bizMerchantInfoDAO.selectForUpdate(paraMap);
+        List<BizMerchantInfo> merchants = bizMerchantInfoDAO.selectMerchant(paraMap);
+
+        if (CollectionUtils.isEmpty(merchants)) {
+            return null;
+        }
+
+        return merchants.get(ParamConstant.FIRST_INDEX);
 
     }
 
@@ -392,7 +395,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         queryResponse.setAcquirer_id(merchantInfo.getAcquirerId());
         queryResponse.setMerchant_id(merchantInfo.getMerchantId());
-        queryResponse.setExternal_id(merchantInfo.getExternalId());
+        queryResponse.setExternal_id(merchantInfo.getOutExternalId());
         queryResponse.setName(merchantInfo.getName());
         queryResponse.setAlias_name(merchantInfo.getAliasName());
         queryResponse.setService_phone(merchantInfo.getServicePhone());

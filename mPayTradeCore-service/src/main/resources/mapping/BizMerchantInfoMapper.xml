@@ -257,25 +257,6 @@
     where ID = #{id,jdbcType=VARCHAR}
   </update>
 
-	<!-- 加锁查询 -->
-	<select id="selectForUpdate" parameterType="java.util.Map"
-		resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from BIZ_MERCHANT_INFO
-		where 1 = 1
-		<if test="_parameter.containsKey('acquirerId')">
-			AND ACQUIRER_ID = #{acquirerId}
-		</if>
-		<if test="_parameter.containsKey('externalId')">
-			AND EXTERNAL_ID = #{externalId}
-		</if>
-		<if test="_parameter.containsKey('merchantId')">
-			AND MERCHANT_ID = #{merchantId}
-		</if>
-		for update
-	</select>
-
 	<!-- 普通查询 -->
 	<select id="selectMerchant" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
@@ -289,11 +270,25 @@
 		<if test="_parameter.containsKey('merchantId')">
 			AND MERCHANT_ID = #{merchantId}
 		</if>
+		<if test="_parameter.containsKey('outExternalId')">
+			AND OUT_EXTERNAL_ID = #{outExternalId}
+		</if>
 		<if test="_parameter.containsKey('status')">
 			AND STATUS = #{status}
 		</if>
 	</select>
 
+	<!-- 通过结算中心商户外部编号查询商户信息 -->
+	<select id="selectByExternalId" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from BIZ_MERCHANT_INFO
+		where EXTERNAL_ID =
+		#{externalId,jdbcType=VARCHAR}
+	</select>
+
+	<!-- 查询商户状态是否合法 -->
 	<select id="selectNormalMerchant" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select

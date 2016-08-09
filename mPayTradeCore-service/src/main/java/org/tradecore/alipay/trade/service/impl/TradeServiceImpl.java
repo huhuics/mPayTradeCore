@@ -37,7 +37,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.TradeNoFormater;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
@@ -100,7 +100,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //2.幂等判断
         //组装结算中心订单号
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(payRequest.getAcquirerId(), payRequest.getMerchantId(),
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(),
             payRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
@@ -165,7 +165,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(createRequest.getAcquirerId(),
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(createRequest.getAcquirerId(),
             createRequest.getMerchantId(), createRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
 
@@ -217,7 +217,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(TradeNoFormater.format(precreateRequest.getAcquirerId(),
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(),
             precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 

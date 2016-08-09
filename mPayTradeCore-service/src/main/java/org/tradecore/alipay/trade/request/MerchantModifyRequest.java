@@ -17,14 +17,19 @@ public class MerchantModifyRequest extends BaseRequest {
     private static final long serialVersionUID = -3730532500978279060L;
 
     /**
-     * (必填)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
+     *  (必填)收单机构号
+     */
+    private String            acquirer_id;
+
+    /**
+     * (结算中心生成)结算中心商户外部编号，全局唯一。生成规则：收单机构号+商户外部编号
      */
     private String            external_id;
 
     /**
-     *  (必填)收单机构号
+     * (必填)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
      */
-    private String            acquirer_id;
+    private String            out_external_id;
 
     /**
      *  (必填)商户识别号
@@ -88,7 +93,7 @@ public class MerchantModifyRequest extends BaseRequest {
     @Override
     public boolean validate() {
 
-        AssertUtil.assertNotEmpty(external_id, "商户外部编号不能为空");
+        AssertUtil.assertNotEmpty(out_external_id, "商户外部编号不能为空");
 
         AssertUtil.assertNotEmpty(acquirer_id, "收单机构号不能为空");
 
@@ -111,6 +116,14 @@ public class MerchantModifyRequest extends BaseRequest {
 
     public void setExternal_id(String external_id) {
         this.external_id = external_id;
+    }
+
+    public String getOut_external_id() {
+        return out_external_id;
+    }
+
+    public void setOut_external_id(String out_external_id) {
+        this.out_external_id = out_external_id;
     }
 
     public String getAcquirer_id() {
