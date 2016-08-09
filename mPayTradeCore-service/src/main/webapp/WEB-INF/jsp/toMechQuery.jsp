@@ -32,7 +32,7 @@
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>商户外部编号：</label>
 		  <div class="controls">
-			<input type="text" class="input-large" name="external_id">
+			<input type="text" class="input-large" name="out_external_id">
 		  </div>
 		</div>
 		<div class="row actions-bar">       

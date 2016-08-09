@@ -31,7 +31,7 @@
 		<div class="control-group">
 		  <label class="control-label">商户外部编号：</label>
 		  <div class="controls">
-			<span class="control-text">${external_id}</span>
+			<span class="control-text">${out_external_id}</span>
 		  </div>
 		</div>
 		<div class="control-group">

@@ -323,6 +323,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         AlipayBossProdSubmerchantCreateRequest alipayCreateRequest = new AlipayBossProdSubmerchantCreateRequest();
         alipayCreateRequest.setBizContent(JSON.toJSONString(merchantCreateRequest));
 
+        LogUtil.info(logger, "merchant create.bizContent:{0}", alipayCreateRequest.getBizContent());
+
         return alipayCreateRequest;
     }
 

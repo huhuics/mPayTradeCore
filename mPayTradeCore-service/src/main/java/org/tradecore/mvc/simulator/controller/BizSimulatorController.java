@@ -33,6 +33,7 @@ import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.alipay.trade.service.TradeService;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
 
 import com.alibaba.fastjson.JSON;
@@ -199,7 +200,7 @@ public class BizSimulatorController {
     @RequestMapping(value = "/toMechCreate", method = RequestMethod.GET)
     public String toMechCreate(WebRequest request, ModelMap map) {
 
-        map.put("external_id", geneRandomId());
+        map.put("external_id", geneRandomId().substring(0, 8));
         map.put("acquirer_id", "10880010001");
         map.put("name", "测试商户");
         map.put("alias_name", "测试别名");
@@ -562,7 +563,7 @@ public class BizSimulatorController {
         if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             map.put("acquirer_id", queryResponse.getAcquirer_id());
             map.put("sub_merchant_id", queryResponse.getMerchant_id());
-            map.put("external_id", queryResponse.getExternal_id());
+            map.put("out_external_id", queryResponse.getExternal_id());
             map.put("name", queryResponse.getName());
             map.put("alias_name", queryResponse.getAlias_name());
             map.put("service_phone", queryResponse.getService_phone());
@@ -585,7 +586,7 @@ public class BizSimulatorController {
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
 
         queryRequest.setAcquirer_id(request.getParameter("acquirer_id"));
-        queryRequest.setExternal_id(request.getParameter("external_id"));
+        queryRequest.setOut_external_id(request.getParameter("out_external_id"));
         queryRequest.setMerchant_id(request.getParameter("merchant_id"));
 
         return queryRequest;
@@ -601,8 +602,9 @@ public class BizSimulatorController {
 
         MerchantCreateRequest createRequest = new MerchantCreateRequest();
 
-        createRequest.setExternal_id(request.getParameter("external_id"));
         createRequest.setAcquirer_id(request.getParameter("acquirer_id"));
+        createRequest.setOut_external_id(request.getParameter("external_id"));
+        createRequest.setExternal_id(FormaterUtil.externalIdFormat(createRequest.getAcquirer_id(), createRequest.getOut_external_id()));
         createRequest.setName(request.getParameter("name"));
         createRequest.setAlias_name(request.getParameter("alias_name"));
         createRequest.setService_phone(request.getParameter("service_phone"));

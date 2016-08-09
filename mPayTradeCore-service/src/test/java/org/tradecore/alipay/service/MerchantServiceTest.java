@@ -97,10 +97,10 @@ public class MerchantServiceTest extends BaseTest {
 
         //封装测试请求参数
         MerchantModifyRequest modifyreateRequest = new MerchantModifyRequest();
-        modifyreateRequest.setExternal_id("1469412591828");
-        modifyreateRequest.setAcquirer_id("1234567890");
-        modifyreateRequest.setMerchant_id("195");
-        modifyreateRequest.setName("测试商户123");
+        modifyreateRequest.setOut_external_id("14707489");
+        modifyreateRequest.setAcquirer_id("10880010001");
+        modifyreateRequest.setMerchant_id("27774");
+        modifyreateRequest.setName("测试商户");
         modifyreateRequest.setAlias_name("测试别名123");
         modifyreateRequest.setService_phone("9518888");
         modifyreateRequest.setContact_name("小二2");
