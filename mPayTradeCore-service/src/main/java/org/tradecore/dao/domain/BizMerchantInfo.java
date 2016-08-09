@@ -5,7 +5,7 @@ import java.util.Date;
 public class BizMerchantInfo extends BaseDomain {
 
     /**  */
-    private static final long serialVersionUID = -876229239902743339L;
+    private static final long serialVersionUID = -3025880138657985716L;
 
     /**
      *  null, BIZ_MERCHANT_INFO.ID
@@ -13,14 +13,19 @@ public class BizMerchantInfo extends BaseDomain {
     private String            id;
 
     /**
+     *  null, BIZ_MERCHANT_INFO.ACQUIRER_ID
+     */
+    private String            acquirerId;
+
+    /**
      *  null, BIZ_MERCHANT_INFO.EXTERNAL_ID
      */
     private String            externalId;
 
     /**
-     *  null, BIZ_MERCHANT_INFO.ACQUIRER_ID
+     *  null, BIZ_MERCHANT_INFO.OUT_EXTERNAL_ID
      */
-    private String            acquirerId;
+    private String            outExternalId;
 
     /**
      *  null, BIZ_MERCHANT_INFO.MERCHANT_ID
@@ -105,6 +110,14 @@ public class BizMerchantInfo extends BaseDomain {
         this.id = id == null ? null : id.trim();
     }
 
+    public String getAcquirerId() {
+        return acquirerId;
+    }
+
+    public void setAcquirerId(String acquirerId) {
+        this.acquirerId = acquirerId == null ? null : acquirerId.trim();
+    }
+
     public String getExternalId() {
         return externalId;
     }
@@ -113,12 +126,12 @@ public class BizMerchantInfo extends BaseDomain {
         this.externalId = externalId == null ? null : externalId.trim();
     }
 
-    public String getAcquirerId() {
-        return acquirerId;
+    public String getOutExternalId() {
+        return outExternalId;
     }
 
-    public void setAcquirerId(String acquirerId) {
-        this.acquirerId = acquirerId == null ? null : acquirerId.trim();
+    public void setOutExternalId(String outExternalId) {
+        this.outExternalId = outExternalId == null ? null : outExternalId.trim();
     }
 
     public String getMerchantId() {

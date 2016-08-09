@@ -3,8 +3,9 @@
 <mapper namespace="org.tradecore.dao.BizMerchantInfoDAO">
   <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizMerchantInfo">
     <id column="ID" jdbcType="VARCHAR" property="id" />
-    <result column="EXTERNAL_ID" jdbcType="VARCHAR" property="externalId" />
     <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
+    <result column="EXTERNAL_ID" jdbcType="VARCHAR" property="externalId" />
+    <result column="OUT_EXTERNAL_ID" jdbcType="VARCHAR" property="outExternalId" />
     <result column="MERCHANT_ID" jdbcType="VARCHAR" property="merchantId" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
     <result column="ALIAS_NAME" jdbcType="VARCHAR" property="aliasName" />
@@ -22,9 +23,9 @@
     <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, EXTERNAL_ID, ACQUIRER_ID, MERCHANT_ID, NAME, ALIAS_NAME, SERVICE_PHONE, CONTACT_NAME, 
-    CONTACT_PHONE, CONTACT_MOBILE, CONTACT_EMAIL, CATEGORY_ID, SOURCE, MEMO, STATUS, 
-    RETURN_DETAIL, GMT_CREATE, GMT_UPDATE
+    ID, ACQUIRER_ID, EXTERNAL_ID, OUT_EXTERNAL_ID, MERCHANT_ID, NAME, ALIAS_NAME, SERVICE_PHONE, 
+    CONTACT_NAME, CONTACT_PHONE, CONTACT_MOBILE, CONTACT_EMAIL, CATEGORY_ID, SOURCE, 
+    MEMO, STATUS, RETURN_DETAIL, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
@@ -37,20 +38,20 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
-    insert into BIZ_MERCHANT_INFO (ID, EXTERNAL_ID, ACQUIRER_ID, 
-      MERCHANT_ID, NAME, ALIAS_NAME, 
-      SERVICE_PHONE, CONTACT_NAME, CONTACT_PHONE, 
-      CONTACT_MOBILE, CONTACT_EMAIL, CATEGORY_ID, 
-      SOURCE, MEMO, STATUS, 
-      RETURN_DETAIL, GMT_CREATE, GMT_UPDATE
-      )
-    values (#{id,jdbcType=VARCHAR}, #{externalId,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, 
-      #{merchantId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{aliasName,jdbcType=VARCHAR}, 
-      #{servicePhone,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, #{contactPhone,jdbcType=VARCHAR}, 
-      #{contactMobile,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, #{categoryId,jdbcType=VARCHAR}, 
-      #{source,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{returnDetail,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}
-      )
+    insert into BIZ_MERCHANT_INFO (ID, ACQUIRER_ID, EXTERNAL_ID, 
+      OUT_EXTERNAL_ID, MERCHANT_ID, NAME, 
+      ALIAS_NAME, SERVICE_PHONE, CONTACT_NAME, 
+      CONTACT_PHONE, CONTACT_MOBILE, CONTACT_EMAIL, 
+      CATEGORY_ID, SOURCE, MEMO, 
+      STATUS, RETURN_DETAIL, GMT_CREATE, 
+      GMT_UPDATE)
+    values (#{id,jdbcType=VARCHAR}, #{acquirerId,jdbcType=VARCHAR}, #{externalId,jdbcType=VARCHAR}, 
+      #{outExternalId,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{aliasName,jdbcType=VARCHAR}, #{servicePhone,jdbcType=VARCHAR}, #{contactName,jdbcType=VARCHAR}, 
+      #{contactPhone,jdbcType=VARCHAR}, #{contactMobile,jdbcType=VARCHAR}, #{contactEmail,jdbcType=VARCHAR}, 
+      #{categoryId,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{returnDetail,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, 
+      #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
     insert into BIZ_MERCHANT_INFO
@@ -58,11 +59,14 @@
       <if test="id != null">
         ID,
       </if>
+      <if test="acquirerId != null">
+        ACQUIRER_ID,
+      </if>
       <if test="externalId != null">
         EXTERNAL_ID,
       </if>
-      <if test="acquirerId != null">
-        ACQUIRER_ID,
+      <if test="outExternalId != null">
+        OUT_EXTERNAL_ID,
       </if>
       <if test="merchantId != null">
         MERCHANT_ID,
@@ -114,11 +118,14 @@
       <if test="id != null">
         #{id,jdbcType=VARCHAR},
       </if>
+      <if test="acquirerId != null">
+        #{acquirerId,jdbcType=VARCHAR},
+      </if>
       <if test="externalId != null">
         #{externalId,jdbcType=VARCHAR},
       </if>
-      <if test="acquirerId != null">
-        #{acquirerId,jdbcType=VARCHAR},
+      <if test="outExternalId != null">
+        #{outExternalId,jdbcType=VARCHAR},
       </if>
       <if test="merchantId != null">
         #{merchantId,jdbcType=VARCHAR},
@@ -170,11 +177,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
     update BIZ_MERCHANT_INFO
     <set>
+      <if test="acquirerId != null">
+        ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      </if>
       <if test="externalId != null">
         EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
       </if>
-      <if test="acquirerId != null">
-        ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      <if test="outExternalId != null">
+        OUT_EXTERNAL_ID = #{outExternalId,jdbcType=VARCHAR},
       </if>
       <if test="merchantId != null">
         MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
@@ -226,8 +236,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="org.tradecore.dao.domain.BizMerchantInfo">
     update BIZ_MERCHANT_INFO
-    set EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
-      ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+    set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
+      EXTERNAL_ID = #{externalId,jdbcType=VARCHAR},
+      OUT_EXTERNAL_ID = #{outExternalId,jdbcType=VARCHAR},
       MERCHANT_ID = #{merchantId,jdbcType=VARCHAR},
       NAME = #{name,jdbcType=VARCHAR},
       ALIAS_NAME = #{aliasName,jdbcType=VARCHAR},
@@ -289,7 +300,8 @@
 		<include refid="Base_Column_List" />
 		from BIZ_MERCHANT_INFO
 		where merchant_id = #{merchantId}
-		and status = #{status}
+		and status =
+		#{status}
 		and acquirer_id in (select acquirer_id
 		from biz_acquirer_info
 		where acquirer_id = #{acquirerId}
