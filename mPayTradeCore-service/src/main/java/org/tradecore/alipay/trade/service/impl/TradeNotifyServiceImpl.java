@@ -53,7 +53,6 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //1.校验参数
         AssertUtil.assertNotNull(paraMap, "异步通知参数不能为空");
 
-        //对支付宝而言，外部商户号就是结算中心订单号
         String outTradeNo = paraMap.get(JSONFieldConstant.OUT_TRADE_NO);
 
         //2.查询原始订单
