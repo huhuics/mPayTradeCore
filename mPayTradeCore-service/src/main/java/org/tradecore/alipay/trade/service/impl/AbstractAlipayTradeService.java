@@ -59,6 +59,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @param queryResponse
      * @return
      */
+    @Deprecated
     protected BizAlipayPayOrder checkQueryAndCancel(BizAlipayPayOrder payOrder, PayRequest payRequest, AlipayTradePayResponse payResponse,
                                                     AlipayTradeQueryResponse queryResponse) {
 
@@ -167,6 +168,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @param alipayQueryRequest
      * @return
      */
+    @Deprecated
     protected AlipayTradeQueryResponse loopQuery(AlipayTradeQueryRequest alipayQueryRequest) {
 
         LogUtil.info(logger, "收到轮询订单请求,outTradeNo={0}", alipayQueryRequest.getBizContent());
@@ -283,9 +285,6 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
         payOrder.setDiscountGoodsDetail(payResponse.getDiscountGoodsDetail());
         payOrder.setGmtPayment(payResponse.getGmtPayment());
         payOrder.setCheckDate(DateUtil.format(payResponse.getGmtPayment(), DateUtil.shortFormat));
-
-        //支付宝返回消息体
-        payOrder.setReturnDetail(payResponse.getBody());
 
         return payOrder;
     }

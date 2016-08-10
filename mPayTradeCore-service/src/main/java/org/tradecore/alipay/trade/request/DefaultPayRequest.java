@@ -38,10 +38,17 @@ public class DefaultPayRequest extends BaseRequest {
     protected String            scene;
 
     /**
-     *  (必填)商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，需保证商户系统端不能重复，建议通过数据库sequence生成， 
+     *  (必填)商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，需保证商户系统端不能重复，建议通过数据库sequence生成<br>
+     *   在结算中心角度，商户订单号为outTradeNo
+     */
+    protected String            outTradeNo;
+
+    /**
+     * (结算中心自动生成)结算中心订单号<br>
+     * 在支付宝角度看，结算中心订单号为outTradeNo
      */
     @JSONField(name = "out_trade_no")
-    protected String            outTradeNo;
+    protected String            tradeNo;
 
     /**
      * 卖家支付宝账号ID，用于支持一个签约账号下支持打款到不同的收款账号，(打款到sellerId对应的支付宝账号)。<br>
@@ -151,6 +158,8 @@ public class DefaultPayRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(outTradeNo, "商户订单号不能为空");
 
+        AssertUtil.assertNotEmpty(tradeNo, "结算中心订单号不能为空");
+
         AssertUtil.assertNotEmpty(totalAmount, "订单总金额不能为空");
 
         AssertUtil.assertNotEmpty(subject, "订单标题不能为空");
@@ -180,6 +189,14 @@ public class DefaultPayRequest extends BaseRequest {
 
     public void setScene(String scene) {
         this.scene = scene;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
     }
 
     public String getOutTradeNo() {

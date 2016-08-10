@@ -37,7 +37,6 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
-import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
@@ -100,8 +99,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //2.幂等判断
         //组装结算中心订单号
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(),
-            payRequest.getOutTradeNo()));
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(payRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
         //3.请求参数转换成支付宝支付请求参数
@@ -121,35 +119,27 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             LogUtil.info(logger, "条码支付返回成功");
             setPayOrderSuccess(payOrder, payResponse);
         } else if (isPayProcessing(payResponse)) {
-            //6.2 返回处理中，则轮询查询交易是否成功，如果超时，则调用撤销
-            LogUtil.info(logger, "条码支付返回业务处理中");
-            AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
-
-            AlipayTradeQueryResponse loopQueryResponse = loopQuery(alipayQueryRequest);
-
-            LogUtil.info(logger, "轮询订单结果,loopQueryResponse={0}", JSON.toJSONString(loopQueryResponse, SerializerFeature.UseSingleQuotes));
-
-            checkQueryAndCancel(payOrder, payRequest, payResponse, loopQueryResponse);
-
+            //6.2 返回处理中
+            LogUtil.warn(logger, "条码支付返回业务处理中");
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
         } else if (isResponseError(payResponse)) {
-            //6.3 系统错误，则查询一次交易，如果交易没有支付成功，则调用撤销
+            //6.3 系统错误
             LogUtil.warn(logger, "条码支付返回系统错误,outTradeNo={0}", payRequest.getOutTradeNo());
-            AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(payRequest.getAppAuthToken(), payRequest.getOutTradeNo());
-
-            AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
-
-            checkQueryAndCancel(payOrder, payRequest, payResponse, queryResponse);
+            payOrder.setOrderStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
         } else {
             //6.4 其它情况可以明确支付失败
             LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
-            payOrder.setReturnDetail(JSON.toJSONString(payResponse.getBody(), SerializerFeature.UseSingleQuotes));
+        }
+
+        if (payResponse != null) {
+            payOrder.setReturnDetail(payResponse.getBody());
         }
 
         //7.保存订单数据
         payRepository.savePayOrder(payOrder);
 
-        return payResponse;
+        return setPayResponse(payResponse, payRequest.getOutTradeNo());
     }
 
     @Override
@@ -165,8 +155,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(createRequest.getAcquirerId(),
-            createRequest.getMerchantId(), createRequest.getOutTradeNo()));
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
 
         //2.请求参数转换为支付宝请求参数
@@ -201,7 +190,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //7.保存订单数据
         payRepository.savePayOrder(payOrder);
 
-        return createResponse;
+        return setCreateResponse(createResponse, createRequest.getOutTradeNo());
     }
 
     @Override
@@ -217,8 +206,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
 
         //  1.2幂等判断
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(),
-            precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
         //2.请求参数转换成支付宝支付请求参数
@@ -253,7 +241,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //7.保存订单数据
         payRepository.savePayOrder(payOrder);
 
-        return precreateResponse;
+        return setPrecreateResponse(precreateResponse, precreateRequest.getOutTradeNo());
     }
 
     @Override
@@ -274,7 +262,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertNotNull(nativePayOrder, "原订单查询为空");
 
         //3.转换成支付宝查询请求参数
-        AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(queryRequest);
+        AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(queryRequest, nativePayOrder.getTradeNo());
 
         //4.调用支付宝接口
         AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
@@ -297,7 +285,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             LogUtil.warn(logger, "订单查询返回失败,outTradeNo={0},alipayTradeNo={0}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
         }
 
-        return queryResponse;
+        return setTradeQueryResponse(queryResponse, queryRequest.getOutTradeNo());
     }
 
     @Override
@@ -367,7 +355,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(checkFee(oriOrder, refundRequest), "退款金额不能大于订单总金额");
 
         //3.转换成支付宝退款请求参数
-        AlipayTradeRefundRequest alipayRefundRequest = createAlipayRefundRequest(refundRequest);
+        AlipayTradeRefundRequest alipayRefundRequest = createAlipayRefundRequest(refundRequest, oriOrder.getTradeNo());
 
         //4.调用支付宝接口
         AlipayTradeRefundResponse refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest);
@@ -385,7 +373,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payRepository.updateOrderRefundStatus(oriOrder);
         }
 
-        return refundResponse;
+        return setRefundResponse(refundResponse, refundRequest.getOutTradeNo());
     }
 
     @Override
@@ -410,7 +398,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(checkCancelTime(oriOrder.getGmtCreate()), "已超过可撤销时间，订单无法进行撤销");
 
         //4.转换成支付宝撤销请求
-        AlipayTradeCancelRequest alipayCancelRequest = createAlipayCancelRequest(cancelRequest);
+        AlipayTradeCancelRequest alipayCancelRequest = createAlipayCancelRequest(cancelRequest, oriOrder.getTradeNo());
 
         //5.调用支付宝撤销接口
         AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest);
@@ -454,7 +442,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
         }
 
-        return cancelResponse;
+        return setCancelResponse(cancelResponse, cancelRequest.getOutTradeNo());
     }
 
     /**
@@ -462,11 +450,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param cancelRequest
      * @return
      */
-    private AlipayTradeCancelRequest createAlipayCancelRequest(CancelRequest cancelRequest) {
+    private AlipayTradeCancelRequest createAlipayCancelRequest(CancelRequest cancelRequest, String tradeNo) {
 
         AlipayTradeCancelRequest request = new AlipayTradeCancelRequest();
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, cancelRequest.getAppAuthToken());
 
+        cancelRequest.setTradeNo(tradeNo);
         request.setBizContent(JSON.toJSONString(cancelRequest));
 
         LogUtil.info(logger, "cancel.bizContent:{0}", request.getBizContent());
@@ -494,10 +483,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param refundRequest
      * @return
      */
-    private AlipayTradeRefundRequest createAlipayRefundRequest(RefundRequest refundRequest) {
+    private AlipayTradeRefundRequest createAlipayRefundRequest(RefundRequest refundRequest, String tradeNo) {
 
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, refundRequest.getAppAuthToken());
+
+        refundRequest.setTradeNo(tradeNo);
         request.setBizContent(JSON.toJSONString(refundRequest));
 
         LogUtil.info(logger, "refund.bizContent:{0}", request.getBizContent());
@@ -510,11 +501,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param queryRequest
      * @return
      */
-    private AlipayTradeQueryRequest createAlipayQueryRequest(QueryRequest queryRequest) {
+    private AlipayTradeQueryRequest createAlipayQueryRequest(QueryRequest queryRequest, String tradeNo) {
 
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
 
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, queryRequest.getAppAuthToken());
+
+        queryRequest.setTradeNo(tradeNo);
         request.setBizContent(JSON.toJSONString(queryRequest));
 
         LogUtil.info(logger, "query.bizContent:{0}", request.getBizContent());
@@ -528,6 +521,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * @param outTradeNo
      * @return
      */
+    @Deprecated
     private AlipayTradeQueryRequest createAlipayQueryRequest(String appAuthToken, String outTradeNo) {
 
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
@@ -670,6 +664,64 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         Date endDate = DateUtil.parseDateLongFormat(endDateStr);
 
         return endDate.after(new Date());
+    }
+
+    /**
+     * 结算中心给收单机构返回的outTradeNo是商户订单号，而支付宝给结算中心返回的是结算中心订单号，故需要替换
+     */
+    private AlipayTradePayResponse setPayResponse(AlipayTradePayResponse payResponse, String outTradeNo) {
+
+        if (payResponse != null) {
+            payResponse.setOutTradeNo(outTradeNo);
+            //TODO:处理body中的内容
+        }
+
+        return payResponse;
+    }
+
+    private AlipayTradeCreateResponse setCreateResponse(AlipayTradeCreateResponse createResponse, String outTradeNo) {
+
+        if (createResponse != null) {
+            createResponse.setOutTradeNo(outTradeNo);
+        }
+
+        return createResponse;
+    }
+
+    private AlipayTradePrecreateResponse setPrecreateResponse(AlipayTradePrecreateResponse precreateResponse, String outTradeNo) {
+
+        if (precreateResponse != null) {
+            precreateResponse.setOutTradeNo(outTradeNo);
+        }
+
+        return precreateResponse;
+    }
+
+    private AlipayTradeQueryResponse setTradeQueryResponse(AlipayTradeQueryResponse queryResponse, String outTradeNo) {
+
+        if (queryResponse != null) {
+            queryResponse.setOutTradeNo(outTradeNo);
+        }
+
+        return queryResponse;
+    }
+
+    private AlipayTradeRefundResponse setRefundResponse(AlipayTradeRefundResponse refundResponse, String outTradeNo) {
+
+        if (refundResponse != null) {
+            refundResponse.setOutTradeNo(outTradeNo);
+        }
+
+        return refundResponse;
+    }
+
+    private AlipayTradeCancelResponse setCancelResponse(AlipayTradeCancelResponse cancelResponse, String outTradeNo) {
+
+        if (cancelResponse != null) {
+            cancelResponse.setOutTradeNo(outTradeNo);
+        }
+
+        return cancelResponse;
     }
 
 }

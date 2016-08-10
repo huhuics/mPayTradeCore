@@ -30,6 +30,7 @@ import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.ResponseUtil;
 
@@ -437,8 +438,8 @@ public class AlipayTradeController extends AbstractBizController {
         request.setAcquirerId(acquirerId);
         request.setMerchantId(bizParaMap.get("merchant_id"));
         request.setSubMerchantId(request.getMerchantId());
-
         request.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        request.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
         request.setSellerId(bizParaMap.get("seller_id"));
         request.setTotalAmount(bizParaMap.get("total_amount"));
         request.setDiscountableAmount(bizParaMap.get("discountable_amount"));

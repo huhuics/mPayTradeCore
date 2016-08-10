@@ -18,7 +18,7 @@
 	<h1>商户信息查询付</h1>
 	  <form id="J_Form" action="/mPay/simulator/mechQuery" method="post" class="form-horizontal">
 		<div class="control-group">
-		  <label class="control-label"><s>*</s>收单机构号：</label>
+		  <label class="control-label"><s>*</s>收单机构编号：</label>
 		  <div class="controls">
 			<input type="text" class="input-large" name="acquirer_id">
 		  </div>
