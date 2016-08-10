@@ -27,6 +27,7 @@ import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
+import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.AssertUtil;
@@ -38,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
+import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
@@ -191,6 +193,33 @@ public class AlipayTradeController extends AbstractBizController {
 
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/refundQuery", method = RequestMethod.POST)
+    public String refundQuery(WebRequest request, ModelMap map) {
+
+        LogUtil.info(logger, "收到退款查询HTTP请求");
+
+        AlipayTradeFastpayRefundQueryResponse refundQueryResponse = new AlipayTradeFastpayRefundQueryResponse();
+
+        try {
+            Map<String, String> paraMap = getParameters(request);
+
+            AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
+            RefundQueryRequest refundQueryRequest = buildRefundQueryRequest(paraMap);
+
+            refundQueryResponse = tradeService.refundQuery(refundQueryRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "退款查询HTTP调用异常,Message={0}", e.getMessage());
+        }
+
+        String refundQueryResponseStr = ResponseUtil.buildResponse(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE);
+
+        LogUtil.info(logger, "退款HTTP调用结果,refundQueryResponse={0}", refundQueryResponseStr);
+
+        return refundQueryResponseStr;
+    }
+
     /**
      * 处理订单退款请求
      */
@@ -200,7 +229,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         LogUtil.info(logger, "收到退款HTTP请求");
 
-        AlipayTradeRefundResponse refundResponse = null;
+        AlipayTradeRefundResponse refundResponse = new AlipayTradeRefundResponse();
 
         try {
             Map<String, String> paraMap = getParameters(request);
@@ -277,6 +306,30 @@ public class AlipayTradeController extends AbstractBizController {
         LogUtil.info(logger, "订单撤销请求参数转换完成");
 
         return cancelRequest;
+    }
+
+    private RefundQueryRequest buildRefundQueryRequest(Map<String, String> paraMap) {
+
+        LogUtil.info(logger, "收到退款订单查询报文转换请求");
+
+        RefundQueryRequest refundQueryRequest = new RefundQueryRequest();
+
+        String bizContent = paraMap.get(ParamConstant.BIZ_CONTENT);
+        String acquirerId = paraMap.get(ACQUIRER_ID);
+
+        Map<String, String> bizParaMap = JSON.parseObject(bizContent, new TypeReference<Map<String, String>>() {
+        });
+
+        refundQueryRequest.setAcquirerId(acquirerId);
+        refundQueryRequest.setMerchantId(bizParaMap.get("merchant_id"));
+        refundQueryRequest.setOutTradeNo(bizParaMap.get("out_trade_no"));
+        refundQueryRequest.setOutRequestNo(bizParaMap.get("out_request_no"));
+        refundQueryRequest.setAlipayTradeNo(bizParaMap.get("trade_no"));
+        refundQueryRequest.setAppAuthToken(bizParaMap.get("app_auth_token"));
+
+        LogUtil.info(logger, "退款订单查询请求参数转换完成");
+
+        return refundQueryRequest;
     }
 
     /**

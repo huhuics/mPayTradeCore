@@ -306,8 +306,9 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
     protected boolean isQuerySuccess(AlipayTradeQueryResponse queryResponse) {
         return queryResponse != null
                && StringUtils.equals(queryResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())
-               && (StringUtils.equals(queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode()) || StringUtils.equals(
-                   queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_FINISHED.getCode()));
+               && (StringUtils.equals(queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())
+                   || StringUtils.equals(queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_FINISHED.getCode()) || StringUtils.equals(
+                   queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_CLOSED.getCode()));
     }
 
     /**

@@ -30,12 +30,18 @@ public class RefundQueryRequest extends BaseRequest {
     private String            outTradeNo;
 
     /** (特殊可选)支付宝交易号，和商户订单号不能同时为空 */
-    @JSONField(name = "trade_no")
     private String            alipayTradeNo;
 
     /** (必填)退款请求号 */
     @JSONField(name = "out_request_no")
     private String            outRequestNo;
+
+    /**
+     * (结算中心自动生成)结算中心订单号<br>
+     * 在支付宝角度看，结算中心订单号为outTradeNo
+     */
+    @JSONField(name = "out_trade_no")
+    protected String          tradeNo;
 
     /**
      * 应用授权令牌
@@ -100,6 +106,14 @@ public class RefundQueryRequest extends BaseRequest {
 
     public void setAppAuthToken(String appAuthToken) {
         this.appAuthToken = appAuthToken;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
     }
 
     @Override

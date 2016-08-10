@@ -88,7 +88,7 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT   = "mechQueryResult";
 
-    private static final String MERCHANT_ID         = "27375";
+    private static final String MERCHANT_ID         = "27862";
 
     private static final String OUT_NOTIFY_URL      = "http://168.33.50.230:8088/mPay/simulator/receive";
 
@@ -707,6 +707,7 @@ public class BizSimulatorController {
         createRequest.setBuyerLogonId(request.getParameter("buyer_logon_id"));
         createRequest.setScene(request.getParameter("scene"));
         createRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        createRequest.setTradeNo(FormaterUtil.tradeNoFormat(createRequest.getAcquirerId(), createRequest.getMerchantId(), createRequest.getOutTradeNo()));
         createRequest.setSellerId(request.getParameter("seller_id"));
         createRequest.setTotalAmount(request.getParameter("total_amount"));
         createRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
@@ -743,6 +744,8 @@ public class BizSimulatorController {
         precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
         precreateRequest.setScene(request.getParameter("scene"));
         precreateRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        precreateRequest.setTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(),
+            precreateRequest.getOutTradeNo()));
         precreateRequest.setSellerId(request.getParameter("seller_id"));
         precreateRequest.setTotalAmount(request.getParameter("total_amount"));
         precreateRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
@@ -783,6 +786,7 @@ public class BizSimulatorController {
         payRequest.setSubMerchantId(payRequest.getMerchantId());
         payRequest.setScene(request.getParameter("scene"));
         payRequest.setOutTradeNo(request.getParameter("out_trade_no"));
+        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo()));
         payRequest.setSellerId(request.getParameter("seller_id"));
         payRequest.setTotalAmount(request.getParameter("total_amount"));
         payRequest.setDiscountableAmount(request.getParameter("discountable_amount"));

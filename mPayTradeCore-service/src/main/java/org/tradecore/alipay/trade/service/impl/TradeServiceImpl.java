@@ -42,6 +42,7 @@ import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradeCreateRequest;
@@ -285,7 +286,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             LogUtil.warn(logger, "订单查询返回失败,outTradeNo={0},alipayTradeNo={0}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
         }
 
-        return setTradeQueryResponse(queryResponse, queryRequest.getOutTradeNo());
+        return setTradeQueryResponse(queryResponse, nativePayOrder.getOutTradeNo());
     }
 
     @Override
@@ -307,7 +308,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //3.转换成支付宝退款查询请求参数
-        AlipayTradeFastpayRefundQueryRequest alipayRefundQueryRequest = createAlipayRefundQueryRequest(refundQueryRequest);
+        AlipayTradeFastpayRefundQueryRequest alipayRefundQueryRequest = createAlipayRefundQueryRequest(refundQueryRequest, oriOrder.getTradeNo());
 
         //4.调用支付宝接口
         AlipayTradeFastpayRefundQueryResponse refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest);
@@ -330,7 +331,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             LogUtil.warn(logger, "退款订单查询返回失败,outRequestNo={0}", refundQueryRequest.getOutRequestNo());
         }
 
-        return refundQueryResponse;
+        return setRefundQueryResponse(refundQueryResponse, oriOrder.getOutTradeNo());
     }
 
     @Override
@@ -373,7 +374,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payRepository.updateOrderRefundStatus(oriOrder);
         }
 
-        return setRefundResponse(refundResponse, refundRequest.getOutTradeNo());
+        return setRefundResponse(refundResponse, oriOrder.getOutTradeNo());
     }
 
     @Override
@@ -442,7 +443,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payRepository.updateOrderCancelStatus(oriOrder, cancelOrder);
         }
 
-        return setCancelResponse(cancelResponse, cancelRequest.getOutTradeNo());
+        return setCancelResponse(cancelResponse, oriOrder.getOutTradeNo());
     }
 
     /**
@@ -466,11 +467,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     /**
      * 将退款订单查询请求转换成支付宝请求
      */
-    private AlipayTradeFastpayRefundQueryRequest createAlipayRefundQueryRequest(RefundQueryRequest refundQueryRequest) {
+    private AlipayTradeFastpayRefundQueryRequest createAlipayRefundQueryRequest(RefundQueryRequest refundQueryRequest, String tradeNo) {
 
         AlipayTradeFastpayRefundQueryRequest request = new AlipayTradeFastpayRefundQueryRequest();
 
         request.putOtherTextParam(ParamConstant.APP_AUTH_TOKEN, refundQueryRequest.getAppAuthToken());
+
+        refundQueryRequest.setTradeNo(tradeNo);
         request.setBizContent(JSON.toJSONString(refundQueryRequest));
 
         LogUtil.info(logger, "refund query.bizContent:{0}", request.getBizContent());
@@ -670,12 +673,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * 结算中心给收单机构返回的outTradeNo是商户订单号，而支付宝给结算中心返回的是结算中心订单号，故需要替换
      */
     private AlipayTradePayResponse setPayResponse(AlipayTradePayResponse payResponse, String outTradeNo) {
-
+        LogUtil.info(logger, "修改前payResponse={0}", JSON.toJSON(payResponse));
         if (payResponse != null) {
             payResponse.setOutTradeNo(outTradeNo);
-            //TODO:处理body中的内容
+            payResponse.setBody(setBody(payResponse.getBody(), ParamConstant.ALIPAY_TRADE_PAY_RESPONSE, outTradeNo));
         }
-
+        LogUtil.info(logger, "修改后payResponse={0}", JSON.toJSON(payResponse));
         return payResponse;
     }
 
@@ -683,6 +686,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (createResponse != null) {
             createResponse.setOutTradeNo(outTradeNo);
+            setBody(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE, outTradeNo);
         }
 
         return createResponse;
@@ -692,6 +696,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (precreateResponse != null) {
             precreateResponse.setOutTradeNo(outTradeNo);
+            setBody(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE, outTradeNo);
         }
 
         return precreateResponse;
@@ -701,15 +706,27 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (queryResponse != null) {
             queryResponse.setOutTradeNo(outTradeNo);
+            setBody(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, outTradeNo);
         }
 
         return queryResponse;
+    }
+
+    private AlipayTradeFastpayRefundQueryResponse setRefundQueryResponse(AlipayTradeFastpayRefundQueryResponse refundQueryResponse, String outTradeNo) {
+
+        if (refundQueryResponse != null) {
+            refundQueryResponse.setOutTradeNo(outTradeNo);
+            setBody(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE, outTradeNo);
+        }
+
+        return refundQueryResponse;
     }
 
     private AlipayTradeRefundResponse setRefundResponse(AlipayTradeRefundResponse refundResponse, String outTradeNo) {
 
         if (refundResponse != null) {
             refundResponse.setOutTradeNo(outTradeNo);
+            setBody(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE, outTradeNo);
         }
 
         return refundResponse;
@@ -719,9 +736,31 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (cancelResponse != null) {
             cancelResponse.setOutTradeNo(outTradeNo);
+            setBody(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE, outTradeNo);
         }
 
         return cancelResponse;
+    }
+
+    /**
+     * 替换response中body字符串中out_trade_no的内容
+     */
+    private String setBody(String body, String responseName, String outTradeNo) {
+        if (StringUtils.isBlank(body)) {
+            return null;
+        }
+
+        Map<String, String> bodyMap = JSON.parseObject(body, new TypeReference<Map<String, String>>() {
+        });
+
+        Map<String, String> responseMap = JSON.parseObject(bodyMap.get(responseName), new TypeReference<Map<String, String>>() {
+        });
+
+        responseMap.put(JSONFieldConstant.OUT_TRADE_NO, outTradeNo);
+
+        bodyMap.put(responseName, JSON.toJSONString(responseMap));
+
+        return JSON.toJSONString(bodyMap);
     }
 
 }
