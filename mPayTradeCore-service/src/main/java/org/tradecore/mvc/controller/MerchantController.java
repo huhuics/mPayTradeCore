@@ -232,6 +232,7 @@ public class MerchantController extends AbstractBizController {
 
         createRequest = JSON.parseObject(bizContent, MerchantCreateRequest.class);
         createRequest.setAcquirer_id(acquirerId);
+        createRequest.setSource("2016070723781231");
 
         //对external_id和out_external_id进行转化
         createRequest.setOut_external_id(createRequest.getExternal_id());

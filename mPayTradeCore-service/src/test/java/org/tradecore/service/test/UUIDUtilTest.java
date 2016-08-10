@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.common.util.DateUtil;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.UUIDUtil;
 
@@ -59,6 +60,16 @@ public class UUIDUtilTest {
         String json = JSON.toJSONString(paraMap);
 
         LogUtil.info(logger, "json={0}", json);
+    }
+
+    @Test
+    public void testFormater() {
+        String acquirerId = "10880010001";
+        String externalId = "201512345678901";
+
+        String ret = FormaterUtil.externalIdFormat(acquirerId, externalId);
+
+        LogUtil.info(logger, "ret={0}", ret);
     }
 
 }

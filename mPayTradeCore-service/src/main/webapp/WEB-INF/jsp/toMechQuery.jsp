@@ -15,7 +15,7 @@
 <body>
   <div class="demo-content" id="contentDiv">
 	<div class="span16 doc-content" id="formDiv">  
-	<h1>商户信息查询付</h1>
+	<h1>商户信息查询</h1>
 	  <form id="J_Form" action="/mPay/simulator/mechQuery" method="post" class="form-horizontal">
 		<div class="control-group">
 		  <label class="control-label"><s>*</s>收单机构编号：</label>

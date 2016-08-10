@@ -54,7 +54,7 @@
 		  </div>
 		</div>
 		<div class="control-group">
-		  <label class="control-label">退款标识：</label>
+		  <label class="control-label">退款请求号：</label>
 		  <div class="controls">
 			<input type="text" class="input-large" name="out_request_no"  value="${out_request_no}">
 		  </div>
