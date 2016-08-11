@@ -271,7 +271,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         LogUtil.info(logger, "支付宝返回订单查询结果,queryResponse={0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
 
         //5.根据调用结果分别处理
-        if (isQuerySuccess(queryResponse)) {
+        if (isResponseSuccess(queryResponse)) {
             LogUtil.info(logger, "订单查询返回成功");
             //如果支付宝返回订单状态与本地订单不一致，则修改本地
             if (!StringUtils.equals(nativePayOrder.getOrderStatus(), queryResponse.getTradeStatus())) {
