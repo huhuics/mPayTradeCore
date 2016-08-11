@@ -701,12 +701,10 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     private AlipayTradeQueryResponse setTradeQueryResponse(AlipayTradeQueryResponse queryResponse, String outTradeNo) {
-        LogUtil.info(logger, "before:{0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
         if (queryResponse != null) {
             queryResponse.setOutTradeNo(outTradeNo);
             queryResponse.setBody(setBody(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, outTradeNo));
         }
-        LogUtil.info(logger, "after :{0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
         return queryResponse;
     }
 

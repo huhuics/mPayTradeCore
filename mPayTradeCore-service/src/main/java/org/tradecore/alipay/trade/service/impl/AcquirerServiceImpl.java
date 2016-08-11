@@ -27,7 +27,6 @@ import org.tradecore.dao.BizMerchantInfoDAO;
 import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
-import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
 
 /**
@@ -99,7 +98,7 @@ public class AcquirerServiceImpl implements AcquirerService {
     @Override
     public boolean verify(String acquirerId, Map<String, String> paraMap) {
 
-        LogUtil.info(logger, "收到验签请求参数,acquirerId={0},paraMap={1}", acquirerId, JSON.toJSONString(paraMap));
+        LogUtil.info(logger, "收到验签请求参数");
 
         //1.根据收单机构号查询收单机构信息
         List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId);

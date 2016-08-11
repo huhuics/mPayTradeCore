@@ -52,14 +52,12 @@ public class SecureUtil {
     public static String signNotify(Map<String, String> sortedParaMap) {
 
         String sign = null;
-
         try {
             sign = AlipaySignature.rsaSign(sortedParaMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
             LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(sortedParaMap));
             throw new RuntimeException("加签发生异常");
         }
-
         return sign;
     }
 

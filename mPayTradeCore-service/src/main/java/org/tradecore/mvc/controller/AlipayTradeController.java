@@ -179,6 +179,8 @@ public class AlipayTradeController extends AbstractBizController {
         try {
             Map<String, String> paraMap = getParameters(request);
 
+            LogUtil.info(logger, "订单查询原始报文参数paraMap={0}", paraMap);
+
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
             QueryRequest queryRequest = buildQueryRequest(paraMap);
@@ -207,6 +209,8 @@ public class AlipayTradeController extends AbstractBizController {
 
         try {
             Map<String, String> paraMap = getParameters(request);
+
+            LogUtil.info(logger, "退款订单查询原始报文参数paraMap={0}", paraMap);
 
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
 
