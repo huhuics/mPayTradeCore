@@ -62,7 +62,7 @@ public class ResponseUtil {
         Map<String, String> parseBodyMap = JSON.parseObject(body, new TypeReference<Map<String, String>>() {
         });
 
-        TreeMap<String, String> sortedParaMap = JSON.parseObject(parseBodyMap.get(methodName), new TypeReference<TreeMap<String, String>>() {
+        TreeMap<String, Object> sortedParaMap = JSON.parseObject(parseBodyMap.get(methodName), new TypeReference<TreeMap<String, Object>>() {
         });
 
         String sign = SecureUtil.sign(sortedParaMap);

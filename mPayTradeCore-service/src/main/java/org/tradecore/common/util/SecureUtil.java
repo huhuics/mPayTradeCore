@@ -30,7 +30,7 @@ public class SecureUtil {
      * @param sortedParaMap    必须传进来的参数是TreeMap
      * @return
      */
-    public static String sign(Map<String, String> sortedParaMap) {
+    public static String sign(Map<String, Object> sortedParaMap) {
 
         String sign = null;
 

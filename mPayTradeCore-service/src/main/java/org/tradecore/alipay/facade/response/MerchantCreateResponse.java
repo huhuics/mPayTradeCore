@@ -43,8 +43,8 @@ public class MerchantCreateResponse extends BaseResponse {
     /**
      * 将不为空的参数放入TreeMap，用于签名
      */
-    public Map<String, String> buildSortedParaMap() {
-        Map<String, String> paraMap = super.buildSortedParaMap();
+    public Map<String, Object> buildSortedParaMap() {
+        Map<String, Object> paraMap = super.buildSortedParaMap();
         if (StringUtils.isNotBlank(acquirer_id)) {
             paraMap.put("acquirer_id", acquirer_id);
         }

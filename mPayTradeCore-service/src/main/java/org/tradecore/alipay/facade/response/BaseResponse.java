@@ -86,8 +86,8 @@ public class BaseResponse implements Serializable {
     /**
      * 将不为空的参数放入TreeMap，用于签名
      */
-    public Map<String, String> buildSortedParaMap() {
-        Map<String, String> paraMap = new TreeMap<String, String>();
+    public Map<String, Object> buildSortedParaMap() {
+        Map<String, Object> paraMap = new TreeMap<String, Object>();
 
         if (StringUtils.isNotBlank(code)) {
             paraMap.put("code", code);
