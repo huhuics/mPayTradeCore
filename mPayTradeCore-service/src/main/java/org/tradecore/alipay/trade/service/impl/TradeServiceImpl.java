@@ -684,7 +684,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (createResponse != null) {
             createResponse.setOutTradeNo(outTradeNo);
-            setBody(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE, outTradeNo);
+            createResponse.setBody(setBody(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE, outTradeNo));
         }
 
         return createResponse;
@@ -694,19 +694,19 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (precreateResponse != null) {
             precreateResponse.setOutTradeNo(outTradeNo);
-            setBody(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE, outTradeNo);
+            precreateResponse.setBody(setBody(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE, outTradeNo));
         }
 
         return precreateResponse;
     }
 
     private AlipayTradeQueryResponse setTradeQueryResponse(AlipayTradeQueryResponse queryResponse, String outTradeNo) {
-
+        LogUtil.info(logger, "before:{0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
         if (queryResponse != null) {
             queryResponse.setOutTradeNo(outTradeNo);
-            setBody(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, outTradeNo);
+            queryResponse.setBody(setBody(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, outTradeNo));
         }
-
+        LogUtil.info(logger, "after :{0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
         return queryResponse;
     }
 
@@ -714,7 +714,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (refundQueryResponse != null) {
             refundQueryResponse.setOutTradeNo(outTradeNo);
-            setBody(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE, outTradeNo);
+            refundQueryResponse.setBody(setBody(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE, outTradeNo));
         }
 
         return refundQueryResponse;
@@ -724,7 +724,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (refundResponse != null) {
             refundResponse.setOutTradeNo(outTradeNo);
-            setBody(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE, outTradeNo);
+            refundResponse.setBody(setBody(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE, outTradeNo));
         }
 
         return refundResponse;
@@ -734,7 +734,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         if (cancelResponse != null) {
             cancelResponse.setOutTradeNo(outTradeNo);
-            setBody(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE, outTradeNo);
+            cancelResponse.setBody(setBody(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE, outTradeNo));
         }
 
         return cancelResponse;

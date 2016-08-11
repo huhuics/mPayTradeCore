@@ -142,9 +142,9 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         QueryRequest queryRequest = new QueryRequest();
-        queryRequest.setAcquirerId("acquire_id_1468506224394");
-        queryRequest.setMerchantId("27");
-        queryRequest.setOutTradeNo("tradepay1468509260030");
+        queryRequest.setAcquirerId("10880010001");
+        queryRequest.setMerchantId("34830");
+        queryRequest.setOutTradeNo("2016081000011017300091");
         queryRequest.setAlipayTradeNo("");
 
         AlipayTradeQueryResponse ret = tradeService.query(queryRequest);
