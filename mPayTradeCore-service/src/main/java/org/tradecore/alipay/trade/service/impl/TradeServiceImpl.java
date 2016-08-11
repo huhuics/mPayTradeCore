@@ -96,7 +96,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(payRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //2.幂等判断
         //组装结算中心订单号
@@ -153,7 +153,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(createRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //  1.2幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getTradeNo());
@@ -204,7 +204,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(precreateRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //  1.2幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getTradeNo());
@@ -255,7 +255,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(queryRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(queryRequest.getAcquirerId(), queryRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(queryRequest.getAcquirerId(), queryRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //2.查询本地订单
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(),
@@ -299,7 +299,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(refundQueryRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundQueryRequest.getAcquirerId(), refundQueryRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundQueryRequest.getAcquirerId(), refundQueryRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(),
@@ -344,7 +344,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(refundRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
@@ -387,7 +387,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         validateRequest(cancelRequest);
 
         //  1.1判断商户是否可用
-        AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "商户不存在或状态非法");
+        AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
