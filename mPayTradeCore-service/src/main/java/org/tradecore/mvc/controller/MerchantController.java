@@ -79,7 +79,7 @@ public class MerchantController extends AbstractBizController {
 
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户入驻HTTP调用异常,Message={0}", e.getMessage());
-            createResponse.setBizFailed();
+            createResponse.setBizFailed(e.getMessage());
         }
 
         //签名
@@ -120,7 +120,7 @@ public class MerchantController extends AbstractBizController {
             queryResponse = merchantService.query(merchantQueryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户信息查询HTTP调用异常,Message={0}", e.getMessage());
-            queryResponse.setBizFailed();
+            queryResponse.setBizFailed(e.getMessage());
         }
 
         String sign = SecureUtil.sign(queryResponse.buildSortedParaMap());
@@ -160,7 +160,7 @@ public class MerchantController extends AbstractBizController {
 
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户信息修改HTTP调用异常,Message={0}", e.getMessage());
-            modifyResponse.setBizFailed();
+            modifyResponse.setBizFailed(e.getMessage());
         }
 
         String sign = SecureUtil.sign(modifyResponse.buildSortedParaMap());

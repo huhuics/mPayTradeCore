@@ -673,12 +673,10 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * 结算中心给收单机构返回的outTradeNo是商户订单号，而支付宝给结算中心返回的是结算中心订单号，故需要替换
      */
     private AlipayTradePayResponse setPayResponse(AlipayTradePayResponse payResponse, String outTradeNo) {
-        LogUtil.info(logger, "修改前payResponse={0}", JSON.toJSON(payResponse));
         if (payResponse != null) {
             payResponse.setOutTradeNo(outTradeNo);
             payResponse.setBody(setBody(payResponse.getBody(), ParamConstant.ALIPAY_TRADE_PAY_RESPONSE, outTradeNo));
         }
-        LogUtil.info(logger, "修改后payResponse={0}", JSON.toJSON(payResponse));
         return payResponse;
     }
 

@@ -13,12 +13,15 @@ import java.util.TreeMap;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
+import org.tradecore.alipay.facade.response.BaseResponse;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.mvc.controller.AlipayTradeController;
 import org.tradecore.mvc.controller.MerchantController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alipay.api.AlipayResponse;
 
 /**
  * 构造接口响应JSON字符串
@@ -94,4 +97,21 @@ public class ResponseUtil {
         return strBuff.toString();
     }
 
+    public static String buildErrorResponse(AlipayResponse response, String responseName, String message) {
+
+        Map<String, Object> resultMap = new TreeMap<String, Object>();
+
+        if (response == null) {
+            BaseResponse baseResponse = new BaseResponse();
+            baseResponse.setCode(AlipayBizResultEnum.FAILED.getCode());
+            baseResponse.setMsg(message);
+            resultMap.put(responseName, JSON.toJSONString(baseResponse));
+            return buildResponse(JSON.toJSONString(resultMap), responseName);
+        }
+
+        response.setCode(AlipayBizResultEnum.FAILED.getCode());
+        response.setMsg(message);
+        resultMap.put(responseName, JSON.toJSONString(response));
+        return buildResponse(JSON.toJSONString(resultMap), responseName);
+    }
 }

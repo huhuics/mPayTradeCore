@@ -86,6 +86,7 @@ public class AlipayTradeController extends AbstractBizController {
             payResponse = tradeService.pay(payRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "条码支付HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(payResponse, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE, e.getMessage());
         }
 
         String payResponseStr = ResponseUtil.buildResponse(payResponse.getBody(), ParamConstant.ALIPAY_TRADE_PAY_RESPONSE);
@@ -119,6 +120,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单创建HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(createResponse, ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE, e.getMessage());
         }
 
         String createResponseStr = ResponseUtil.buildResponse(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE);
@@ -153,6 +155,7 @@ public class AlipayTradeController extends AbstractBizController {
 
         } catch (Exception e) {
             LogUtil.error(e, logger, "扫码支付HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(precreateResponse, ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE, e.getMessage());
         }
 
         String precreateResponseStr = ResponseUtil.buildResponse(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE);
@@ -183,6 +186,7 @@ public class AlipayTradeController extends AbstractBizController {
             queryResponse = tradeService.query(queryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单查询HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(queryResponse, ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, e.getMessage());
         }
 
         String queryResponseStr = ResponseUtil.buildResponse(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
@@ -211,6 +215,7 @@ public class AlipayTradeController extends AbstractBizController {
             refundQueryResponse = tradeService.refundQuery(refundQueryRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "退款查询HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(refundQueryResponse, ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE, e.getMessage());
         }
 
         String refundQueryResponseStr = ResponseUtil.buildResponse(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE);
@@ -241,6 +246,7 @@ public class AlipayTradeController extends AbstractBizController {
             refundResponse = tradeService.refund(refundRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "退款HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(refundResponse, ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE, e.getMessage());
         }
 
         String refundResponseStr = ResponseUtil.buildResponse(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE);
@@ -272,6 +278,7 @@ public class AlipayTradeController extends AbstractBizController {
             cancelResponse = tradeService.cancel(cancelRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, "撤销HTTP调用异常,Message={0}", e.getMessage());
+            return ResponseUtil.buildErrorResponse(cancelResponse, ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE, e.getMessage());
         }
 
         String cancelRespStr = ResponseUtil.buildResponse(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE);
