@@ -744,6 +744,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
      * 替换response中body字符串中out_trade_no的内容
      */
     private String setBody(String body, String responseName, String outTradeNo) {
+
         if (StringUtils.isBlank(body)) {
             return null;
         }
@@ -751,7 +752,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         Map<String, String> bodyMap = JSON.parseObject(body, new TypeReference<Map<String, String>>() {
         });
 
-        Map<String, String> responseMap = JSON.parseObject(bodyMap.get(responseName), new TypeReference<Map<String, String>>() {
+        Map<String, Object> responseMap = JSON.parseObject(bodyMap.get(responseName), new TypeReference<Map<String, Object>>() {
         });
 
         responseMap.put(JSONFieldConstant.OUT_TRADE_NO, outTradeNo);

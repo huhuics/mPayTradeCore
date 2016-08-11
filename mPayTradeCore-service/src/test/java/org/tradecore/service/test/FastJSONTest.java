@@ -11,6 +11,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.common.util.LogUtil;
@@ -93,5 +94,24 @@ public class FastJSONTest {
         for (int i = 0; i < listMap.size(); i++) {
             LogUtil.info(logger, "{0}", listMap.get(i));
         }
+    }
+
+    @Test
+    public void testResponsBody() {
+        String body = "{\"alipay_trade_query_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"buyer_logon_id\":\"382***@qq.com\",\"buyer_pay_amount\":\"0.01\",\"buyer_user_id\":\"2088002960279322\",\"fund_bill_list\":[{\"amount\":\"0.01\",\"fund_channel\":\"ALIPAYACCOUNT\"},{\"amount\":\"0.01\",\"fund_channel\":\"DISCOUNT\"}],\"invoice_amount\":\"0.01\",\"open_id\":\"20880032903381910673306320012232\",\"out_trade_no\":\"10880010001348302016081000011017300091\",\"point_amount\":\"0.01\",\"receipt_amount\":\"0.02\",\"send_pay_date\":\"2016-08-10 21:42:32\",\"total_amount\":\"0.02\",\"trade_no\":\"2016081021001004320274033250\",\"trade_status\":\"TRADE_SUCCESS\"},\"sign\":\"Py+Dv58NrTfKbgApvFlDan2DR6nwo8aM88mW0tqAtY3jTSK1sVPVV3ExmSR7HAmqDPnegtj5kJ8XhYdLX9YZwG3UIPtTJqsyi+9eDghwChzeKPLSxFYBrKMZ/nEQCELcGNSw5UL+h1IcJGz/oqO3EpWP/7A+ZDRovvQLaxgjX8o=\"}";
+
+        Map<String, String> bodyMap = JSON.parseObject(body, new TypeReference<Map<String, String>>() {
+        });
+
+        Map<String, Object> responseMap = JSON.parseObject(bodyMap.get("alipay_trade_query_response"), new TypeReference<Map<String, Object>>() {
+        });
+
+        responseMap.put(JSONFieldConstant.OUT_TRADE_NO, "1234567890");
+
+        bodyMap.put("alipay_trade_query_response", JSON.toJSONString(responseMap));
+
+        String newBody = JSON.toJSONString(bodyMap);
+
+        LogUtil.info(logger, "after:{0}", newBody);
     }
 }
