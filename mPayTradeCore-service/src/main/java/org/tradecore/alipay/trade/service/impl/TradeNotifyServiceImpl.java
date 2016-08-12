@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -45,7 +44,6 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
     private static final Logger logger = LoggerFactory.getLogger(TradeNotifyServiceImpl.class);
 
     @Override
-    @Transactional
     public boolean receiveAndSend(Map<String, String> paraMap) throws Exception {
 
         LogUtil.info(logger, "收到扫码支付异步通知请求参数");
@@ -63,9 +61,11 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         //幂等控制，如果原始订单为支付成功、关闭、完成三种状态之一，则不修改本订单内容，直接发给收单机构；否则修改，且发送收单机构
         if (isTradeNotTerminate(oriOrder.getOrderStatus())) {
-            LogUtil.info(logger, "异步通知修改原始订单幂等,outTradeNo={0}", tradeNo);
+            LogUtil.info(logger, "异步通知修改原始订单,tradeNo={0}", tradeNo);
             //3.修改原始订单
             payRepository.updatePayOrder(oriOrder, paraMap);
+        } else {
+            LogUtil.info(logger, "异步通知修改原始订单幂等,tradeNo={0}", tradeNo);
         }
 
         //4.发送给收单机构

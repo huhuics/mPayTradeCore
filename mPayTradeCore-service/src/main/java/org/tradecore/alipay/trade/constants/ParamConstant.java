@@ -65,6 +65,12 @@ public class ParamConstant {
     /** 第一个元素 */
     public static final int    FIRST_INDEX                                = 0;
 
+    /** 买家支付宝用户号 */
+    public static final String buyer_id                                   = "buyer_id";
+
+    /** 买家支付宝账号 */
+    public static final String buyer_logon_id                             = "buyer_logon_id";
+
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE                   = "merchant_create_response";
 

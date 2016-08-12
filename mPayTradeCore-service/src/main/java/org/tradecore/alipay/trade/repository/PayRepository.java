@@ -21,7 +21,7 @@ public interface PayRepository {
      * 并持久化交易对象
      * @param   payOrder       交易对象
      */
-    BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder);
+    BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) throws Exception;
 
     /**
      * 修改本地订单

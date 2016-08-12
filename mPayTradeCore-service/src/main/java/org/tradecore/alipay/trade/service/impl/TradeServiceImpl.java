@@ -107,7 +107,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradePayRequest alipayRequest = createAlipayRequest(payRequest);
 
         //4.调用支付宝条码支付接口
-        AlipayTradePayResponse payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
+        AlipayTradePayResponse payResponse = null;
+        try {
+            payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "条码支付调用支付宝发生异常,outTradeNo={0}", payRequest.getOutTradeNo());
+        }
 
         LogUtil.info(logger, "支付宝返回条码支付响应,payResponse={0}", JSON.toJSONString(payResponse, SerializerFeature.UseSingleQuotes));
 
@@ -163,7 +168,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeCreateRequest alipayCreateRequest = createAlipayCreateRequest(createRequest);
 
         //3.调用支付宝订单创建接口
-        AlipayTradeCreateResponse createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest);
+        AlipayTradeCreateResponse createResponse = null;
+        try {
+            createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "订单创建调用支付宝异常,outTradeNo={0}", createRequest.getOutTradeNo());
+        }
 
         LogUtil.info(logger, "支付宝返回订单创建业务结果,createResponse:{0}", JSON.toJSONString(createResponse, SerializerFeature.UseSingleQuotes));
 
@@ -214,7 +224,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradePrecreateRequest alipayPrecreateRequest = createAlipayPrecreateRequest(precreateRequest);
 
         //3.调用支付宝扫码支付接口
-        AlipayTradePrecreateResponse precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest);
+        AlipayTradePrecreateResponse precreateResponse = null;
+        try {
+            precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "扫码支付调用支付宝异常,outTradeNo={0}", precreateRequest.getOutTradeNo());
+        }
 
         LogUtil.info(logger, "支付宝返回扫码支付业务结果,precreateResponse={0}", JSON.toJSONString(precreateResponse, SerializerFeature.UseSingleQuotes));
 
@@ -266,7 +281,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeQueryRequest alipayQueryRequest = createAlipayQueryRequest(queryRequest, nativePayOrder.getTradeNo());
 
         //4.调用支付宝接口
-        AlipayTradeQueryResponse queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
+        AlipayTradeQueryResponse queryResponse = null;
+        try {
+            queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "");
+        }
 
         LogUtil.info(logger, "支付宝返回订单查询结果,queryResponse={0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
 

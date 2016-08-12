@@ -457,6 +457,9 @@ public class AlipayTradeController extends AbstractBizController {
         //支付宝通知结算中心地址
         createRequest.setNotifyUrl(ParamConstant.NOTIFY_URL);
 
+        createRequest.setBuyerId(bizParaMap.get(ParamConstant.buyer_id));
+        createRequest.setBuyerLogonId(bizParaMap.get(ParamConstant.buyer_logon_id));
+
         LogUtil.info(logger, "订单创建请求参数转换完成");
 
         return createRequest;

@@ -21,7 +21,7 @@ import com.alipay.api.response.AlipayTradePayResponse;
  * @author HuHui
  * @version $Id: CommonTest.java, v 0.1 2016年7月21日 上午10:32:05 HuHui Exp $
  */
-public class CommonTest extends BaseTest {
+public class CommonTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonTest.class);
 
@@ -37,6 +37,17 @@ public class CommonTest extends BaseTest {
         String ret = ResponseUtil.buildErrorResponse(payResponse, ParamConstant.ALIPAY_TRADE_PAY_RESPONSE, "参数错误");
 
         LogUtil.info(logger, "ret={0}", ret);
+    }
+
+    @Test
+    public void testException() {
+        int i = 1;
+        try {
+            double m = i / 0;
+        } catch (Exception e) {
+            LogUtil.error(logger, "message:{0}", e.getMessage());
+        }
+        LogUtil.info(logger, "方法结束");
     }
 
 }

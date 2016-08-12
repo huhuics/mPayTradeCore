@@ -47,7 +47,7 @@ public class PayRepositoryImpl implements PayRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) {
+    public BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) throws Exception {
 
         LogUtil.info(logger, "收到支付订单持久化请求");
 
@@ -55,7 +55,7 @@ public class PayRepositoryImpl implements PayRepository {
             bizAlipayPayOrderDAO.insert(payOrder);
         } catch (Exception e) {
             LogUtil.error(e, logger, "支付订单持久化失败,message={0}", e.getMessage());
-            throw new RuntimeException("支付订单持久化失败", e);
+            throw new RuntimeException("支付订单持久化失败");
         }
 
         return payOrder;
@@ -71,7 +71,7 @@ public class PayRepositoryImpl implements PayRepository {
             bizAlipayPayOrderDAO.updateByPrimaryKey(payOrder);
         } catch (Exception e) {
             LogUtil.error(e, logger, "支付订单更新失败,message={0}", e.getMessage());
-            throw new RuntimeException("支付订单更新失败", e);
+            throw new RuntimeException("支付订单更新失败");
         }
     }
 
@@ -133,7 +133,7 @@ public class PayRepositoryImpl implements PayRepository {
             order = bizAlipayPayOrderDAO.selectByTradeNo(tradeNo);
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单查询异常,message={0}", e.getMessage());
-            throw new RuntimeException("订单查询异常", e);
+            throw new RuntimeException("订单查询异常");
         }
 
         LogUtil.info(logger, "订单查询结果,order={0}", order);
