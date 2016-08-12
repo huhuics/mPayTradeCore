@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
@@ -44,6 +45,7 @@ import org.tradecore.dao.domain.BizAlipayRefundOrder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.AlipayResponse;
 import com.alipay.api.request.AlipayTradeCancelRequest;
 import com.alipay.api.request.AlipayTradeCreateRequest;
 import com.alipay.api.request.AlipayTradeFastpayRefundQueryRequest;
@@ -285,7 +287,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         try {
             queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "");
+            LogUtil.error(e, logger, "支付订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
         }
 
         LogUtil.info(logger, "支付宝返回订单查询结果,queryResponse={0}", JSON.toJSONString(queryResponse, SerializerFeature.UseSingleQuotes));
@@ -331,7 +333,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeFastpayRefundQueryRequest alipayRefundQueryRequest = createAlipayRefundQueryRequest(refundQueryRequest, oriOrder.getTradeNo());
 
         //4.调用支付宝接口
-        AlipayTradeFastpayRefundQueryResponse refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest);
+        AlipayTradeFastpayRefundQueryResponse refundQueryResponse = null;
+        try {
+            refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(),
+                refundQueryRequest.getAlipayTradeNo());
+        }
 
         LogUtil.info(logger, "支付宝返回退款查询业务结果,refundQueryResponse={0}", JSON.toJSONString(refundQueryResponse, SerializerFeature.UseSingleQuotes));
 
@@ -379,7 +387,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeRefundRequest alipayRefundRequest = createAlipayRefundRequest(refundRequest, oriOrder.getTradeNo());
 
         //4.调用支付宝接口
-        AlipayTradeRefundResponse refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest);
+        AlipayTradeRefundResponse refundResponse = null;
+        try {
+            refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(),
+                refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
+        }
 
         LogUtil.info(logger, "支付宝返回退款业务结果,refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
 
@@ -422,7 +436,12 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AlipayTradeCancelRequest alipayCancelRequest = createAlipayCancelRequest(cancelRequest, oriOrder.getTradeNo());
 
         //5.调用支付宝撤销接口
-        AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest);
+        AlipayTradeCancelResponse cancelResponse = null;
+        try {
+            cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest);
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "订单撤销调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
+        }
 
         LogUtil.info(logger, "支付宝返回撤销业务结果,cancelResponse={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
@@ -696,6 +715,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (payResponse != null) {
             payResponse.setOutTradeNo(outTradeNo);
             payResponse.setBody(setBody(payResponse.getBody(), ParamConstant.ALIPAY_TRADE_PAY_RESPONSE, outTradeNo));
+        } else {
+            payResponse = new AlipayTradePayResponse();
+            setErrorAlipayResponse(payResponse);
         }
         return payResponse;
     }
@@ -705,6 +727,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (createResponse != null) {
             createResponse.setOutTradeNo(outTradeNo);
             createResponse.setBody(setBody(createResponse.getBody(), ParamConstant.ALIPAY_TRADE_CREATE_RESPONSE, outTradeNo));
+        } else {
+            createResponse = new AlipayTradeCreateResponse();
+            setErrorAlipayResponse(createResponse);
         }
 
         return createResponse;
@@ -715,6 +740,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (precreateResponse != null) {
             precreateResponse.setOutTradeNo(outTradeNo);
             precreateResponse.setBody(setBody(precreateResponse.getBody(), ParamConstant.ALIPAY_TRADE_PRECREATE_RESPONSE, outTradeNo));
+        } else {
+            precreateResponse = new AlipayTradePrecreateResponse();
+            setErrorAlipayResponse(precreateResponse);
         }
 
         return precreateResponse;
@@ -724,6 +752,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (queryResponse != null) {
             queryResponse.setOutTradeNo(outTradeNo);
             queryResponse.setBody(setBody(queryResponse.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE, outTradeNo));
+        } else {
+            queryResponse = new AlipayTradeQueryResponse();
+            setErrorAlipayResponse(queryResponse);
         }
         return queryResponse;
     }
@@ -733,6 +764,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (refundQueryResponse != null) {
             refundQueryResponse.setOutTradeNo(outTradeNo);
             refundQueryResponse.setBody(setBody(refundQueryResponse.getBody(), ParamConstant.ALIPAY_TRADE_FASTPAY_REFUND_QUERY_RESPONSE, outTradeNo));
+        } else {
+            refundQueryResponse = new AlipayTradeFastpayRefundQueryResponse();
+            setErrorAlipayResponse(refundQueryResponse);
         }
 
         return refundQueryResponse;
@@ -743,6 +777,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (refundResponse != null) {
             refundResponse.setOutTradeNo(outTradeNo);
             refundResponse.setBody(setBody(refundResponse.getBody(), ParamConstant.ALIPAY_TRADE_REFUND_RESPONSE, outTradeNo));
+        } else {
+            refundResponse = new AlipayTradeRefundResponse();
+            setErrorAlipayResponse(refundResponse);
         }
 
         return refundResponse;
@@ -753,6 +790,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         if (cancelResponse != null) {
             cancelResponse.setOutTradeNo(outTradeNo);
             cancelResponse.setBody(setBody(cancelResponse.getBody(), ParamConstant.ALIPAY_TRADE_CANCEL_RESPONSE, outTradeNo));
+        } else {
+            cancelResponse = new AlipayTradeCancelResponse();
+            setErrorAlipayResponse(cancelResponse);
         }
 
         return cancelResponse;
@@ -778,6 +818,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         bodyMap.put(responseName, JSON.toJSONString(responseMap));
 
         return JSON.toJSONString(bodyMap);
+    }
+
+    private AlipayResponse setErrorAlipayResponse(AlipayResponse response) {
+        response.setCode(AlipayBizResultEnum.UNKNOW.getCode());
+        response.setMsg(AlipayBizResultEnum.UNKNOW.getDesc());
+
+        return response;
     }
 
 }
