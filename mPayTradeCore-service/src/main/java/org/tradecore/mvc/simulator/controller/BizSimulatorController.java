@@ -510,15 +510,16 @@ public class BizSimulatorController {
 
         LogUtil.info(logger, "模拟器撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
-        if(cancelResponse!=null){
-        map.put("code", cancelResponse.getCode());
-        map.put("msg", cancelResponse.getMsg());
-        map.put("subCode", cancelResponse.getSubCode());
-        map.put("subMsg", cancelResponse.getSubMsg());
-        map.put("acquirerId", cancelRequest.getAcquirerId());
-        map.put("merchantId", cancelRequest.getMerchantId());
-        map.put("outTradeNo", cancelRequest.getOutTradeNo());
-        map.put("tradeNo", cancelResponse.getTradeNo());}
+        if (cancelResponse != null) {
+            map.put("code", cancelResponse.getCode());
+            map.put("msg", cancelResponse.getMsg());
+            map.put("subCode", cancelResponse.getSubCode());
+            map.put("subMsg", cancelResponse.getSubMsg());
+            map.put("acquirerId", cancelRequest.getAcquirerId());
+            map.put("merchantId", cancelRequest.getMerchantId());
+            map.put("outTradeNo", cancelRequest.getOutTradeNo());
+            map.put("tradeNo", cancelResponse.getTradeNo());
+        }
 
         return RESULT;
     }
