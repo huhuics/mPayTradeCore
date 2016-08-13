@@ -33,7 +33,7 @@ public interface TradeService {
      * @return            支付返回结果信息
      * @throws Exception 
      */
-    AlipayTradePayResponse pay(PayRequest payRequest) throws Exception;
+    AlipayTradePayResponse pay(PayRequest payRequest);
 
     /**
      * 线上支付，创建订单接口
@@ -41,21 +41,21 @@ public interface TradeService {
      * @return
      * @throws Exception
      */
-    AlipayTradeCreateResponse create(CreateRequest createRequest) throws Exception;
+    AlipayTradeCreateResponse create(CreateRequest createRequest);
 
     /**
      * 扫码支付，预下单(生成二维码)接口
      * @param precreateRequest
      * @return
      */
-    AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) throws Exception;
+    AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest);
 
     /**
      * 订单查询
      * @param queryRequest  请求参数
      * @return              订单查询结果信息
      */
-    AlipayTradeQueryResponse query(QueryRequest queryRequest) throws Exception;
+    AlipayTradeQueryResponse query(QueryRequest queryRequest);
 
     /**
      * 退款订单查询<br>
@@ -64,14 +64,14 @@ public interface TradeService {
      * @return                          退款订单查询结果信息
      * @throws Exception                
      */
-    AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) throws Exception;
+    AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest);
 
     /**
      * 订单退款
      * @param refundRequest  请求参数
      * @return               退款返回结果信息
      */
-    AlipayTradeRefundResponse refund(RefundRequest refundRequest) throws Exception;
+    AlipayTradeRefundResponse refund(RefundRequest refundRequest);
 
     /**
      * 订单撤销<br>
@@ -81,6 +81,6 @@ public interface TradeService {
      * @param cancelRequest  请求参数，只支持根据商户订单号撤销订单
      * @return
      */
-    AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) throws Exception;
+    AlipayTradeCancelResponse cancel(CancelRequest cancelRequest);
 
 }

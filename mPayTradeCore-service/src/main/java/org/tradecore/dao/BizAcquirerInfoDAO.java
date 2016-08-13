@@ -1,22 +1,24 @@
 package org.tradecore.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.tradecore.dao.domain.BizAcquirerInfo;
 
 public interface BizAcquirerInfoDAO {
-    int deleteByPrimaryKey(Short id);
 
-    int insert(BizAcquirerInfo record);
+    int deleteByPrimaryKey(Short id) throws SQLException;
 
-    int insertSelective(BizAcquirerInfo record);
+    int insert(BizAcquirerInfo record) throws SQLException;
 
-    BizAcquirerInfo selectByPrimaryKey(Short id);
+    int insertSelective(BizAcquirerInfo record) throws SQLException;
 
-    int updateByPrimaryKeySelective(BizAcquirerInfo record);
+    BizAcquirerInfo selectByPrimaryKey(Short id) throws SQLException;
 
-    int updateByPrimaryKey(BizAcquirerInfo record);
+    int updateByPrimaryKeySelective(BizAcquirerInfo record) throws SQLException;
+
+    int updateByPrimaryKey(BizAcquirerInfo record) throws SQLException;
 
     /**
      * 查询收单机构信息<br>
@@ -25,5 +27,5 @@ public interface BizAcquirerInfoDAO {
      * @param paraMap
      * @return
      */
-    List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap);
+    List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap) throws SQLException;
 }

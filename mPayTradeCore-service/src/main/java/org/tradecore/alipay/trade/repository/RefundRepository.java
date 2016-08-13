@@ -56,12 +56,12 @@ public interface RefundRepository {
      * @param refundQueryResponse
      */
     void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
-                            AlipayTradeFastpayRefundQueryResponse refundQueryResponse) throws Exception;
+                            AlipayTradeFastpayRefundQueryResponse refundQueryResponse);
 
     /**
      * 修改退款订单
      * @param refundOrder
      */
-    void updateRefundOrder(BizAlipayRefundOrder refundOrder) throws Exception;
+    void updateRefundOrder(BizAlipayRefundOrder refundOrder);
 
 }

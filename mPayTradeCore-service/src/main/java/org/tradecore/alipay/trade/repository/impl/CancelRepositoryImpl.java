@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.repository.CancelRepository;
-import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.BizAlipayCancelOrderDAO;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
@@ -42,7 +42,11 @@ public class CancelRepositoryImpl implements CancelRepository {
         LogUtil.info(logger, "收到撤销订单持久化请求");
 
         //持久化撤销订单数据
-        AssertUtil.assertTrue(bizAlipayCancelOrderDAO.insert(cancelOrder) > 0, "撤销请求数据持久化失败");
+        try {
+            bizAlipayCancelOrderDAO.insert(cancelOrder);
+        } catch (SQLException e) {
+            throw new RuntimeException("撤销请求数据持久化失败", e);
+        }
 
         LogUtil.info(logger, "撤销订单持久化成功");
 
@@ -69,7 +73,12 @@ public class CancelRepositoryImpl implements CancelRepository {
             paraMap.put(QueryFieldConstant.CANCEL_STATUS, cancelStatus);
         }
 
-        List<BizAlipayCancelOrder> cancelOrders = bizAlipayCancelOrderDAO.selectCancelOrders(paraMap);
+        List<BizAlipayCancelOrder> cancelOrders = null;
+        try {
+            cancelOrders = bizAlipayCancelOrderDAO.selectCancelOrders(paraMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("撤销订单查询失败", e);
+        }
 
         LogUtil.info(logger, "撤销订单查询结果,cancelOrders={0}", cancelOrders);
 

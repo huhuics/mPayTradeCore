@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.BaseRequest;
-import org.tradecore.common.util.LogUtil;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.AlipayRequest;
@@ -65,10 +64,9 @@ public abstract class AbstractAlipayService {
 
             return response;
         } catch (Exception e) {
-            LogUtil.error(e, logger, "调用支付宝失败,message={0}", e.getMessage());
+            throw new RuntimeException("调用支付宝失败", e);
         }
 
-        return response;
     }
 
 }

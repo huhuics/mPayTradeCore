@@ -90,7 +90,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradePayResponse pay(PayRequest payRequest) throws Exception {
+    public AlipayTradePayResponse pay(PayRequest payRequest) {
 
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
 
@@ -152,7 +152,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradeCreateResponse create(CreateRequest createRequest) throws Exception {
+    public AlipayTradeCreateResponse create(CreateRequest createRequest) {
 
         LogUtil.info(logger, "收到订单创建请求,createRequest={0}", createRequest);
 
@@ -208,7 +208,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) throws Exception {
+    public AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) {
 
         LogUtil.info(logger, "收到扫码支付请求参数,precreateRequest={0}", precreateRequest);
 
@@ -264,7 +264,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradeQueryResponse query(QueryRequest queryRequest) throws Exception {
+    public AlipayTradeQueryResponse query(QueryRequest queryRequest) {
 
         LogUtil.info(logger, "收到订单查询请求,queryRequest={0}", queryRequest);
 
@@ -313,7 +313,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) throws Exception {
+    public AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) {
 
         LogUtil.info(logger, "收到退款订单查询请求,refundQueryRequest={0}", refundQueryRequest);
 
@@ -364,7 +364,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradeRefundResponse refund(RefundRequest refundRequest) throws Exception {
+    public AlipayTradeRefundResponse refund(RefundRequest refundRequest) {
 
         LogUtil.info(logger, "收到订单退款请求,refundRequest={0}", refundRequest);
 
@@ -405,7 +405,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             refundRepository.saveRefundOrder(oriOrder, refundRequest, refundResponse);
 
             //5.2根据退款订单状态更新本地交易订单的退款状态数据
-            payRepository.updateOrderRefundStatus(oriOrder);
+            payRepository.updatePayOrder(oriOrder);
         }
 
         return setRefundResponse(refundResponse, oriOrder.getOutTradeNo());
@@ -413,7 +413,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
     @Override
     @Transactional
-    public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) throws Exception {
+    public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) {
 
         LogUtil.info(logger, "收到订单撤销请求,cancelRequest={0}", cancelRequest);
 

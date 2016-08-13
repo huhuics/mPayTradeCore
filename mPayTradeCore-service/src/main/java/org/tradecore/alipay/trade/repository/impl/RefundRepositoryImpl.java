@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,6 @@ import org.tradecore.alipay.trade.repository.PayRepository;
 import org.tradecore.alipay.trade.repository.RefundRepository;
 import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
-import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
@@ -118,7 +118,11 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
         refundOrder.setGmtUpdate(new Date());
 
-        AssertUtil.assertTrue(bizAlipayRefundOrderDAO.insert(refundOrder) > 0, "退款请求数据持久化失败");
+        try {
+            bizAlipayRefundOrderDAO.insert(refundOrder);
+        } catch (SQLException e) {
+            throw new RuntimeException("退款请求数据持久化失败", e);
+        }
 
         LogUtil.info(logger, "退款订单持久化成功");
 
@@ -149,7 +153,12 @@ public class RefundRepositoryImpl implements RefundRepository {
             paraMap.put(QueryFieldConstant.OUT_REQUEST_NO, queryRequest.getOutRequestNo());
         }
 
-        List<BizAlipayRefundOrder> refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
+        List<BizAlipayRefundOrder> refundOrders = null;
+        try {
+            refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("退款订单查询失败", e);
+        }
 
         LogUtil.info(logger, "退款订单查询结果,refundOrders={0}", refundOrders);
 
@@ -185,7 +194,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
     @Override
     public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
-                                   AlipayTradeFastpayRefundQueryResponse refundQueryResponse) throws Exception {
+                                   AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
 
         LogUtil.info(logger, "收到退款状态更新请求");
 
@@ -203,7 +212,11 @@ public class RefundRepositoryImpl implements RefundRepository {
                 //构造一笔退款订单并保存
                 refundOrder = buildRefundOrder(payOrder, refundQueryResponse);
 
-                bizAlipayRefundOrderDAO.insert(refundOrder);
+                try {
+                    bizAlipayRefundOrderDAO.insert(refundOrder);
+                } catch (SQLException e) {
+                    throw new RuntimeException("退款订单持久化失败", e);
+                }
             } else {//1.2 本地有此退款订单
                 LogUtil.info(logger, "支付宝返回退款订单存在,且本地有此订单");
                 refundOrder = refundOrders.get(ParamConstant.FIRST_INDEX);
@@ -252,7 +265,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public void updateRefundOrder(BizAlipayRefundOrder refundOrder) throws Exception {
+    public void updateRefundOrder(BizAlipayRefundOrder refundOrder) {
 
         LogUtil.info(logger, "收到退款订单更新请求");
 
@@ -260,7 +273,6 @@ public class RefundRepositoryImpl implements RefundRepository {
             refundOrder.setGmtUpdate(new Date());
             bizAlipayRefundOrderDAO.updateByPrimaryKey(refundOrder);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "退款订单更新失败,message={0}", e.getMessage());
             throw new RuntimeException("退款订单更新失败", e);
         }
 

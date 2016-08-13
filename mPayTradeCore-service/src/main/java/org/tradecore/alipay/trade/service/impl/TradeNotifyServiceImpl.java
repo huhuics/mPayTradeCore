@@ -44,7 +44,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
     private static final Logger logger = LoggerFactory.getLogger(TradeNotifyServiceImpl.class);
 
     @Override
-    public boolean receiveAndSend(Map<String, String> paraMap) throws Exception {
+    public boolean receiveAndSend(Map<String, String> paraMap) {
 
         LogUtil.info(logger, "收到扫码支付异步通知请求参数");
 

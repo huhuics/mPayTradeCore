@@ -1,5 +1,6 @@
 package org.tradecore.dao;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -7,15 +8,15 @@ import org.tradecore.dao.domain.BizAlipayPayOrder;
 public interface BizAlipayPayOrderDAO {
     int deleteByPrimaryKey(String id);
 
-    int insert(BizAlipayPayOrder record);
+    int insert(BizAlipayPayOrder record) throws SQLException;
 
-    int insertSelective(BizAlipayPayOrder record);
+    int insertSelective(BizAlipayPayOrder record) throws SQLException;
 
-    BizAlipayPayOrder selectByPrimaryKey(String id);
+    BizAlipayPayOrder selectByPrimaryKey(String id) throws SQLException;
 
-    int updateByPrimaryKeySelective(BizAlipayPayOrder record);
+    int updateByPrimaryKeySelective(BizAlipayPayOrder record) throws SQLException;
 
-    int updateByPrimaryKey(BizAlipayPayOrder record);
+    int updateByPrimaryKey(BizAlipayPayOrder record) throws SQLException;
 
     /**
      * 普通查询单条记录<br>
@@ -24,7 +25,7 @@ public interface BizAlipayPayOrderDAO {
      * @param paramMap
      * @return
      */
-    BizAlipayPayOrder selectOrder(Map<String, Object> paramMap);
+    BizAlipayPayOrder selectOrder(Map<String, Object> paramMap) throws SQLException;
 
     /**
      * 根据订单号查询订单<br>
@@ -32,6 +33,6 @@ public interface BizAlipayPayOrderDAO {
      * @param tradeNo
      * @return
      */
-    BizAlipayPayOrder selectByTradeNo(String tradeNo);
+    BizAlipayPayOrder selectByTradeNo(String tradeNo) throws SQLException;
 
 }

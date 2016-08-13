@@ -21,19 +21,13 @@ public interface PayRepository {
      * 并持久化交易对象
      * @param   payOrder       交易对象
      */
-    BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) throws Exception;
+    BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder);
 
     /**
      * 修改本地订单
      * @param payOrder           订单对象
      */
-    void updatePayOrder(BizAlipayPayOrder payOrder) throws Exception;
-
-    /**
-     * 更新交易订单中的交易状态和退款状态
-     * @param oriOrder         退款业务原始交易订单
-     */
-    void updateOrderRefundStatus(BizAlipayPayOrder oriOrder);
+    void updatePayOrder(BizAlipayPayOrder payOrder);
 
     /**
      * 根据撤销业务是否成功更新交易订单中的撤销状态
@@ -50,7 +44,7 @@ public interface PayRepository {
      * @return               订单对象
      * @throws SQLException 
      */
-    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) throws SQLException;
+    BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo);
 
     /**
      * 根据结算中心订单号查询支付订单
@@ -58,7 +52,7 @@ public interface PayRepository {
      * @return                订单对象
      * @throws SQLException
      */
-    BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo) throws SQLException;
+    BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo);
 
     /**
      * 根据支付宝异步通知参数更新本地支付订单

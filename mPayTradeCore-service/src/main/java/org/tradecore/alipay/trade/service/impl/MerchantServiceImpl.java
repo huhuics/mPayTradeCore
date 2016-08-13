@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +63,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
     @Override
     @Transactional
-    public MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) throws Exception {
+    public MerchantCreateResponse create(MerchantCreateRequest merchantCreateRequest) {
 
         LogUtil.info(logger, "收到商户入驻请求参数,merchantCreateRequest={0}", merchantCreateRequest);
 
@@ -106,7 +107,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
     @Override
     @Transactional
-    public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) throws Exception {
+    public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) {
 
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
 
@@ -128,7 +129,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
     }
 
     @Override
-    public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) throws Exception {
+    public MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest) {
 
         LogUtil.info(logger, "收到商户信息修改请求参数,merchantModifyRequest={0}", merchantModifyRequest);
 
@@ -163,14 +164,18 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         response.setMerchant_id(merchantInfo.getMerchantId());
         response.setExternal_id(merchantInfo.getOutExternalId());
 
-        if (bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo) > 0) {
-            response.setModify_result(DefaultBizResultEnum.SUCCESS.getCode());
-            response.setCode(AlipayBizResultEnum.SUCCESS.getCode());
-            response.setMsg(AlipayBizResultEnum.SUCCESS.getDesc());
-        } else {
-            response.setModify_result(DefaultBizResultEnum.FAILED.getCode());
-            response.setCode(AlipayBizResultEnum.FAILED.getCode());
-            response.setMsg(AlipayBizResultEnum.FAILED.getDesc());
+        try {
+            if (bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo) > 0) {
+                response.setModify_result(DefaultBizResultEnum.SUCCESS.getCode());
+                response.setCode(AlipayBizResultEnum.SUCCESS.getCode());
+                response.setMsg(AlipayBizResultEnum.SUCCESS.getDesc());
+            } else {
+                response.setModify_result(DefaultBizResultEnum.FAILED.getCode());
+                response.setCode(AlipayBizResultEnum.FAILED.getCode());
+                response.setMsg(AlipayBizResultEnum.FAILED.getDesc());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("更新商户信息失败", e);
         }
 
         return response;
@@ -219,7 +224,11 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      */
     private boolean insert(BizMerchantInfo bizMerchantInfo) {
         if (bizMerchantInfo != null) {
-            return bizMerchantInfoDAO.insert(bizMerchantInfo) > 0;
+            try {
+                return bizMerchantInfoDAO.insert(bizMerchantInfo) > 0;
+            } catch (SQLException e) {
+                throw new RuntimeException("持久化商户信息失败", e);
+            }
         }
 
         //返回true的意思是，如果bizMerchantInfo为null，则不插入数据库
@@ -329,13 +338,17 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
     }
 
     /**
-     * 通过externalId加锁查询
+     * 通过externalId查询
      * @param externalId
      * @return
      */
     private BizMerchantInfo selectMerchantInfoByExternalId(String externalId) {
 
-        return bizMerchantInfoDAO.selectByExternalId(externalId);
+        try {
+            return bizMerchantInfoDAO.selectByExternalId(externalId);
+        } catch (SQLException e) {
+            throw new RuntimeException("查询商户信息失败", e);
+        }
 
     }
 
@@ -358,7 +371,12 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
             paraMap.put(QueryFieldConstant.OUT_EXTERNAL_ID, outExternalId);
         }
 
-        List<BizMerchantInfo> merchants = bizMerchantInfoDAO.selectMerchant(paraMap);
+        List<BizMerchantInfo> merchants = null;
+        try {
+            merchants = bizMerchantInfoDAO.selectMerchant(paraMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("查询商户信息失败", e);
+        }
 
         if (CollectionUtils.isEmpty(merchants)) {
             return null;

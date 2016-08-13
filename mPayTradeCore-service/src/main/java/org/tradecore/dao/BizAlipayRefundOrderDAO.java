@@ -1,22 +1,24 @@
 package org.tradecore.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 public interface BizAlipayRefundOrderDAO {
-    int deleteByPrimaryKey(String id);
 
-    int insert(BizAlipayRefundOrder record);
+    int deleteByPrimaryKey(String id) throws SQLException;
 
-    int insertSelective(BizAlipayRefundOrder record);
+    int insert(BizAlipayRefundOrder record) throws SQLException;
 
-    BizAlipayRefundOrder selectByPrimaryKey(String id);
+    int insertSelective(BizAlipayRefundOrder record) throws SQLException;
 
-    int updateByPrimaryKeySelective(BizAlipayRefundOrder record);
+    BizAlipayRefundOrder selectByPrimaryKey(String id) throws SQLException;
 
-    int updateByPrimaryKey(BizAlipayRefundOrder record);
+    int updateByPrimaryKeySelective(BizAlipayRefundOrder record) throws SQLException;
+
+    int updateByPrimaryKey(BizAlipayRefundOrder record) throws SQLException;
 
     /**
      * 根据条件查询退款记录<br>
@@ -26,5 +28,5 @@ public interface BizAlipayRefundOrderDAO {
      * </ul>
      * @param paraMap
      */
-    List<BizAlipayRefundOrder> selectRefundOrders(Map<String, Object> paraMap);
+    List<BizAlipayRefundOrder> selectRefundOrders(Map<String, Object> paraMap) throws SQLException;
 }

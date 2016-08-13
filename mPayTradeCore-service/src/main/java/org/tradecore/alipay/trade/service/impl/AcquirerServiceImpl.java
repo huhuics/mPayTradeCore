@@ -5,6 +5,7 @@
 package org.tradecore.alipay.trade.service.impl;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +91,12 @@ public class AcquirerServiceImpl implements AcquirerService {
         paraMap.put(ParamConstant.MERCHANT_ID, merchantId);
         paraMap.put(ParamConstant.STATUS, SubMerchantBizStatusEnum.NORMAL.getCode());
 
-        BizMerchantInfo merchant = bizMerchantInfoDAO.selectNormalMerchant(paraMap);
+        BizMerchantInfo merchant = null;
+        try {
+            merchant = bizMerchantInfoDAO.selectNormalMerchant(paraMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("查询商户信息失败", e);
+        }
 
         return merchant != null;
     }
@@ -175,7 +181,11 @@ public class AcquirerServiceImpl implements AcquirerService {
         paraMap.put(ParamConstant.ACQUIRER_ID, acquirerId);
         paraMap.put(ParamConstant.STATUS, SubMerchantBizStatusEnum.NORMAL.getCode());
 
-        return bizAcquirerInfoDAO.selectBizAcquirerInfo(paraMap);
+        try {
+            return bizAcquirerInfoDAO.selectBizAcquirerInfo(paraMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("查询收单机构信息失败", e);
+        }
     }
 
 }

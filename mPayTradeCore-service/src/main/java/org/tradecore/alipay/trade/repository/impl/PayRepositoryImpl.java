@@ -19,7 +19,6 @@ import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.QueryFieldConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.alipay.trade.repository.PayRepository;
-import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
@@ -47,22 +46,21 @@ public class PayRepositoryImpl implements PayRepository {
     private BizAlipayPayOrderDAO bizAlipayPayOrderDAO;
 
     @Override
-    public BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) throws Exception {
+    public BizAlipayPayOrder savePayOrder(BizAlipayPayOrder payOrder) {
 
         LogUtil.info(logger, "收到支付订单持久化请求");
 
         try {
             bizAlipayPayOrderDAO.insert(payOrder);
-        } catch (Exception e) {
-            LogUtil.error(e, logger, "支付订单持久化失败,message={0}", e.getMessage());
-            throw new RuntimeException("支付订单持久化失败");
+        } catch (SQLException e) {
+            throw new RuntimeException("支付订单持久化失败", e);
         }
 
         return payOrder;
     }
 
     @Override
-    public void updatePayOrder(BizAlipayPayOrder payOrder) throws Exception {
+    public void updatePayOrder(BizAlipayPayOrder payOrder) {
 
         LogUtil.info(logger, "收到订单更新请求");
 
@@ -70,17 +68,8 @@ public class PayRepositoryImpl implements PayRepository {
             payOrder.setGmtUpdate(new Date());
             bizAlipayPayOrderDAO.updateByPrimaryKey(payOrder);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "支付订单更新失败,message={0}", e.getMessage());
-            throw new RuntimeException("支付订单更新失败");
+            throw new RuntimeException("支付订单更新失败", e);
         }
-    }
-
-    @Override
-    public void updateOrderRefundStatus(BizAlipayPayOrder oriOrder) {
-
-        LogUtil.info(logger, "收到订单退款状态更新请求");
-
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单退款状态修改失败");
     }
 
     @Override
@@ -88,15 +77,19 @@ public class PayRepositoryImpl implements PayRepository {
 
         LogUtil.info(logger, "收到订单撤销状态更新请求");
 
-        oriOrder.setCancelStatus(cancelOrder.getCancelStatus());
-        oriOrder.setGmtUpdate(new Date());
+        try {
+            oriOrder.setCancelStatus(cancelOrder.getCancelStatus());
+            oriOrder.setGmtUpdate(new Date());
 
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单撤销状态修改失败");
+            bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder);
+        } catch (SQLException e) {
+            throw new RuntimeException("交易订单修改撤销状态失败", e);
+        }
 
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) throws SQLException {
+    public BizAlipayPayOrder selectPayOrder(String merchantId, String outTradeNo, String alipayTradeNo) {
 
         LogUtil.info(logger, "收到订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2}", merchantId, outTradeNo, alipayTradeNo);
 
@@ -115,7 +108,12 @@ public class PayRepositoryImpl implements PayRepository {
         }
 
         BizAlipayPayOrder order = null;
-        order = bizAlipayPayOrderDAO.selectOrder(paramMap);
+
+        try {
+            order = bizAlipayPayOrderDAO.selectOrder(paramMap);
+        } catch (SQLException e) {
+            throw new RuntimeException("查询订单错误", e);
+        }
 
         LogUtil.info(logger, "订单查询结果,order={0}", order);
 
@@ -123,7 +121,7 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo) throws SQLException {
+    public BizAlipayPayOrder selectPayOrderByTradeNo(String tradeNo) {
 
         LogUtil.info(logger, "收到订单查询请求,tradeNo={0}", tradeNo);
 
@@ -132,7 +130,6 @@ public class PayRepositoryImpl implements PayRepository {
         try {
             order = bizAlipayPayOrderDAO.selectByTradeNo(tradeNo);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "订单查询异常,message={0}", e.getMessage());
             throw new RuntimeException("订单查询异常");
         }
 
@@ -167,7 +164,11 @@ public class PayRepositoryImpl implements PayRepository {
 
         oriOrder.setGmtUpdate(new Date());
 
-        AssertUtil.assertTrue(bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder) > 0, "支付订单更新失败");
+        try {
+            bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder);
+        } catch (SQLException e) {
+            throw new RuntimeException("支付订单更新失败", e);
+        }
 
         LogUtil.info(logger, "异步响应订单更新请求成功");
 
