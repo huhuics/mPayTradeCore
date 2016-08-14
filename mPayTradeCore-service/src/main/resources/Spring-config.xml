@@ -16,6 +16,18 @@
 		</property>
 	</bean>
 
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass" value="java.lang.System" />
+		<property name="targetMethod" value="setProperty" />
+		<property name="arguments">
+			<list>
+				<value>url</value>
+				<value>${url}</value>
+			</list>
+		</property>
+	</bean>
+
 	<!-- 扫描注解 -->
 	<context:component-scan base-package="org.tradecore">
 		<context:exclude-filter type="annotation"

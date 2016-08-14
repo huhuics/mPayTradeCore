@@ -21,7 +21,7 @@ import com.alipay.api.response.AlipayTradePayResponse;
  * @author HuHui
  * @version $Id: CommonTest.java, v 0.1 2016年7月21日 上午10:32:05 HuHui Exp $
  */
-public class CommonTest {
+public class CommonTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonTest.class);
 
@@ -48,6 +48,12 @@ public class CommonTest {
             LogUtil.error(logger, "message:{0}", e.getMessage());
         }
         LogUtil.info(logger, "方法结束");
+    }
+
+    @Test
+    public void testGetProperties() {
+        String property = System.getProperty("url");
+        LogUtil.info(logger, "property url={0}", property);
     }
 
 }
