@@ -79,7 +79,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
             return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(),
-                AlipayBizResultEnum.SUCCESS.getDesc());
+                AlipayBizResultEnum.SUCCESS.getDesc(), null, null);
         }
 
         //3.将请求转化为支付宝商户入驻请求
@@ -102,7 +102,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg());
+        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg(),
+            alipayResponse.getSubCode(), alipayResponse.getSubMsg());
     }
 
     @Override
@@ -392,7 +393,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @param merchantId
      * @return
      */
-    private MerchantCreateResponse buildResponse(String acquirerId, String merchantId, String code, String msg) {
+    private MerchantCreateResponse buildResponse(String acquirerId, String merchantId, String code, String msg, String subCode, String subMsg) {
 
         MerchantCreateResponse createResponse = new MerchantCreateResponse();
 
@@ -400,6 +401,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         createResponse.setMerchant_id(merchantId);
         createResponse.setCode(code);
         createResponse.setMsg(msg);
+        createResponse.setSub_code(subCode);
+        createResponse.setSub_msg(subMsg);
 
         return createResponse;
     }

@@ -548,6 +548,11 @@ public class BizSimulatorController {
             map.put("msg", createResponse.getMsg());
             map.put("acquirerId", createResponse.getAcquirer_id());
             map.put("merchantId", createResponse.getMerchant_id());
+        } else if (createResponse != null) {
+            map.put("code", createResponse.getCode());
+            map.put("msg", createResponse.getMsg());
+            map.put("subCode", createResponse.getSub_code());
+            map.put("subMsg", createResponse.getSub_msg());
         }
 
         return RESULT;
