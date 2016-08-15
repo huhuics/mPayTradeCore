@@ -52,8 +52,12 @@ public class CommonTest extends BaseTest {
 
     @Test
     public void testGetProperties() {
-        String property = System.getProperty("url");
-        LogUtil.info(logger, "property url={0}", property);
+        String url = System.getProperty("url");
+        LogUtil.error(logger, "property url={0}", url);
+
+        String driver = System.getProperty("driver");
+        LogUtil.error(logger, "property driven={0}", driver);
+
     }
 
 }
