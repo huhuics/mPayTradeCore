@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class CancelRepositoryImpl implements CancelRepository {
         //持久化撤销订单数据
         try {
             bizAlipayCancelOrderDAO.insert(cancelOrder);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("撤销请求数据持久化失败", e);
         }
 
@@ -76,7 +75,7 @@ public class CancelRepositoryImpl implements CancelRepository {
         List<BizAlipayCancelOrder> cancelOrders = null;
         try {
             cancelOrders = bizAlipayCancelOrderDAO.selectCancelOrders(paraMap);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("撤销订单查询失败", e);
         }
 

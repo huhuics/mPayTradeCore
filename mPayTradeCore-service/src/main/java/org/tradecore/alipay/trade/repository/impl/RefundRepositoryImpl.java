@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -120,7 +119,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         try {
             bizAlipayRefundOrderDAO.insert(refundOrder);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("退款请求数据持久化失败", e);
         }
 
@@ -156,7 +155,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         List<BizAlipayRefundOrder> refundOrders = null;
         try {
             refundOrders = bizAlipayRefundOrderDAO.selectRefundOrders(paraMap);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("退款订单查询失败", e);
         }
 
@@ -214,7 +213,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
                 try {
                     bizAlipayRefundOrderDAO.insert(refundOrder);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     throw new RuntimeException("退款订单持久化失败", e);
                 }
             } else {//1.2 本地有此退款订单

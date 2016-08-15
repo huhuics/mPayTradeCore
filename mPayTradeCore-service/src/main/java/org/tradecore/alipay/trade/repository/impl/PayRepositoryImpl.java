@@ -4,7 +4,6 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +51,7 @@ public class PayRepositoryImpl implements PayRepository {
 
         try {
             bizAlipayPayOrderDAO.insert(payOrder);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("支付订单持久化失败", e);
         }
 
@@ -82,7 +81,7 @@ public class PayRepositoryImpl implements PayRepository {
             oriOrder.setGmtUpdate(new Date());
 
             bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("交易订单修改撤销状态失败", e);
         }
 
@@ -111,7 +110,7 @@ public class PayRepositoryImpl implements PayRepository {
 
         try {
             order = bizAlipayPayOrderDAO.selectOrder(paramMap);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("查询订单错误", e);
         }
 
@@ -166,7 +165,7 @@ public class PayRepositoryImpl implements PayRepository {
 
         try {
             bizAlipayPayOrderDAO.updateByPrimaryKey(oriOrder);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("支付订单更新失败", e);
         }
 
