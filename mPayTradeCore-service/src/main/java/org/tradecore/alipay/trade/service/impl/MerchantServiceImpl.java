@@ -16,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
@@ -107,7 +108,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
     }
 
     @Override
-    @Transactional
+    @Cacheable(value = "merchantInfoCache")
     public MerchantQueryResponse query(MerchantQueryRequest merchantQueryRequest) {
 
         LogUtil.info(logger, "收到商户查询请求参数,merchantQueryRequest={0}", merchantQueryRequest);
@@ -360,6 +361,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @return
      */
     private BizMerchantInfo selectMerchantInfoByMerchantIdOrOutExternalId(String acquirerId, String merchantId, String outExternalId) {
+
+        LogUtil.info(logger, "time={0}", System.currentTimeMillis());
 
         Map<String, Object> paraMap = new HashMap<String, Object>();
         paraMap.put(QueryFieldConstant.ACQUIRER_ID, acquirerId);
