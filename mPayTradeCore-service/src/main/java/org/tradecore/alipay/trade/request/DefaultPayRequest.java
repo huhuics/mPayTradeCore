@@ -11,8 +11,8 @@ import org.tradecore.alipay.trade.model.SubMerchant;
 import org.tradecore.common.util.AssertUtil;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.alipay.demo.trade.model.ExtendParams;
-import com.alipay.demo.trade.model.GoodsDetail;
+import com.alipay.api.domain.ExtendParams;
+import com.alipay.api.domain.GoodsDetail;
 
 /**
  * 支付宝条码支付、扫码支付、线上支付请求参数的父类<br>

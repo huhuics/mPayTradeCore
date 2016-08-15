@@ -13,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author HuHui
  * @version $Id: Resources.java, v 0.1 2016年7月24日 下午2:48:32 HuHui Exp $
  */
-@PropertySource(value = { "classpath:config/notifyurl.properties" })
+@PropertySource(value = { "classpath:config/notifyurl.properties", "classpath:config/zfbinfo.properties" })
 public final class Resources {
 
     /** notify_url配置 */

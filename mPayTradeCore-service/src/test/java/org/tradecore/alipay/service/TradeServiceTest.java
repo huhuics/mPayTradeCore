@@ -23,18 +23,18 @@ import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
+import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.model.GoodsDetail;
-import com.alipay.demo.trade.utils.ZxingUtils;
 
 /**
  * 测试支付宝交易服务类
@@ -75,9 +75,17 @@ public class TradeServiceTest extends BaseTest {
 
         // 商品明细列表
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
-        GoodsDetail goods1 = GoodsDetail.newInstance("goods_id001", "xxx面包", 1000, 1);//单位为分，数量为1
+        GoodsDetail goods1 = new GoodsDetail();
+        goods1.setGoodsId("goods_id001");
+        goods1.setGoodsName("xxx面包");
+        goods1.setPrice("1000");
+        goods1.setQuantity(1L);
         goodsDetailList.add(goods1);
-        GoodsDetail goods2 = GoodsDetail.newInstance("goods_id002", "xxx牙刷", 500, 2);
+        GoodsDetail goods2 = new GoodsDetail();
+        goods2.setGoodsId("goods_id002");
+        goods2.setGoodsName("xxx牙刷");
+        goods2.setPrice("500");
+        goods2.setQuantity(2L);
         goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
@@ -111,9 +119,17 @@ public class TradeServiceTest extends BaseTest {
 
         // 商品明细列表
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
-        GoodsDetail goods1 = GoodsDetail.newInstance("goods_id001", "西瓜", 1000, 1);//单位为分，数量为1
+        GoodsDetail goods1 = new GoodsDetail();
+        goods1.setGoodsId("goods_id001");
+        goods1.setGoodsName("xxx面包");
+        goods1.setPrice("1000");
+        goods1.setQuantity(1L);
         goodsDetailList.add(goods1);
-        GoodsDetail goods2 = GoodsDetail.newInstance("goods_id002", "苹果", 500, 2);
+        GoodsDetail goods2 = new GoodsDetail();
+        goods2.setGoodsId("goods_id002");
+        goods2.setGoodsName("xxx牙刷");
+        goods2.setPrice("500");
+        goods2.setQuantity(2L);
         goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
@@ -127,7 +143,7 @@ public class TradeServiceTest extends BaseTest {
         LogUtil.info(logger, "qrFilePath={0}", qrFilePath);
 
         //生成二维码图片
-        ZxingUtils.getQRCodeImge(ret.getQrCode(), 256, qrFilePath);
+        ImageUtil.getQRCodeImge(ret.getQrCode(), 256, qrFilePath);
 
         Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
     }

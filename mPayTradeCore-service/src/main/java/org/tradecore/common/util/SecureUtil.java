@@ -9,11 +9,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tradecore.common.config.AlipayConfigs;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.demo.trade.config.Configs;
 
 /**
  * 安全工具类
@@ -35,7 +35,7 @@ public class SecureUtil {
         String sign = null;
 
         try {
-            sign = AlipaySignature.rsaSign(JSON.toJSONString(sortedParaMap), Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
+            sign = AlipaySignature.rsaSign(JSON.toJSONString(sortedParaMap), AlipayConfigs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
             LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(sortedParaMap));
             throw new RuntimeException("加签发生异常");
@@ -53,7 +53,7 @@ public class SecureUtil {
 
         String sign = null;
         try {
-            sign = AlipaySignature.rsaSign(sortedParaMap, Configs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
+            sign = AlipaySignature.rsaSign(sortedParaMap, AlipayConfigs.getPrivateKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
             LogUtil.error(e, logger, "加签发生异常,paraMap={0}", JSON.toJSONString(sortedParaMap));
             throw new RuntimeException("加签发生异常");
@@ -67,7 +67,7 @@ public class SecureUtil {
      */
     public static boolean verifyAlipayNotify(Map<String, String> paraMap) {
         try {
-            return AlipaySignature.rsaCheckV1(paraMap, Configs.getAlipayPublicKey(), StandardCharsets.UTF_8.displayName());
+            return AlipaySignature.rsaCheckV1(paraMap, AlipayConfigs.getAlipayPublicKey(), StandardCharsets.UTF_8.displayName());
         } catch (AlipayApiException e) {
             LogUtil.error(e, logger, "验证支付宝异步通知签名失败");
         }

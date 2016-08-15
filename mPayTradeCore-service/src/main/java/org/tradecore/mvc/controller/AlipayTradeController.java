@@ -37,6 +37,8 @@ import org.tradecore.common.util.ResponseUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alipay.api.domain.ExtendParams;
+import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
@@ -44,8 +46,6 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.model.ExtendParams;
-import com.alipay.demo.trade.model.GoodsDetail;
 
 /**
  * 处理支付宝交易请求
@@ -549,11 +549,11 @@ public class AlipayTradeController extends AbstractBizController {
             goodDetail.setGoodsCategory(goodsDetailMap.get("goods_category"));
             goodDetail.setGoodsId(goodsDetailMap.get("goods_id"));
             goodDetail.setGoodsName(goodsDetailMap.get("goods_name"));
-            if (StringUtils.isNotBlank(goodsDetailMap.get("price"))) {
-                goodDetail.setPrice(Long.parseLong(goodsDetailMap.get("price")));
-            }
+
+            goodDetail.setPrice(goodsDetailMap.get("price"));
+
             if (StringUtils.isNotBlank(goodsDetailMap.get("quantity"))) {
-                goodDetail.setQuantity(Double.parseDouble(goodsDetailMap.get("quantity")));
+                goodDetail.setQuantity(Long.parseLong(goodsDetailMap.get("quantity")));
             }
 
             goodsDetails.add(goodDetail);

@@ -166,12 +166,22 @@
 			<artifactId>ehcache</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+		</dependency>
+
 		<!-- tools end -->
 
-		<!-- alipay trade sdk -->
+		<!-- alipay sdk -->
 		<dependency>
 			<groupId>com.alipay.f2f</groupId>
-			<artifactId>TradePaySDK</artifactId>
+			<artifactId>alipay-sdk</artifactId>
 		</dependency>
 		<!-- sdk end -->
 

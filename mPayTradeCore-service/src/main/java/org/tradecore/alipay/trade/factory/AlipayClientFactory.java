@@ -5,10 +5,10 @@
 package org.tradecore.alipay.trade.factory;
 
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.common.config.AlipayConfigs;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
-import com.alipay.demo.trade.config.Configs;
 
 /**
  * Alipay交易相关工厂类
@@ -25,11 +25,11 @@ public class AlipayClientFactory {
     static {
 
         //1.读取配置文件
-        Configs.init("config/zfbinfo.properties");
+        AlipayConfigs.init("config/zfbinfo.properties");
 
         //2.实例化AlipayClient
-        alipayClient = new DefaultAlipayClient(Configs.getOpenApiDomain(), Configs.getAppid(), Configs.getPrivateKey(), ParamConstant.ALIPAY_CONFIG_FORMAT,
-            ParamConstant.ALIPAY_CONFIG_CHARSET, Configs.getAlipayPublicKey());
+        alipayClient = new DefaultAlipayClient(AlipayConfigs.getOpenApiDomain(), AlipayConfigs.getAppid(), AlipayConfigs.getPrivateKey(),
+            ParamConstant.ALIPAY_CONFIG_FORMAT, ParamConstant.ALIPAY_CONFIG_CHARSET, AlipayConfigs.getAlipayPublicKey());
     }
 
     /**

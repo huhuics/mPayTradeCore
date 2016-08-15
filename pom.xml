@@ -209,13 +209,25 @@
 				<version>2.10.2</version>
 			</dependency>
 
+			<dependency>
+				<groupId>com.google.zxing</groupId>
+				<artifactId>core</artifactId>
+				<version>2.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.10</version>
+			</dependency>
+
 			<!-- tools end -->
 
-			<!-- alipay trade sdk -->
+			<!-- alipay sdk -->
 			<dependency>
 				<groupId>com.alipay.f2f</groupId>
-				<artifactId>TradePaySDK</artifactId>
-				<version>20160724</version>
+				<artifactId>alipay-sdk</artifactId>
+				<version>20160711120057</version>
 			</dependency>
 			<!-- sdk end -->
 

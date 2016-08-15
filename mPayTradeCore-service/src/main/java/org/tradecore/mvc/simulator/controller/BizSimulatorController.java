@@ -34,6 +34,7 @@ import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.FormaterUtil;
+import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
 
 import com.alibaba.fastjson.JSON;
@@ -45,7 +46,6 @@ import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
-import com.alipay.demo.trade.utils.ZxingUtils;
 
 /**
  * 业务模拟器<br>
@@ -352,7 +352,7 @@ public class BizSimulatorController {
             LogUtil.info(logger, "模拟器生成二维码图片保存路径qrFilePath={0}", qrFilePath);
 
             //生成二维码图片
-            ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
+            ImageUtil.getQRCodeImge(response.getQrCode(), 256, qrFilePath);
             map.put("qrFileName", response.getOutTradeNo() + ".png");
 
         }

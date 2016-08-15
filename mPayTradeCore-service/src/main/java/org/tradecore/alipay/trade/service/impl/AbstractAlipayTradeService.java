@@ -19,6 +19,7 @@ import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
 import org.tradecore.alipay.trade.request.PayRequest;
+import org.tradecore.common.config.AlipayConfigs;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
@@ -31,8 +32,6 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.demo.trade.config.Configs;
-import com.alipay.demo.trade.utils.Utils;
 
 /**
  * 支付宝交易服务抽象类
@@ -146,8 +145,13 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
             @Override
             public void run() {
 
-                for (int i = 0; i < Configs.getMaxCancelRetry(); i++) {
-                    Utils.sleep(Configs.getCancelDuration());
+                for (int i = 0; i < AlipayConfigs.getMaxCancelRetry(); i++) {
+
+                    try {
+                        Thread.sleep(AlipayConfigs.getCancelDuration());
+                    } catch (InterruptedException e) {
+                        LogUtil.error(e, logger, "thread sleep exception");
+                    }
 
                     AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest);
 
@@ -175,8 +179,12 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
 
         AlipayTradeQueryResponse queryResult = null;
 
-        for (int i = 0; i < Configs.getMaxQueryRetry(); i++) {
-            Utils.sleep(Configs.getQueryDuration());
+        for (int i = 0; i < AlipayConfigs.getMaxQueryRetry(); i++) {
+            try {
+                Thread.sleep(AlipayConfigs.getCancelDuration());
+            } catch (InterruptedException e) {
+                LogUtil.error(e, logger, "thread sleep exception");
+            }
 
             AlipayTradeQueryResponse response = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
 
