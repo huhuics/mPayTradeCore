@@ -83,15 +83,16 @@ public class MerchantServiceTest extends BaseTest {
         queryRequest.setAcquirer_id("10880010001");
         queryRequest.setExternal_id("1088001000114707489");
         queryRequest.setMerchant_id("27774");
+        queryRequest.setOut_external_id("14707489");
 
         MerchantQueryResponse queryResponse = merchantService.query(queryRequest);
 
         LogUtil.info(logger, "首次商户查询结果,queryResponse={0}", queryResponse);
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         queryResponse = merchantService.query(queryRequest);
 
-        LogUtil.info(logger, "2s后商户查询结果,queryResponse={0}", queryResponse);
+        LogUtil.info(logger, "1s后商户查询结果,queryResponse={0}", queryResponse);
 
         Thread.sleep(5000);
         queryResponse = merchantService.query(queryRequest);

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.tradecore.dao.domain.BizAcquirerInfo;
 
 public interface BizAcquirerInfoDAO {
@@ -27,5 +28,6 @@ public interface BizAcquirerInfoDAO {
      * @param paraMap
      * @return
      */
+    @Cacheable(value = "acquirerInfoCache")
     List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap) throws SQLException;
 }

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
 public interface BizMerchantInfoDAO {
@@ -25,6 +26,7 @@ public interface BizMerchantInfoDAO {
      * 如果需要增加查询条件，需要在对应的mapper文件中增加
      * @param paraMap
      */
+    @Cacheable(value = "merchantInfoCache")
     List<BizMerchantInfo> selectMerchant(Map<String, Object> paraMap) throws SQLException;
 
     /**
@@ -35,6 +37,7 @@ public interface BizMerchantInfoDAO {
      * </ul>
      * @param paraMap
      */
+    @Cacheable(value = "merchantInfoCache")
     BizMerchantInfo selectNormalMerchant(Map<String, Object> paraMap) throws SQLException;
 
     /**

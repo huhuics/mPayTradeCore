@@ -10,6 +10,7 @@ import org.tradecore.alipay.facade.response.MerchantQueryResponse;
 import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
+import org.tradecore.dao.domain.BizMerchantInfo;
 
 /**
  * 商户服务接口
@@ -39,5 +40,7 @@ public interface MerchantService {
      * @return
      */
     MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest);
+
+    BizMerchantInfo selectMerchantInfoByMerchantIdOrOutExternalId(String acquirerId, String merchantId, String outExternalId);
 
 }
