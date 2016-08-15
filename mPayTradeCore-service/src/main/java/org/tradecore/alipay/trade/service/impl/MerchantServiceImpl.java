@@ -174,7 +174,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
                 response.setCode(AlipayBizResultEnum.FAILED.getCode());
                 response.setMsg(AlipayBizResultEnum.FAILED.getDesc());
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("更新商户信息失败", e);
         }
 
@@ -226,7 +226,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         if (bizMerchantInfo != null) {
             try {
                 return bizMerchantInfoDAO.insert(bizMerchantInfo) > 0;
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 throw new RuntimeException("持久化商户信息失败", e);
             }
         }
@@ -346,7 +346,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         try {
             return bizMerchantInfoDAO.selectByExternalId(externalId);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException("查询商户信息失败", e);
         }
 
