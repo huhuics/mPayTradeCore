@@ -227,7 +227,7 @@
 			<dependency>
 				<groupId>com.alipay.f2f</groupId>
 				<artifactId>alipay-sdk</artifactId>
-				<version>20160711120057</version>
+				<version>20160728</version>
 			</dependency>
 			<!-- sdk end -->
 
