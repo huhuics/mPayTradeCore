@@ -574,7 +574,7 @@ public class CreateOrderRequest implements Serializable {
             throw new RuntimeException("加签发生异常");
         }
 
-        paraMap.put("sign_type", sign);
+        paraMap.put("sign", sign);
 
         List<NameValuePair> pairList = new ArrayList<NameValuePair>(paraMap.size());
 
