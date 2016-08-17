@@ -25,7 +25,7 @@ public class CreateOrderRequest implements Serializable {
     /**
      * 
      */
-    private String            method;d
+    private String            method;
 
     /**
      *  
@@ -77,20 +77,20 @@ public class CreateOrderRequest implements Serializable {
      */
     private String            bizContent;
 
-    public String getAcquirer_id() {
+    public String getAcquirerId() {
         return acquirerId;
     }
 
-    public void setAcquirer_id(String acquirer_id) {
-        this.acquirerId = acquirer_id;
+    public void setAcquirerId(String acquirerId) {
+        this.acquirerId = acquirerId;
     }
 
-    public String getApp_id() {
-        return app_id;
+    public String getAppId() {
+        return appId;
     }
 
-    public void setApp_id(String app_id) {
-        this.app_id = app_id;
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getMethod() {
@@ -117,12 +117,12 @@ public class CreateOrderRequest implements Serializable {
         this.charset = charset;
     }
 
-    public String getSign_type() {
-        return sign_type;
+    public String getSignType() {
+        return signType;
     }
 
-    public void setSign_type(String sign_type) {
-        this.sign_type = sign_type;
+    public void setSignType(String signType) {
+        this.signType = signType;
     }
 
     public String getSign() {
@@ -149,42 +149,46 @@ public class CreateOrderRequest implements Serializable {
         this.version = version;
     }
 
-    public String getNotify_url() {
-        return notify_url;
+    public String getNotifyUrl() {
+        return notifyUrl;
     }
 
-    public void setNotify_url(String notify_url) {
-        this.notify_url = notify_url;
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
     }
 
-    public String getApp_auth_token() {
-        return app_auth_token;
+    public String getAppAuthToken() {
+        return appAuthToken;
     }
 
-    public void setApp_auth_token(String app_auth_token) {
-        this.app_auth_token = app_auth_token;
+    public void setAppAuthToken(String appAuthToken) {
+        this.appAuthToken = appAuthToken;
     }
 
-    public String getWallet_type() {
-        return wallet_type;
+    public String getWalletType() {
+        return walletType;
     }
 
-    public void setWallet_type(String wallet_type) {
-        this.wallet_type = wallet_type;
+    public void setWalletType(String walletType) {
+        this.walletType = walletType;
     }
 
-    public String getBiz_content() {
-        return biz_content;
+    public String getBizContent() {
+        return bizContent;
     }
 
-    public void setBiz_content(String biz_content) {
-        this.biz_content = biz_content;
+    public void setBizContent(String bizContent) {
+        this.bizContent = bizContent;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
     public Map<String, String> getParaMap() {
-        
+
         Map<String, String> paraMap = new HashMap<String, String>();
-        paraMap.put("acquirer_id", );
+        paraMap.put("acquirer_id", "10880010001");
         paraMap.put("app_id", "2014072300007148");
         paraMap.put("method", "alipay.boss.prod.merch");
         paraMap.put("format", "JSON");
@@ -201,7 +205,7 @@ public class CreateOrderRequest implements Serializable {
         biz_content.setSubject("iphone");
 
         paraMap.put("biz_content", JSON.toJSONString(biz_content));
-        
+
         return paraMap;
     }
 }
