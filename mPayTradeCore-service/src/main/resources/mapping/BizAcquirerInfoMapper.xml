@@ -5,18 +5,21 @@
     <id column="ID" jdbcType="DECIMAL" property="id" />
     <result column="ACQUIRER_ID" jdbcType="VARCHAR" property="acquirerId" />
     <result column="ACQUIRER_NAME" jdbcType="VARCHAR" property="acquirerName" />
+    <result column="APP_ID" jdbcType="VARCHAR" property="appId" />
+    <result column="SIGN_TYPE" jdbcType="VARCHAR" property="signType" />
+    <result column="FEE" jdbcType="DECIMAL" property="fee" />
     <result column="ACC_NO" jdbcType="VARCHAR" property="accNo" />
     <result column="ACC_NAME" jdbcType="VARCHAR" property="accName" />
     <result column="ACC_BANK_NO" jdbcType="VARCHAR" property="accBankNo" />
     <result column="PUB_KEY" jdbcType="VARCHAR" property="pubKey" />
     <result column="PRI_KEY" jdbcType="VARCHAR" property="priKey" />
-    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
     <result column="GMT_CREATE" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="GMT_UPDATE" jdbcType="TIMESTAMP" property="gmtUpdate" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, ACQUIRER_ID, ACQUIRER_NAME, ACC_NO, ACC_NAME, ACC_BANK_NO, PUB_KEY, PRI_KEY, 
-    STATUS, GMT_CREATE, GMT_UPDATE
+    ID, ACQUIRER_ID, ACQUIRER_NAME, APP_ID, SIGN_TYPE, FEE, ACC_NO, ACC_NAME, ACC_BANK_NO, 
+    PUB_KEY, PRI_KEY, STATUS, GMT_CREATE, GMT_UPDATE
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
     select 
@@ -30,12 +33,14 @@
   </delete>
   <insert id="insert" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
     insert into BIZ_ACQUIRER_INFO (ID, ACQUIRER_ID, ACQUIRER_NAME, 
+      APP_ID, SIGN_TYPE, FEE, 
       ACC_NO, ACC_NAME, ACC_BANK_NO, 
       PUB_KEY, PRI_KEY, STATUS, 
       GMT_CREATE, GMT_UPDATE)
     values (#{id,jdbcType=DECIMAL}, #{acquirerId,jdbcType=VARCHAR}, #{acquirerName,jdbcType=VARCHAR}, 
+      #{appId,jdbcType=VARCHAR}, #{signType,jdbcType=VARCHAR}, #{fee,jdbcType=DECIMAL}, 
       #{accNo,jdbcType=VARCHAR}, #{accName,jdbcType=VARCHAR}, #{accBankNo,jdbcType=VARCHAR}, 
-      #{pubKey,jdbcType=VARCHAR}, #{priKey,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{pubKey,jdbcType=VARCHAR}, #{priKey,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
       #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="org.tradecore.dao.domain.BizAcquirerInfo">
@@ -49,6 +54,15 @@
       </if>
       <if test="acquirerName != null">
         ACQUIRER_NAME,
+      </if>
+      <if test="appId != null">
+        APP_ID,
+      </if>
+      <if test="signType != null">
+        SIGN_TYPE,
+      </if>
+      <if test="fee != null">
+        FEE,
       </if>
       <if test="accNo != null">
         ACC_NO,
@@ -85,6 +99,15 @@
       <if test="acquirerName != null">
         #{acquirerName,jdbcType=VARCHAR},
       </if>
+      <if test="appId != null">
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="signType != null">
+        #{signType,jdbcType=VARCHAR},
+      </if>
+      <if test="fee != null">
+        #{fee,jdbcType=DECIMAL},
+      </if>
       <if test="accNo != null">
         #{accNo,jdbcType=VARCHAR},
       </if>
@@ -101,7 +124,7 @@
         #{priKey,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=CHAR},
+        #{status,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null">
         #{gmtCreate,jdbcType=TIMESTAMP},
@@ -120,6 +143,15 @@
       <if test="acquirerName != null">
         ACQUIRER_NAME = #{acquirerName,jdbcType=VARCHAR},
       </if>
+      <if test="appId != null">
+        APP_ID = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="signType != null">
+        SIGN_TYPE = #{signType,jdbcType=VARCHAR},
+      </if>
+      <if test="fee != null">
+        FEE = #{fee,jdbcType=DECIMAL},
+      </if>
       <if test="accNo != null">
         ACC_NO = #{accNo,jdbcType=VARCHAR},
       </if>
@@ -136,7 +168,7 @@
         PRI_KEY = #{priKey,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        STATUS = #{status,jdbcType=CHAR},
+        STATUS = #{status,jdbcType=VARCHAR},
       </if>
       <if test="gmtCreate != null">
         GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
@@ -151,12 +183,15 @@
     update BIZ_ACQUIRER_INFO
     set ACQUIRER_ID = #{acquirerId,jdbcType=VARCHAR},
       ACQUIRER_NAME = #{acquirerName,jdbcType=VARCHAR},
+      APP_ID = #{appId,jdbcType=VARCHAR},
+      SIGN_TYPE = #{signType,jdbcType=VARCHAR},
+      FEE = #{fee,jdbcType=DECIMAL},
       ACC_NO = #{accNo,jdbcType=VARCHAR},
       ACC_NAME = #{accName,jdbcType=VARCHAR},
       ACC_BANK_NO = #{accBankNo,jdbcType=VARCHAR},
       PUB_KEY = #{pubKey,jdbcType=VARCHAR},
       PRI_KEY = #{priKey,jdbcType=VARCHAR},
-      STATUS = #{status,jdbcType=CHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
       GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
       GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=DECIMAL}
@@ -176,5 +211,7 @@
 			AND STATUS = #{status}
 		</if>
 	</select>
+	
+	
   
 </mapper>

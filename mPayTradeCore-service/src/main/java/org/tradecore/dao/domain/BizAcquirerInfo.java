@@ -2,65 +2,76 @@ package org.tradecore.dao.domain;
 
 import java.util.Date;
 
-public class BizAcquirerInfo extends BaseDomain {
-
-    /**  */
-    private static final long serialVersionUID = 3372019669998964876L;
-
+public class BizAcquirerInfo {
     /**
      *  null, BIZ_ACQUIRER_INFO.ID
      */
-    private Short             id;
+    private Short id;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ACQUIRER_ID
      */
-    private String            acquirerId;
+    private String acquirerId;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ACQUIRER_NAME
      */
-    private String            acquirerName;
+    private String acquirerName;
+
+    /**
+     *  null, BIZ_ACQUIRER_INFO.APP_ID
+     */
+    private String appId;
+
+    /**
+     *  null, BIZ_ACQUIRER_INFO.SIGN_TYPE
+     */
+    private String signType;
+
+    /**
+     *  null, BIZ_ACQUIRER_INFO.FEE
+     */
+    private Short fee;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ACC_NO
      */
-    private String            accNo;
+    private String accNo;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ACC_NAME
      */
-    private String            accName;
+    private String accName;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.ACC_BANK_NO
      */
-    private String            accBankNo;
+    private String accBankNo;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.PUB_KEY
      */
-    private String            pubKey;
+    private String pubKey;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.PRI_KEY
      */
-    private String            priKey;
+    private String priKey;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.STATUS
      */
-    private String            status;
+    private String status;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.GMT_CREATE
      */
-    private Date              gmtCreate;
+    private Date gmtCreate;
 
     /**
      *  null, BIZ_ACQUIRER_INFO.GMT_UPDATE
      */
-    private Date              gmtUpdate;
+    private Date gmtUpdate;
 
     public Short getId() {
         return id;
@@ -84,6 +95,30 @@ public class BizAcquirerInfo extends BaseDomain {
 
     public void setAcquirerName(String acquirerName) {
         this.acquirerName = acquirerName == null ? null : acquirerName.trim();
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId == null ? null : appId.trim();
+    }
+
+    public String getSignType() {
+        return signType;
+    }
+
+    public void setSignType(String signType) {
+        this.signType = signType == null ? null : signType.trim();
+    }
+
+    public Short getFee() {
+        return fee;
+    }
+
+    public void setFee(Short fee) {
+        this.fee = fee;
     }
 
     public String getAccNo() {

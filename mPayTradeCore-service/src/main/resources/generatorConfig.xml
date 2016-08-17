@@ -36,7 +36,7 @@
 			<columnOverride column="UNDISCOUNTABLE_AMOUNT" javaType="org.tradecore.common.util.Money"></columnOverride>
 		</table> -->
 		
-		<table tableName="BIZ_MERCHANT_INFO" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+		<table tableName="BIZ_ACQUIRER_INFO" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
 		
     </context>  
 </generatorConfiguration>

@@ -67,7 +67,7 @@ public class AcquirerServiceImpl implements AcquirerService {
 
         AssertUtil.assertNotBlank(acquirerId, "收单机构编号不能为空");
 
-        List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId);
+        List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId, SubMerchantBizStatusEnum.NORMAL.getCode());
 
         if (CollectionUtils.isEmpty(acquirerInfos)) {
             return false;
@@ -106,7 +106,7 @@ public class AcquirerServiceImpl implements AcquirerService {
         LogUtil.info(logger, "收到验签请求参数");
 
         //1.根据收单机构号查询收单机构信息
-        List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId);
+        List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId, SubMerchantBizStatusEnum.NORMAL.getCode());
 
         BizAcquirerInfo acquirerInfo = null;
         if (CollectionUtils.isNotEmpty(acquirerInfos)) {
@@ -171,14 +171,14 @@ public class AcquirerServiceImpl implements AcquirerService {
     }
 
     /**
-     * 通过收单机构编号查询收单机构
+     * 通过条件查询收单机构信息
      * @param acquirerId
      * @return
      */
-    private List<BizAcquirerInfo> selectBizAcquirerInfo(String acquirerId) {
+    private List<BizAcquirerInfo> selectBizAcquirerInfo(String acquirerId, String status) {
         Map<String, Object> paraMap = new HashMap<String, Object>();
         paraMap.put(ParamConstant.ACQUIRER_ID, acquirerId);
-        paraMap.put(ParamConstant.STATUS, SubMerchantBizStatusEnum.NORMAL.getCode());
+        paraMap.put(ParamConstant.STATUS, status);
 
         try {
             return bizAcquirerInfoDAO.selectBizAcquirerInfo(paraMap);

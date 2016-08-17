@@ -358,8 +358,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @param outExternalId
      * @return
      */
-    @Override
-    public BizMerchantInfo selectMerchantInfoByMerchantIdOrOutExternalId(String acquirerId, String merchantId, String outExternalId) {
+    private BizMerchantInfo selectMerchantInfoByMerchantIdOrOutExternalId(String acquirerId, String merchantId, String outExternalId) {
 
         Map<String, Object> paraMap = new HashMap<String, Object>();
         paraMap.put(QueryFieldConstant.ACQUIRER_ID, acquirerId);
