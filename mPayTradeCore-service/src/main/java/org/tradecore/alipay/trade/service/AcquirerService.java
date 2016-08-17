@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,5 +39,11 @@ public interface AcquirerService {
      * @return
      */
     boolean verify(String acquirerId, Map<String, String> paraMap);
+
+    /**
+     * 查询所有不重复的appid
+     * @return
+     */
+    List<String> selectDistinctAppIds();
 
 }

@@ -29,4 +29,11 @@ public interface BizAcquirerInfoDAO {
     */
     @Cacheable(value = "acquirerInfoCache")
     List<BizAcquirerInfo> selectBizAcquirerInfo(Map<String, Object> paraMap);
+
+    /**
+     * 查询所有不重复的appid
+     * @return
+     */
+    List<String> selectDistinctAppIds();
+
 }

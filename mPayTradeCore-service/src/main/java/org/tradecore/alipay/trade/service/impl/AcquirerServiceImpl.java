@@ -187,4 +187,9 @@ public class AcquirerServiceImpl implements AcquirerService {
         }
     }
 
+    @Override
+    public List<String> selectDistinctAppIds() {
+        return null;
+    }
+
 }
