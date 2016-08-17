@@ -1,43 +1,19 @@
-package org.tradecore.acquirertest;
+package org.tradecore.trade.demo;
+
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tradecore.alipay.enums.AlipayBizResultEnum;
-import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.service.TradeServiceTest;
-import org.tradecore.alipay.trade.constants.ParamConstant;
-import org.tradecore.alipay.trade.request.CancelRequest;
-import org.tradecore.alipay.trade.request.PayRequest;
-import org.tradecore.alipay.trade.request.PrecreateRequest;
-import org.tradecore.alipay.trade.request.QueryRequest;
-import org.tradecore.alipay.trade.request.RefundRequest;
-import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.HttpUtil;
-import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
-import org.tradecore.service.test.BaseTest;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.alipay.api.response.AlipayTradeCancelResponse;
-import com.alipay.api.response.AlipayTradePayResponse;
-import com.alipay.api.response.AlipayTradePrecreateResponse;
-import com.alipay.api.response.AlipayTradeQueryResponse;
-import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
  * 
@@ -45,10 +21,9 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
  *
  */
 public class AcquirerPayTest {
-     /** 日志 */
+    /** 日志 */
     private static final Logger logger = LoggerFactory.getLogger(TradeServiceTest.class);
-    
-    
+
     /**
      * 
      * @throws Exception
@@ -57,30 +32,30 @@ public class AcquirerPayTest {
     public void testPay() throws Exception {
 
         //组装参数
-        String merchantNotifyUrl="http://127.0.0.1:8088/mPay/trade/pay";
-        AcquirerPayRequest acqPayRequest=new AcquirerPayRequest();
-        acqPayRequest.bizrequest.setMerchantId("34855"); 
-        acqPayRequest.bizrequest.setOutTradeNo("108800100333485511");
+        String merchantNotifyUrl = "http://127.0.0.1:8088/mPay/trade/pay";
+        AcquirerPayRequest acqPayRequest = new AcquirerPayRequest();
+        acqPayRequest.bizrequest.setMerchantId("34855");
+        acqPayRequest.bizrequest.setOutTradeNo("108800100333485512");
         acqPayRequest.bizrequest.setScene("bar_code");
-        acqPayRequest.bizrequest.setAuthCode("28355684010846005");
+        acqPayRequest.bizrequest.setAuthCode("280678375955593927");
         acqPayRequest.bizrequest.setSubject("结算中心条码交易测试_1471225111111");
-            
+        acqPayRequest.bizrequest.setTotalAmount("0.01");
+
         acqPayRequest.setAcquirerId("10880010033");
         acqPayRequest.setAppId("2016070501581962");
         acqPayRequest.setMethod("alipay.boss.prod.merch");
         acqPayRequest.setFormat("JSON");
         acqPayRequest.setCharset("utf-8");
         acqPayRequest.setSignType("RSA");
-       
-        
+
         acqPayRequest.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()));
         acqPayRequest.setVersion("1.0");
         acqPayRequest.setNotifyUrl("http://api.test.alipay.net/atinterface/receive_notify.htm");
-        acqPayRequest.setAppAuthToken("    ");
+        acqPayRequest.setAppAuthToken("test");
         acqPayRequest.setWalletType("alipay");
         acqPayRequest.setBizContent(acqPayRequest.bizrequest.buildBizContent());
-        
-        Map<String, String> map=acqPayRequest.buildParaMap();
+
+        Map<String, String> map = acqPayRequest.buildParaMap();
 
         //签名
         String sign = null;
@@ -93,15 +68,12 @@ public class AcquirerPayTest {
         } catch (Exception e) {
             throw new RuntimeException("加签发生异常");
         }
-        acqPayRequest.setSign(sign);      
-        List<NameValuePair> paraList=acqPayRequest.buildPostParaList(map);
-        
+        map.put("sign", sign);
+
+        List<NameValuePair> paraList = acqPayRequest.buildPostParaList(map);
+
         String response = HttpUtil.httpClientPost(merchantNotifyUrl, paraList);
         LogUtil.info(logger, "完成发送扫码支付到中心,response={0}", response);
-        Assert.assertTrue(StringUtils.equals(response, ParamConstant.NOTIFY_SUCCESS));
+
     }
-    
-   
-
-
 }
