@@ -213,7 +213,7 @@
 	</select>
 	
 	<!-- 查询所有不重复的appid -->
-	<select id="selectDistinctAppIds">
+	<select id="selectDistinctAppIds" resultType="java.lang.String">
 		select distinct(APP_ID) from BIZ_ACQUIRER_INFO
 	</select>
   

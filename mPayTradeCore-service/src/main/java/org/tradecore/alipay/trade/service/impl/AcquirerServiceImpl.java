@@ -189,7 +189,11 @@ public class AcquirerServiceImpl implements AcquirerService {
 
     @Override
     public List<String> selectDistinctAppIds() {
-        return null;
+        try {
+            return bizAcquirerInfoDAO.selectDistinctAppIds();
+        } catch (Exception e) {
+            throw new RuntimeException("查询appid失败", e);
+        }
     }
 
 }

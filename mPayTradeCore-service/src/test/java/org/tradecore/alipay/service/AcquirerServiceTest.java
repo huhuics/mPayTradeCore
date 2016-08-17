@@ -5,6 +5,7 @@
 package org.tradecore.alipay.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -94,4 +95,18 @@ public class AcquirerServiceTest extends BaseTest {
 
         Assert.assertTrue(ret);
     }
+
+    @Test
+    public void testSelectDistinctAppIds() {
+
+        Assert.assertNotNull(acquirerService);
+
+        List<String> appIds = acquirerService.selectDistinctAppIds();
+
+        LogUtil.info(logger, "appIds={0}", appIds);
+
+        Assert.assertTrue(appIds.size() > 0);
+
+    }
+
 }
