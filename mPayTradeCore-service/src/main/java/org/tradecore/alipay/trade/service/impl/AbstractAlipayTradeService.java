@@ -60,7 +60,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      */
     @Deprecated
     protected BizAlipayPayOrder checkQueryAndCancel(BizAlipayPayOrder payOrder, PayRequest payRequest, AlipayTradePayResponse payResponse,
-                                                    AlipayTradeQueryResponse queryResponse) {
+                                                    AlipayTradeQueryResponse queryResponse, String appId) {
 
         LogUtil.info(logger, "收到订单查询结果校验请求,outTradeNo={0}", payRequest.getOutTradeNo());
 
@@ -90,7 +90,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
 
         cancelRequest.setBizContent(JSON.toJSONString(paraMap));
 
-        AlipayTradeCancelResponse cancelResponse = getCancelPayResult(cancelRequest);
+        AlipayTradeCancelResponse cancelResponse = getCancelPayResult(cancelRequest, appId);
 
         //以下为同步撤销返回结果，不是异步撤销返回结果
         if (isResponseError(cancelResponse)) {
@@ -113,10 +113,10 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @param cancelRequest
      * @return
      */
-    protected AlipayTradeCancelResponse getCancelPayResult(AlipayTradeCancelRequest cancelRequest) {
+    protected AlipayTradeCancelResponse getCancelPayResult(AlipayTradeCancelRequest cancelRequest, String appId) {
 
         //远程调用支付宝撤销接口
-        AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest);
+        AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest, appId);
 
         //1.撤销成功，则直接返回
         if (isResponseSuccess(cancelResponse)) {
@@ -128,7 +128,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
             //如果需要重试，首先记录日志(需人工处理)，再调用异步撤销
             LogUtil.warn(logger, "开始异步撤销,cancelRequest.getBizContent={0}", cancelRequest.getBizContent());
 
-            asyncCancel(cancelRequest);
+            asyncCancel(cancelRequest, appId);
         }
 
         return cancelResponse;
@@ -138,7 +138,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * 异步撤销
      * @param cancelRequest
      */
-    protected void asyncCancel(final AlipayTradeCancelRequest cancelRequest) {
+    protected void asyncCancel(final AlipayTradeCancelRequest cancelRequest, final String appId) {
 
         executorService.submit(new Runnable() {
 
@@ -153,7 +153,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
                         LogUtil.error(e, logger, "thread sleep exception");
                     }
 
-                    AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest);
+                    AlipayTradeCancelResponse cancelResponse = (AlipayTradeCancelResponse) getResponse(cancelRequest, appId);
 
                     //如果撤销成功或者响应告知不需要重试撤销，则返回(无论撤销是成功还是失败，都需要人工处理)
                     if (isResponseSuccess(cancelResponse) || !isNeedCancelRetry(cancelResponse)) {
@@ -173,7 +173,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
      * @return
      */
     @Deprecated
-    protected AlipayTradeQueryResponse loopQuery(AlipayTradeQueryRequest alipayQueryRequest) {
+    protected AlipayTradeQueryResponse loopQuery(AlipayTradeQueryRequest alipayQueryRequest, String appId) {
 
         LogUtil.info(logger, "收到轮询订单请求,outTradeNo={0}", alipayQueryRequest.getBizContent());
 
@@ -186,7 +186,7 @@ public abstract class AbstractAlipayTradeService extends AbstractAlipayService {
                 LogUtil.error(e, logger, "thread sleep exception");
             }
 
-            AlipayTradeQueryResponse response = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
+            AlipayTradeQueryResponse response = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest, appId);
 
             if (response != null) {
                 if (isStopQuery(response)) {

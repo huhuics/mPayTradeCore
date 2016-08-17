@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.service.test.BaseTest;
 
 import com.alipay.api.internal.util.AlipaySignature;
@@ -41,9 +42,9 @@ public class AcquirerServiceTest extends BaseTest {
 
         String acquirerId = "1088001000";
 
-        boolean ret = acquirerService.isAcquirerNormal(acquirerId);
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(acquirerId);
 
-        Assert.assertTrue(ret);
+        Assert.assertNotNull(acquirer);
     }
 
     @Test
@@ -87,13 +88,13 @@ public class AcquirerServiceTest extends BaseTest {
 
         Assert.assertTrue(verifyRet);
 
-        boolean ret = acquirerService.isAcquirerNormal(acquirerId);
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(acquirerId);
 
-        Assert.assertTrue(ret);
+        Assert.assertNotNull(acquirer);
 
-        ret = acquirerService.isAcquirerNormal(acquirerId);
+        acquirer = acquirerService.selectNormalAcquirerById(acquirerId);
 
-        Assert.assertTrue(ret);
+        Assert.assertNotNull(acquirer);
     }
 
     @Test

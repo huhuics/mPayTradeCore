@@ -297,7 +297,7 @@
 		where merchant_id = #{merchantId}
 		and status =
 		#{status}
-		and acquirer_id in (select acquirer_id
+		and acquirer_id = (select acquirer_id
 		from biz_acquirer_info
 		where acquirer_id = #{acquirerId}
 		and status = #{status})

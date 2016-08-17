@@ -61,7 +61,7 @@ public class AcquirerServiceImpl implements AcquirerService {
     private static final String SIGN     = "sign";
 
     @Override
-    public boolean isAcquirerNormal(String acquirerId) {
+    public BizAcquirerInfo selectNormalAcquirerById(String acquirerId) {
 
         LogUtil.info(logger, "收到收单机构查询条件:acquirerId={0}", acquirerId);
 
@@ -70,10 +70,10 @@ public class AcquirerServiceImpl implements AcquirerService {
         List<BizAcquirerInfo> acquirerInfos = selectBizAcquirerInfo(acquirerId, SubMerchantBizStatusEnum.NORMAL.getCode());
 
         if (CollectionUtils.isEmpty(acquirerInfos)) {
-            return false;
+            return null;
         }
 
-        return acquirerInfos.size() > 0;
+        return acquirerInfos.get(ParamConstant.FIRST_INDEX);
     }
 
     @Override

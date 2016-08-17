@@ -38,6 +38,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
+import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
@@ -99,6 +100,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(payRequest.getAcquirerId(), payRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(payRequest.getAcquirerId());
 
         //2.幂等判断
         //组装结算中心订单号
@@ -111,7 +113,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝条码支付接口
         AlipayTradePayResponse payResponse = null;
         try {
-            payResponse = (AlipayTradePayResponse) getResponse(alipayRequest);
+            payResponse = (AlipayTradePayResponse) getResponse(alipayRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "条码支付调用支付宝发生异常,outTradeNo={0}", payRequest.getOutTradeNo());
         }
@@ -161,6 +163,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(createRequest.getAcquirerId(), createRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(createRequest.getAcquirerId());
 
         //  1.2幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getTradeNo());
@@ -172,7 +175,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //3.调用支付宝订单创建接口
         AlipayTradeCreateResponse createResponse = null;
         try {
-            createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest);
+            createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单创建调用支付宝异常,outTradeNo={0}", createRequest.getOutTradeNo());
         }
@@ -217,6 +220,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(precreateRequest.getAcquirerId());
 
         //  1.2幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getTradeNo());
@@ -228,7 +232,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //3.调用支付宝扫码支付接口
         AlipayTradePrecreateResponse precreateResponse = null;
         try {
-            precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest);
+            precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "扫码支付调用支付宝异常,outTradeNo={0}", precreateRequest.getOutTradeNo());
         }
@@ -273,6 +277,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(queryRequest.getAcquirerId(), queryRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(queryRequest.getAcquirerId());
 
         //2.查询本地订单
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(),
@@ -285,7 +290,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝接口
         AlipayTradeQueryResponse queryResponse = null;
         try {
-            queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest);
+            queryResponse = (AlipayTradeQueryResponse) getResponse(alipayQueryRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "支付订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
         }
@@ -322,6 +327,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundQueryRequest.getAcquirerId(), refundQueryRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundQueryRequest.getAcquirerId());
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(),
@@ -335,7 +341,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝接口
         AlipayTradeFastpayRefundQueryResponse refundQueryResponse = null;
         try {
-            refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest);
+            refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(),
                 refundQueryRequest.getAlipayTradeNo());
@@ -373,6 +379,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(refundRequest.getAcquirerId(), refundRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundRequest.getAcquirerId());
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
@@ -389,7 +396,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //4.调用支付宝接口
         AlipayTradeRefundResponse refundResponse = null;
         try {
-            refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest);
+            refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(),
                 refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
@@ -422,6 +429,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         //  1.1判断商户是否可用
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(cancelRequest.getAcquirerId());
 
         //2.查询原始订单
         BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
@@ -438,7 +446,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         //5.调用支付宝撤销接口
         AlipayTradeCancelResponse cancelResponse = null;
         try {
-            cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest);
+            cancelResponse = (AlipayTradeCancelResponse) getResponse(alipayCancelRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "订单撤销调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
         }

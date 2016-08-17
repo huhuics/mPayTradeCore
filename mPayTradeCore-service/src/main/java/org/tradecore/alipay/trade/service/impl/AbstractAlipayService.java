@@ -4,8 +4,11 @@
  */
 package org.tradecore.alipay.trade.service.impl;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.tradecore.alipay.trade.factory.AlipayClientFactory;
 import org.tradecore.alipay.trade.request.BaseRequest;
 
@@ -18,22 +21,14 @@ import com.alipay.api.AlipayResponse;
  * @author HuHui
  * @version $Id: AbstractAlipayService.java, v 0.1 2016年8月4日 下午3:31:49 HuHui Exp $
  */
+@Service
 public abstract class AbstractAlipayService {
 
     /** 日志 */
-    private static final Logger   logger = LoggerFactory.getLogger(AbstractAlipayService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractAlipayService.class);
 
-    /** 公共请求方法类 */
-    protected static AlipayClient alipayClient;
-
-    /**
-     * 构造方法
-     */
-    public AbstractAlipayService() {
-
-        //工厂方法创建静态AlipayClient
-        alipayClient = AlipayClientFactory.getAlipayClientInstance();
-    }
+    @Resource
+    private AlipayClientFactory alipayClientFactory;
 
     /**
      * 校验请求参数是否合法
@@ -55,7 +50,9 @@ public abstract class AbstractAlipayService {
      * @return
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected AlipayResponse getResponse(AlipayRequest request) {
+    protected AlipayResponse getResponse(AlipayRequest request, String appId) {
+
+        AlipayClient alipayClient = alipayClientFactory.getAlipayClientInstance(appId);
 
         AlipayResponse response = null;
 
@@ -68,5 +65,4 @@ public abstract class AbstractAlipayService {
         }
 
     }
-
 }

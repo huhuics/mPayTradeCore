@@ -34,6 +34,7 @@ import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.dao.BizMerchantInfoDAO;
+import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.dao.domain.BizMerchantInfo;
 
 import com.alibaba.fastjson.JSON;
@@ -71,7 +72,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         validateRequest(merchantCreateRequest);
 
         //  1.1判断收单机构是否存在
-        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantCreateRequest.getAcquirer_id()), "收单机构不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(merchantCreateRequest.getAcquirer_id());
+        AssertUtil.assertNotNull(acquirer, "收单机构不存在或状态非法");
 
         //2.根据结算中心商户外部编号查询
         BizMerchantInfo oriBizMerchantInfo = selectMerchantInfoByExternalId(merchantCreateRequest.getExternal_id());
@@ -88,7 +90,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         //4.调用支付宝商户入驻接口
         AlipayBossProdSubmerchantCreateResponse alipayResponse = null;
         try {
-            alipayResponse = (AlipayBossProdSubmerchantCreateResponse) getResponse(alipayCreateRequest);
+            alipayResponse = (AlipayBossProdSubmerchantCreateResponse) getResponse(alipayCreateRequest, acquirer.getAppId());
         } catch (Exception e) {
             LogUtil.error(e, logger, "调用支付宝商户入驻接口异常,alipayCreateRequest={0}", JSON.toJSONString(alipayCreateRequest, SerializerFeature.UseSingleQuotes));
             throw new RuntimeException("调用支付宝商户入驻接口异常", e);
@@ -115,7 +117,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         validateRequest(merchantQueryRequest);
 
         //  1.1判断收单机构是否存在
-        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
+        AssertUtil.assertNotNull(acquirerService.selectNormalAcquirerById(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
         BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(),
@@ -137,7 +139,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         validateRequest(merchantModifyRequest);
 
         //2.校验收单机构
-        AssertUtil.assertTrue(acquirerService.isAcquirerNormal(merchantModifyRequest.getAcquirer_id()), "收单机构不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(merchantModifyRequest.getAcquirer_id());
+        AssertUtil.assertNotNull(acquirer, "收单机构不存在或状态非法");
 
         //3.查询本地商户数据
         BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(),
