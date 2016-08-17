@@ -56,7 +56,6 @@ public class AcquirerPayTest {
     @Test
     public void testPay() throws Exception {
 
-        //Assert.assertNotNull(tradeService);
         //组装参数
         String merchantNotifyUrl="http://127.0.0.1:8088/mPay/trade/pay";
         AcquirerPayRequest acqPayRequest=new AcquirerPayRequest();
@@ -67,17 +66,17 @@ public class AcquirerPayTest {
         acqPayRequest.bizrequest.setSubject("结算中心条码交易测试_1471225111111");
             
         acqPayRequest.setAcquirerId("10880010033");
-        acqPayRequest.setAppId(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()));
+        acqPayRequest.setAppId("2016070501581962");
         acqPayRequest.setMethod("alipay.boss.prod.merch");
         acqPayRequest.setFormat("JSON");
         acqPayRequest.setCharset("utf-8");
         acqPayRequest.setSignType("RSA");
        
         
-        acqPayRequest.setTimestamp("2016/8/17 13:07:09");
+        acqPayRequest.setTimestamp(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()));
         acqPayRequest.setVersion("1.0");
         acqPayRequest.setNotifyUrl("http://api.test.alipay.net/atinterface/receive_notify.htm");
-        acqPayRequest.setAppAuthToken(" ");
+        acqPayRequest.setAppAuthToken("    ");
         acqPayRequest.setWalletType("alipay");
         acqPayRequest.setBizContent(acqPayRequest.bizrequest.buildBizContent());
         
@@ -100,8 +99,6 @@ public class AcquirerPayTest {
         String response = HttpUtil.httpClientPost(merchantNotifyUrl, paraList);
         LogUtil.info(logger, "完成发送扫码支付到中心,response={0}", response);
         Assert.assertTrue(StringUtils.equals(response, ParamConstant.NOTIFY_SUCCESS));
-        //Assert.assertTrue(ret.getCode().equals(AlipayBizResultEnum.SUCCESS.getCode()));
-
     }
     
    
