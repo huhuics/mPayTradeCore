@@ -25,7 +25,7 @@ public class CreateOrderRequest implements Serializable {
     /**
      * 
      */
-    private String            method;
+    private String            method;d
 
     /**
      *  
