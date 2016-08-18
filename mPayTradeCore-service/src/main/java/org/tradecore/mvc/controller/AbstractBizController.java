@@ -79,7 +79,6 @@ public abstract class AbstractBizController {
         try {
             verifyRet = acquirerService.verify(acquirerId, paraMap);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "验签发生异常,paraStr={0}", acquirerId);
             throw new RuntimeException("验签发生异常");
         }
 

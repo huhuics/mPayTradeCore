@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.model.GoodsDetail;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
@@ -29,7 +30,6 @@ import org.tradecore.service.test.BaseTest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradePayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;

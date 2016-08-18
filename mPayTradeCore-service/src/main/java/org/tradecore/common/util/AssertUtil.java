@@ -9,8 +9,6 @@ import java.util.Collection;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.pagehelper.StringUtil;
-
 /**
  * 断言工具类
  * @author HuHui
@@ -186,7 +184,7 @@ public class AssertUtil {
      */
     public static void assertEmpty(String str, String errMsg) {
 
-        if (StringUtil.isNotEmpty(str)) {
+        if (StringUtils.isNotEmpty(str)) {
 
             throw new RuntimeException(errMsg);
         }
@@ -200,7 +198,7 @@ public class AssertUtil {
      */
     public static void assertNotEmpty(String str, String errMsg) {
 
-        if (StringUtil.isEmpty(str)) {
+        if (StringUtils.isEmpty(str)) {
 
             throw new RuntimeException(errMsg);
         }

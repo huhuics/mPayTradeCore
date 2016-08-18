@@ -128,7 +128,6 @@ public class AcquirerServiceImpl implements AcquirerService {
         try {
             verifyRet = AlipaySignature.rsaCheckContent(paraStr, sign, acquirerInfo.getPubKey(), StandardCharsets.UTF_8.displayName());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "验签发生异常,paraStr={0}", paraStr);
             throw new RuntimeException("验签发生异常");
         }
 

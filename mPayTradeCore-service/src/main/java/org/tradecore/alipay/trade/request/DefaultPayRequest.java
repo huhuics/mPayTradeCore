@@ -7,12 +7,12 @@ package org.tradecore.alipay.trade.request;
 import java.util.List;
 
 import org.tradecore.alipay.enums.AlipaySceneEnum;
+import org.tradecore.alipay.trade.model.ExtendParams;
+import org.tradecore.alipay.trade.model.GoodsDetail;
 import org.tradecore.alipay.trade.model.SubMerchant;
 import org.tradecore.common.util.AssertUtil;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.alipay.api.domain.ExtendParams;
-import com.alipay.api.domain.GoodsDetail;
 
 /**
  * 支付宝条码支付、扫码支付、线上支付请求参数的父类<br>

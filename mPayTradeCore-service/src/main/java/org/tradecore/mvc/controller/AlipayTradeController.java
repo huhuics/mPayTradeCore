@@ -4,7 +4,6 @@
  */
 package org.tradecore.mvc.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.tradecore.alipay.enums.AlipaySceneEnum;
 import org.tradecore.alipay.trade.constants.ParamConstant;
+import org.tradecore.alipay.trade.model.ExtendParams;
+import org.tradecore.alipay.trade.model.GoodsDetail;
 import org.tradecore.alipay.trade.request.CancelRequest;
 import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.DefaultPayRequest;
@@ -37,8 +38,6 @@ import org.tradecore.common.util.ResponseUtil;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.alipay.api.domain.ExtendParams;
-import com.alipay.api.domain.GoodsDetail;
 import com.alipay.api.response.AlipayTradeCancelResponse;
 import com.alipay.api.response.AlipayTradeCreateResponse;
 import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
@@ -537,27 +536,8 @@ public class AlipayTradeController extends AbstractBizController {
      */
     private List<GoodsDetail> parseGoodsDetailList(String goodsDetailListStr) {
 
-        List<GoodsDetail> goodsDetails = new ArrayList<GoodsDetail>();
-
-        List<Map<String, String>> listMap = JSON.parseObject(goodsDetailListStr, new TypeReference<List<Map<String, String>>>() {
+        List<GoodsDetail> goodsDetails = JSON.parseObject(goodsDetailListStr, new TypeReference<List<GoodsDetail>>() {
         });
-
-        for (int i = 0; i < listMap.size(); i++) {
-            Map<String, String> goodsDetailMap = listMap.get(i);
-            GoodsDetail goodDetail = new GoodsDetail();
-            goodDetail.setAlipayGoodsId(goodsDetailMap.get("alipay_goods_id"));
-            goodDetail.setGoodsCategory(goodsDetailMap.get("goods_category"));
-            goodDetail.setGoodsId(goodsDetailMap.get("goods_id"));
-            goodDetail.setGoodsName(goodsDetailMap.get("goods_name"));
-
-            goodDetail.setPrice(goodsDetailMap.get("price"));
-
-            if (StringUtils.isNotBlank(goodsDetailMap.get("quantity"))) {
-                goodDetail.setQuantity(Long.parseLong(goodsDetailMap.get("quantity")));
-            }
-
-            goodsDetails.add(goodDetail);
-        }
 
         return goodsDetails;
     }
@@ -566,10 +546,8 @@ public class AlipayTradeController extends AbstractBizController {
      * 解析ExtendParams
      */
     private ExtendParams parseExtendParams(String extendParamsStr) {
-        Map<String, String> extendParamsMap = JSON.parseObject(extendParamsStr, new TypeReference<Map<String, String>>() {
+        ExtendParams extendParams = JSON.parseObject(extendParamsStr, new TypeReference<ExtendParams>() {
         });
-        ExtendParams extendParams = new ExtendParams();
-        extendParams.setSysServiceProviderId(extendParamsMap.get("sys_service _provider_id"));
 
         return extendParams;
     }
