@@ -135,8 +135,7 @@ public class MerchantController extends AbstractBizController {
     /**
      * 商户修改
      */
-    @ResponseBody
-    @RequestMapping(value = "/modify", method = RequestMethod.POST)
+    @Deprecated
     public String modify(WebRequest request, ModelMap map) {
 
         LogUtil.info(logger, "收到商户信息修改HTTP请求");
