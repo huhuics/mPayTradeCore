@@ -11,16 +11,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.common.util.LogUtil;
 
-public class MerchantCreateOrderTest {
+public class ArquirerCreateOrderTest {
 
     /** 日志 */
-    private static final Logger logger = LoggerFactory.getLogger(MerchantCreateOrderTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ArquirerCreateOrderTest.class);
 
     @Test
     public void testCreate() throws Exception {
 
+    	//结算中心url
         String outUrl = "http://127.0.0.1:8088/mPay/trade/create";
         CreateOrderRequest orderRequest = new CreateOrderRequest();
+        //组装参数--以下参数皆为必填项，可选项的添加可自行增加
         orderRequest.setAcquirerId("10880010001");
         orderRequest.setAppId("2014072300007148");
         orderRequest.setMethod("alipay.boss.prod.merch");
@@ -38,9 +40,10 @@ public class MerchantCreateOrderTest {
         orderRequest.setTotalAmount("20.00");
         orderRequest.setSubject("iphone");
 
+        //根据orderRequest获取List<NameValuePair>
         List<NameValuePair> paraList = orderRequest.buildPostParaList();
 
-        //发送
+        //发送请求
         String response = send(outUrl, paraList);
 
         LogUtil.info(logger, "订单创建HTTP调用结果,response={0}", response);
@@ -48,16 +51,20 @@ public class MerchantCreateOrderTest {
     }
 
     private String send(String outUrl, List<NameValuePair> paraList) {
+    	
         String response = "";
         HttpClient client = new HttpClient();
         PostMethod postMethod = new PostMethod(outUrl);
         postMethod.getParams().setContentCharset("utf-8");
+        
         try {
+        	//设置请求参数
             NameValuePair[] pair = new NameValuePair[paraList.size()];
             for (int i = 0; i < paraList.size(); i++) {
                 pair[i] = paraList.get(i);
             }
             postMethod.addParameters(pair);
+            //执行调用
             client.executeMethod(postMethod);
             response = postMethod.getResponseBodyAsString();
         } catch (Exception e) {
@@ -65,6 +72,7 @@ public class MerchantCreateOrderTest {
         } finally {
             postMethod.releaseConnection();
         }
+        
         return response;
     }
 
