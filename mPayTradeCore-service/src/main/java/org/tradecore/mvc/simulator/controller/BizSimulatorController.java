@@ -233,12 +233,13 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.pay(payRequest);
+
+            LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             map.put("code", response.getCode());
@@ -266,11 +267,11 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.pay(payRequest);
+
+            LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器条码支付HTTP调用异常");
         }
-
-        LogUtil.info(logger, "模拟器条码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             return response.getCode();
@@ -291,12 +292,13 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.create(createRequest);
+
+            LogUtil.info(logger, "模拟器订单创建HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单创建HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器订单创建HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             map.put("code", response.getCode());
@@ -323,12 +325,13 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.precreate(precreateRequest);
+
+            LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器扫码支付HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器扫码支付HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             map.put("code", response.getCode());
@@ -377,12 +380,13 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.query(queryRequest);
+
+            LogUtil.info(logger, "模拟器订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器订单查询HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return QUERY_RESULT;
         }
-
-        LogUtil.info(logger, "模拟器订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             map.put("buyerLogonId", response.getBuyerLogonId());
@@ -412,12 +416,14 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.refundQuery(queryRequest);
+
+            LogUtil.info(logger, "模拟器退款订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器退款订单查询HTTP调用异常");
             setErrorResult(map, e.getMessage());
-        }
 
-        LogUtil.info(logger, "模拟器退款订单查询HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
+            return REFUND_QUERY_RESULT;
+        }
 
         if (response != null) {
             map.put("alipayTradeNo", response.getTradeNo());
@@ -470,12 +476,13 @@ public class BizSimulatorController {
 
         try {
             response = tradeService.refund(refundRequest);
+
+            LogUtil.info(logger, "模拟器退款HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器退款HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器退款HTTP调用结果,response={0}", JSON.toJSONString(response, SerializerFeature.UseSingleQuotes));
 
         if (response != null) {
             map.put("code", response.getCode());
@@ -503,12 +510,13 @@ public class BizSimulatorController {
 
         try {
             cancelResponse = tradeService.cancel(cancelRequest);
+
+            LogUtil.info(logger, "模拟器撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器撤销HTTP调用异常");
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器撤销HTTP调用结果,cancelResult={0}", JSON.toJSONString(cancelResponse, SerializerFeature.UseSingleQuotes));
 
         if (cancelResponse != null) {
             map.put("code", cancelResponse.getCode());
@@ -536,12 +544,13 @@ public class BizSimulatorController {
 
         try {
             createResponse = merchantService.create(merchantCreateRequest);
+
+            LogUtil.info(logger, "模拟器返回商户入驻响应,createResponse={0}", createResponse);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器商户入驻HTTP调用异常,merchantCreateRequest={0}", merchantCreateRequest);
             setErrorResult(map, e.getMessage());
+            return RESULT;
         }
-
-        LogUtil.info(logger, "模拟器返回商户入驻响应,createResponse={0}", createResponse);
 
         if (createResponse != null && StringUtils.equals(createResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             map.put("code", createResponse.getCode());
@@ -570,14 +579,15 @@ public class BizSimulatorController {
 
         try {
             queryResponse = merchantService.query(merchantQueryRequest);
+
+            LogUtil.info(logger, "模拟器返回商户查询响应,queryResponse={0}", queryResponse);
         } catch (Exception e) {
             LogUtil.error(e, logger, "模拟器商户信息查询HTTP调用异常,merchantQueryRequest={0}", merchantQueryRequest);
             setErrorResult(map, e.getMessage());
+            return MECH_QUERY_RESULT;
         }
 
-        LogUtil.info(logger, "模拟器返回商户查询响应,queryResponse={0}", queryResponse);
-
-        if (queryResponse != null && StringUtils.equals(queryResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
+        if (queryResponse != null) {
             map.put("acquirer_id", queryResponse.getAcquirer_id());
             map.put("sub_merchant_id", queryResponse.getMerchant_id());
             map.put("out_external_id", queryResponse.getExternal_id());
