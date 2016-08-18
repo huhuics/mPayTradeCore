@@ -28,12 +28,12 @@ public class MerchantQueryRequest extends BaseRequest {
     private String            external_id;
 
     /**
-     * (必填)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
+     * (特殊可选)商户外部编号,一个受理机构下唯一,即商户在收单机构的商户标识
      */
     private String            out_external_id;
 
     /**
-     * (特殊可选)商户标识号<br>
+     * (特殊可选)商户标识号
      */
     private String            merchant_id;
 
