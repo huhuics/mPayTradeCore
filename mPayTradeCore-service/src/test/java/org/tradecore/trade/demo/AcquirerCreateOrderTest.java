@@ -11,10 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tradecore.common.util.LogUtil;
 
-public class ArquirerCreateOrderTest {
+public class AcquirerCreateOrderTest {
 
     /** 日志 */
-    private static final Logger logger = LoggerFactory.getLogger(ArquirerCreateOrderTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AcquirerCreateOrderTest.class);
 
     @Test
     public void testCreate() throws Exception {
