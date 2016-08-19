@@ -304,6 +304,10 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             if (!StringUtils.equals(nativePayOrder.getOrderStatus(), queryResponse.getTradeStatus())) {
                 nativePayOrder.setOrderStatus(queryResponse.getTradeStatus());
                 nativePayOrder.setAlipayTradeNo(queryResponse.getTradeNo());
+                //如果是支付成功的,则需要填充对账时间
+                if (StringUtils.equals(queryResponse.getTradeStatus(), AlipayTradeStatusEnum.TRADE_SUCCESS.getCode())) {
+                    nativePayOrder.setCheckDate(nativePayOrder.getCreateDate());
+                }
                 //修改本地订单
                 payRepository.updatePayOrder(nativePayOrder);
             }
