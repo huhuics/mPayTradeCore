@@ -43,7 +43,7 @@ public class CreateRequest extends DefaultPayRequest {
     private String            notifyUrl;
 
     @Override
-    public boolean validate() {
+    public void validate() {
 
         super.validate();
 
@@ -55,7 +55,6 @@ public class CreateRequest extends DefaultPayRequest {
 
         AssertUtil.assertNotEmpty(notifyUrl, "结算中心支付结果通知URL不能为空");
 
-        return true;
     }
 
     public String getBuyerLogonId() {

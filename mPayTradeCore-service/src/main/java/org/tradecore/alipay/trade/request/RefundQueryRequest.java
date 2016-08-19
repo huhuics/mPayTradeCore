@@ -117,7 +117,7 @@ public class RefundQueryRequest extends BaseRequest {
     }
 
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");
 
@@ -129,7 +129,6 @@ public class RefundQueryRequest extends BaseRequest {
             throw new RuntimeException("商户订单号和支付宝交易号不能同时为空");
         }
 
-        return true;
     }
 
 }

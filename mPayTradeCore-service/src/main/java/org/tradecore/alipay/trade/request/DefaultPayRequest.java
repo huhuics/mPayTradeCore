@@ -148,7 +148,7 @@ public class DefaultPayRequest extends BaseRequest {
      * @return 校验是否成功
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");
 
@@ -164,7 +164,6 @@ public class DefaultPayRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(subject, "订单标题不能为空");
 
-        return true;
     }
 
     public String getAcquirerId() {

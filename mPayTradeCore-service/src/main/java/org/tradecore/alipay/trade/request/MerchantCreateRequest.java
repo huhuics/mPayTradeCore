@@ -101,7 +101,7 @@ public class MerchantCreateRequest extends BaseRequest {
      * @return
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(out_external_id, "商户外部编号不能为空");
 
@@ -115,7 +115,6 @@ public class MerchantCreateRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(category_id, "经营类目编号不能为空");
 
-        return true;
     }
 
     public String getExternal_id() {

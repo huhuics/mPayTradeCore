@@ -34,7 +34,7 @@ public class PrecreateRequest extends DefaultPayRequest {
      * @return 校验是否成功
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         super.validate();
 
@@ -42,7 +42,6 @@ public class PrecreateRequest extends DefaultPayRequest {
 
         AssertUtil.assertNotEmpty(notifyUrl, "结算中心支付结果通知URL不能为空");
 
-        return true;
     }
 
     public String getOutNotifyUrl() {

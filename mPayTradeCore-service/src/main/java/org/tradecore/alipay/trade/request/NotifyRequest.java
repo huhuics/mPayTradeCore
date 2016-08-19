@@ -198,11 +198,10 @@ public class NotifyRequest extends BaseRequest {
      * @return
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(out_trade_no, "商户订单号不能为空");
 
-        return true;
     }
 
     public String getNotifyTime() {

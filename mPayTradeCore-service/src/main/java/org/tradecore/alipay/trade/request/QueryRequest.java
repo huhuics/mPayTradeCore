@@ -56,7 +56,7 @@ public class QueryRequest extends BaseRequest {
      * @return 校验是否成功
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(acquirerId, "收单机构编号不能为空");
 
@@ -66,7 +66,6 @@ public class QueryRequest extends BaseRequest {
             throw new RuntimeException("商户订单号和支付宝交易号不能同时为空");
         }
 
-        return true;
     }
 
     public String getAcquirerId() {

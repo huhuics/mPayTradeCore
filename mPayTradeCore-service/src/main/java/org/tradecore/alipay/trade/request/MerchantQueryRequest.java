@@ -42,7 +42,7 @@ public class MerchantQueryRequest extends BaseRequest {
      * @return
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         AssertUtil.assertNotEmpty(acquirer_id, "收单机构编号不能为空");
 
@@ -50,7 +50,6 @@ public class MerchantQueryRequest extends BaseRequest {
             throw new RuntimeException("商户外部编号和商户标识号不能同时为空");
         }
 
-        return true;
     }
 
     public String getAcquirer_id() {

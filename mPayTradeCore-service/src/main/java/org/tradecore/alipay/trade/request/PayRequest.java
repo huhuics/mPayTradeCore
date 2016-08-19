@@ -29,7 +29,7 @@ public class PayRequest extends DefaultPayRequest {
      * @return 校验是否成功
      */
     @Override
-    public boolean validate() {
+    public void validate() {
 
         super.validate();
 
@@ -39,7 +39,6 @@ public class PayRequest extends DefaultPayRequest {
             throw new IllegalStateException("交易授权码格式错误");
         }
 
-        return true;
     }
 
     public String getAuthCode() {

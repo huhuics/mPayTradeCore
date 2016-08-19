@@ -28,6 +28,6 @@ public abstract class BaseRequest implements Serializable {
      * 参数校验
      * @return
      */
-    public abstract boolean validate();
+    public abstract void validate();
 
 }
