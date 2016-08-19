@@ -24,6 +24,7 @@ import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.TradeService;
+import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.service.test.BaseTest;
@@ -61,11 +62,13 @@ public class TradeServiceTest extends BaseTest {
         //组装参数
         PayRequest payRequest = new PayRequest();
         payRequest.setAcquirerId("10880010001");
-        payRequest.setMerchantId("138");
+        payRequest.setMerchantId("27862");
+        payRequest.setSubMerchantId(payRequest.getMerchantId());
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
-        payRequest.setAuthCode("283730526651806251");
+        payRequest.setAuthCode("286246899167157888");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
+        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo()));
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("结算中心条码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
@@ -78,15 +81,9 @@ public class TradeServiceTest extends BaseTest {
         GoodsDetail goods1 = new GoodsDetail();
         goods1.setGoodsId("goods_id001");
         goods1.setGoodsName("xxx面包");
-        goods1.setPrice("1000");
+        goods1.setPrice("0.01");
         goods1.setQuantity(1L);
         goodsDetailList.add(goods1);
-        GoodsDetail goods2 = new GoodsDetail();
-        goods2.setGoodsId("goods_id002");
-        goods2.setGoodsName("xxx牙刷");
-        goods2.setPrice("500");
-        goods2.setQuantity(2L);
-        goodsDetailList.add(goods2);
         payRequest.setGoodsDetailList(goodsDetailList);
 
         AlipayTradePayResponse ret = tradeService.pay(payRequest);
@@ -181,9 +178,9 @@ public class TradeServiceTest extends BaseTest {
         //组装参数
         RefundRequest refundRequest = new RefundRequest();
         refundRequest.setAcquirerId("10880010001");
-        refundRequest.setMerchantId("106");
-        refundRequest.setOutTradeNo("out_trade_no_1469009103740");
-        refundRequest.setRefundAmount("0.01");
+        refundRequest.setMerchantId("27862");
+        refundRequest.setOutTradeNo("out_trade_no_1471588623788");
+        refundRequest.setRefundAmount("0.001");
         refundRequest.setRefundReason("正常退款");
         refundRequest.setStoreId("store_id_" + geneRandomId());
         refundRequest.setOutRequestNo("out_request_no_" + geneRandomId());
