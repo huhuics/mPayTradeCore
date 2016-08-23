@@ -90,7 +90,7 @@ public class BizSimulatorController {
 
     private static final String MERCHANT_ID         = "27862";
 
-    private static final String OUT_NOTIFY_URL      = "http://168.33.130.251:8089/mPay/simulator/receive";
+    private static final String OUT_NOTIFY_URL      = "http://127.0.0.1:8088/mPay/simulator/receive";
 
     /** 交易服务接口 */
     @Resource
