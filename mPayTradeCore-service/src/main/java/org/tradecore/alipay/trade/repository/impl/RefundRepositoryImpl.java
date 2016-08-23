@@ -277,6 +277,18 @@ public class RefundRepositoryImpl implements RefundRepository {
 
     }
 
+    @Override
+    public void deleteRefundOrder(String id) {
+
+        LogUtil.info(logger, "收到删除退款订单请求,id={0}", id);
+
+        try {
+            bizAlipayRefundOrderDAO.deleteByPrimaryKey(id);
+        } catch (Exception e) {
+            throw new RuntimeException("删除退款订单失败", e);
+        }
+    }
+
     /**
      * 是否完全退款<br>
      * 分两种请情况<ul>

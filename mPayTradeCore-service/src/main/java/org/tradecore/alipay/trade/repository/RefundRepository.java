@@ -64,4 +64,10 @@ public interface RefundRepository {
      */
     void updateRefundOrder(BizAlipayRefundOrder refundOrder);
 
+    /**
+     * 根据退款订单的主键id删除退款订单记录
+     * @param id
+     */
+    void deleteRefundOrder(String id);
+
 }

@@ -408,15 +408,19 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回退款业务结果,refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
 
-        //5.幂等控制。如果查询到退款成功记录，则不修改本地退款订单；如果没查询到，则持久化退款记录
+        //5.幂等控制.一,如果查询到退款记录,①退款为成功,则不不做任何操作.②如果为失败或者未知状态,删除失败记录,再插入成功记录;二,如果没查询到，则持久化退款记录
         RefundQueryRequest queryRequest = buildRefundOrderQueryRequest(refundRequest);
         List<BizAlipayRefundOrder> refundOrders = refundRepository.selectRefundOrders(queryRequest);
         if (CollectionUtils.isEmpty(refundOrders)) {
-            //5.1根据支付宝返回结果持久化退款订单，修改原订单状态
-            refundRepository.saveRefundOrder(oriOrder, refundRequest, refundResponse);
-
-            //5.2根据退款订单状态更新本地交易订单的退款状态数据
-            payRepository.updatePayOrder(oriOrder);
+            doCreateAndUpdate(oriOrder, refundRequest, refundResponse);
+        } else {
+            BizAlipayRefundOrder refundOrder = refundOrders.get(ParamConstant.FIRST_INDEX);
+            if (StringUtils.equals(AlipayTradeStatusEnum.REFUND_FAILED.getCode(), refundOrder.getRefundStatus())
+                || StringUtils.equals(AlipayTradeStatusEnum.UNKNOWN.getCode(), refundOrder.getRefundStatus())) {
+                LogUtil.info(logger, "退款请求号out_request_no={0}存在退款失败记录,删除退款失败记录", refundOrder.getOutRequestNo());
+                refundRepository.deleteRefundOrder(refundOrder.getId());
+                doCreateAndUpdate(oriOrder, refundRequest, refundResponse);
+            }
         }
 
         return setRefundResponse(refundResponse, oriOrder.getOutTradeNo());
@@ -495,6 +499,17 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         }
 
         return setCancelResponse(cancelResponse, oriOrder.getOutTradeNo());
+    }
+
+    /**
+     * 增加退款订单并修改原始订单
+     */
+    private void doCreateAndUpdate(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse refundResponse) {
+        //根据支付宝返回结果持久化退款订单，修改原订单状态
+        refundRepository.saveRefundOrder(oriOrder, refundRequest, refundResponse);
+
+        //根据退款订单状态更新本地交易订单的退款状态数据
+        payRepository.updatePayOrder(oriOrder);
     }
 
     /**
@@ -660,7 +675,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         refundQueryRequest.setMerchantId(refundRequest.getMerchantId());
         refundQueryRequest.setOutRequestNo(refundRequest.getOutRequestNo());
         refundQueryRequest.setOutTradeNo(refundRequest.getOutTradeNo());
-        refundQueryRequest.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
         return refundQueryRequest;
     }
