@@ -23,7 +23,9 @@ public class FormaterUtil {
      * 生成结算中心订单号
      */
     public static String tradeNoFormat(String acquirerId, String merchantId, String outTradeNo) {
-        return new StringBuilder(acquirerId).append(merchantId).append(outTradeNo).toString();
+        //        return new StringBuilder(acquirerId).append(merchantId).append(outTradeNo).toString();
+        //20160825修改，结算中心订单号=收单机构订单号
+        return outTradeNo;
     }
 
     /**
