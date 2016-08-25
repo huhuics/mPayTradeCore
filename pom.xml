@@ -5,7 +5,7 @@
 
 	<groupId>com.fesc.mPayTradeCore</groupId>
 	<artifactId>mPayTradeCore</artifactId>
-	<version>20160823</version>
+	<version>20160824</version>
 	<packaging>pom</packaging>
 
 	<name>mPayTradeCore</name>

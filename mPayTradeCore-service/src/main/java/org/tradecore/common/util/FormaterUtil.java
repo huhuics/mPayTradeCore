@@ -27,7 +27,8 @@ public class FormaterUtil {
     }
 
     /**
-     * 生成结算中心商户外部编号
+     * 生成结算中心商户外部编号<br>
+     * 如果超过10位，从后往前截取
      */
     public static String externalIdFormat(String acquirerId, String outExternalId) {
 
