@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.service.AcquirerService;
 import org.tradecore.common.config.AlipayConfigs;
+import org.tradecore.common.util.LogUtil;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -60,8 +61,21 @@ public class AlipayClientFactory {
         }
 
         AlipayClient alipayClient = alipayClientMap.get(appId);
+
+        //如果appId对应的client对象为空，则重新创建client并放入alipayClientMap中
         if (alipayClient == null) {
-            throw new RuntimeException("不存在此appid=" + appId + "对应的alipayClient,获取alipayClient失败");
+            LogUtil.info(logger, "获取alipayClient为空,不存在此appid={0}对应的alipayClient,重新创建此appid对应的client", appId);
+
+            AlipayClient client = null;
+            try {
+                client = new DefaultAlipayClient(AlipayConfigs.getOpenApiDomain(), appId, AlipayConfigs.getPrivateKey(), ParamConstant.ALIPAY_CONFIG_FORMAT,
+                    ParamConstant.ALIPAY_CONFIG_CHARSET, AlipayConfigs.getAlipayPublicKey());
+            } catch (Exception e) {
+                throw new RuntimeException("创建支付宝远程连接异常", e);
+            }
+            alipayClientMap.put(appId, client);
+
+            return client;
         }
         return alipayClient;
     }
@@ -72,8 +86,13 @@ public class AlipayClientFactory {
 
         //初始化alipayClientMap
         for (String appId : appIds) {
-            AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfigs.getOpenApiDomain(), appId, AlipayConfigs.getPrivateKey(),
-                ParamConstant.ALIPAY_CONFIG_FORMAT, ParamConstant.ALIPAY_CONFIG_CHARSET, AlipayConfigs.getAlipayPublicKey());
+            AlipayClient alipayClient = null;
+            try {
+                alipayClient = new DefaultAlipayClient(AlipayConfigs.getOpenApiDomain(), appId, AlipayConfigs.getPrivateKey(),
+                    ParamConstant.ALIPAY_CONFIG_FORMAT, ParamConstant.ALIPAY_CONFIG_CHARSET, AlipayConfigs.getAlipayPublicKey());
+            } catch (Exception e) {
+                throw new RuntimeException("创建支付宝远程连接异常", e);
+            }
 
             alipayClientMap.put(appId, alipayClient);
         }
