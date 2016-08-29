@@ -210,7 +210,7 @@ public class BizSimulatorController {
         map.put("contact_mobile", "13688888888");
         map.put("contact_email", "user@163.com");
         map.put("category_id", "2015110500080520");
-        map.put("source", "2016070723781231");
+        map.put("source", "2088811361230225");
         map.put("memo", "测试备注信息");
 
         return TO_MECH_CREATE;
