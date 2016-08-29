@@ -33,6 +33,7 @@ import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.alipay.trade.service.TradeService;
+import org.tradecore.common.config.AlipayConfigs;
 import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
@@ -90,7 +91,7 @@ public class BizSimulatorController {
 
     private static final String MERCHANT_ID         = "27862";
 
-    private static final String OUT_NOTIFY_URL      = "http://127.0.0.1:8088/mPay/simulator/receive";
+    private static final String OUT_NOTIFY_URL      = "http://127.0.0.1:8089/mPay/simulator/receive";
 
     /** 交易服务接口 */
     @Resource
@@ -210,7 +211,7 @@ public class BizSimulatorController {
         map.put("contact_mobile", "13688888888");
         map.put("contact_email", "user@163.com");
         map.put("category_id", "2015110500080520");
-        map.put("source", "2088811361230225");
+        map.put("source", AlipayConfigs.getPid());
         map.put("memo", "测试备注信息");
 
         return TO_MECH_CREATE;
