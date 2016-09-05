@@ -24,7 +24,6 @@ import org.tradecore.alipay.trade.request.MerchantCreateRequest;
 import org.tradecore.alipay.trade.request.MerchantModifyRequest;
 import org.tradecore.alipay.trade.request.MerchantQueryRequest;
 import org.tradecore.alipay.trade.service.MerchantService;
-import org.tradecore.common.config.AlipayConfigs;
 import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.LogUtil;
@@ -232,7 +231,6 @@ public class MerchantController extends AbstractBizController {
 
         createRequest = JSON.parseObject(bizContent, MerchantCreateRequest.class);
         createRequest.setAcquirer_id(acquirerId);
-        createRequest.setSource(AlipayConfigs.getPid());
 
         //对external_id和out_external_id进行转化
         createRequest.setOut_external_id(createRequest.getExternal_id());

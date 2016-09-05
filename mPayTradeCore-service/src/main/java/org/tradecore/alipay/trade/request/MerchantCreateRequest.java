@@ -77,7 +77,7 @@ public class MerchantCreateRequest extends BaseRequest {
     private String            category_id;
 
     /**
-     *  商户来源标识
+     *  (必填)商户来源标识
      */
     private String            source;
 
@@ -114,6 +114,8 @@ public class MerchantCreateRequest extends BaseRequest {
         AssertUtil.assertNotEmpty(service_phone, "客服电话不能为空");
 
         AssertUtil.assertNotEmpty(category_id, "经营类目编号不能为空");
+
+        AssertUtil.assertNotEmpty(source, "商户来源标识不能为空");
 
     }
 
