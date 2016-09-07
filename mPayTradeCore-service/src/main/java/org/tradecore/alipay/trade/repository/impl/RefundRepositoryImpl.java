@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.repository.impl;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ import com.alipay.api.response.AlipayTradeFastpayRefundQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
 
 /**
- * 
+ * 退款仓储实现类
  * @author HuHui
  * @version $Id: RefundRepositoryImpl.java, v 0.1 2016年7月11日 下午7:49:34 HuHui Exp $
  */
@@ -120,7 +121,23 @@ public class RefundRepositoryImpl implements RefundRepository {
         try {
             bizAlipayRefundOrderDAO.insert(refundOrder);
         } catch (Exception e) {
-            throw new RuntimeException("退款请求数据持久化失败", e);
+            throw new RuntimeException("退款记录持久化失败", e);
+        }
+
+        LogUtil.info(logger, "退款订单持久化成功");
+
+        return refundOrder;
+    }
+
+    @Override
+    public BizAlipayRefundOrder saveRefundOrder(BizAlipayRefundOrder refundOrder) {
+
+        LogUtil.info(logger, "收到退款订单持久化请求");
+
+        try {
+            bizAlipayRefundOrderDAO.insert(refundOrder);
+        } catch (SQLException e) {
+            throw new RuntimeException("退款记录持久化失败", e);
         }
 
         LogUtil.info(logger, "退款订单持久化成功");

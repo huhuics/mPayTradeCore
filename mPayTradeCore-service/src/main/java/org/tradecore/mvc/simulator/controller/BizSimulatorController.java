@@ -89,7 +89,7 @@ public class BizSimulatorController {
 
     private static final String MECH_QUERY_RESULT   = "mechQueryResult";
 
-    private static final String MERCHANT_ID         = "27862";
+    private static final String MERCHANT_ID         = "16371057142";
 
     private static final String OUT_NOTIFY_URL      = "http://127.0.0.1:8089/mPay/simulator/receive";
 

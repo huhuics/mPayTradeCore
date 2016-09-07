@@ -105,6 +105,8 @@ public class RefundRequest extends BaseRequest {
 
         AssertUtil.assertNotEmpty(refundAmount, "退款金额不能为空");
 
+        AssertUtil.assertNotEmpty(outRequestNo, "退款流水号不能为空");
+
     }
 
     public String getAcquirerId() {

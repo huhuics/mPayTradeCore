@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
+import org.tradecore.alipay.enums.CancelActionEnum;
+import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.constants.ParamConstant;
 import org.tradecore.alipay.trade.convertor.Convertor;
@@ -38,6 +40,7 @@ import org.tradecore.common.util.AssertUtil;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.LogUtil;
 import org.tradecore.common.util.Money;
+import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.domain.BizAcquirerInfo;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -132,6 +135,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             //6.2 返回处理中
             LogUtil.warn(logger, "条码支付返回业务处理中");
             payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
+            payOrder.setAlipayTradeNo(payResponse.getTradeNo());
         } else if (isResponseError(payResponse)) {
             //6.3 系统错误
             LogUtil.warn(logger, "条码支付返回系统错误,outTradeNo={0}", payRequest.getOutTradeNo());
@@ -475,6 +479,18 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             cancelOrder.setAction(cancelResponse.getAction());
             cancelOrder.setReturnDetail(JSON.toJSONString(cancelResponse.getBody(), SerializerFeature.UseSingleQuotes));
 
+            if (StringUtils.equals(CancelActionEnum.REFUND.getCode(), cancelResponse.getAction())) {
+                //判断是否存在全额退款记录(通过退款金额判断)
+                Money refundedMoney = refundRepository.getRefundedMoney(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+                    cancelRequest.getAlipayTradeNo());
+                if (!refundedMoney.equals(oriOrder.getTotalAmount())) {
+                    LogUtil.info(logger, "撤销引起资金变动,本地持久化一条完全退款记录,tradeNo={0}", oriOrder.getTradeNo());
+                    //没有退款,则插入一笔完全退款记录
+                    BizAlipayRefundOrder refundOrder = buildRefundOrder(oriOrder, cancelRequest, cancelResponse);
+                    refundRepository.saveRefundOrder(refundOrder);
+                }
+            }
+
         } else if (isResponseError(cancelResponse)) {
             LogUtil.warn(logger, "订单撤销返回系统错误");
             cancelOrder.setCancelStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
@@ -499,6 +515,36 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         }
 
         return setCancelResponse(cancelResponse, oriOrder.getOutTradeNo());
+    }
+
+    /**
+     * 构造退款记录
+     */
+    private BizAlipayRefundOrder buildRefundOrder(BizAlipayPayOrder oriOrder, CancelRequest cancelRequest, AlipayTradeCancelResponse cancelResponse) {
+        BizAlipayRefundOrder refundOrder = new BizAlipayRefundOrder();
+
+        refundOrder.setId(UUIDUtil.geneId());
+        refundOrder.setAcquirerId(cancelRequest.getAcquirerId());
+        refundOrder.setMerchantId(cancelRequest.getMerchantId());
+        refundOrder.setTradeNo(oriOrder.getTradeNo());
+        refundOrder.setAlipayTradeNo(oriOrder.getAlipayTradeNo());
+        refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+        refundOrder.setTotalAmount(oriOrder.getTotalAmount());
+        refundOrder.setRefundAmount(oriOrder.getTotalAmount());
+        refundOrder.setRefundReason(ParamConstant.DEFAULT_CANCEL_CAUSE_REFUND_REASON);
+        refundOrder.setSendBackFee(oriOrder.getTotalAmount());
+        refundOrder.setOutRequestNo(cancelResponse.getTradeNo());
+        refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
+        refundOrder.setFundChange(ParamConstant.Y);
+        refundOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
+        refundOrder.setCheckDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        refundOrder.setReturnDetail(cancelResponse.getBody());
+        refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+        refundOrder.setGmtRefundPay(new Date());
+        refundOrder.setGmtCreate(new Date());
+        refundOrder.setGmtUpdate(new Date());
+
+        return refundOrder;
     }
 
     /**

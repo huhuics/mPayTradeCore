@@ -71,6 +71,9 @@ public class ParamConstant {
     /** 买家支付宝账号 */
     public static final String BUYER_LOGON_ID                             = "buyer_logon_id";
 
+    /** 撤销引起退款理由 */
+    public static final String DEFAULT_CANCEL_CAUSE_REFUND_REASON         = "撤销引起退款";
+
     /** 商户创建返回json字段名 */
     public static final String MERCHANT_CREATE_RESPONSE                   = "merchant_create_response";
 
