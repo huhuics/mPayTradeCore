@@ -4,8 +4,6 @@
  */
 package org.tradecore.common.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 格式化生成结算中心的ID<br>
  * <ul>
@@ -17,8 +15,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FormaterUtil {
 
-    private static final int MAX_LENGTH = 10;
-
     /**
      * 生成结算中心订单号
      */
@@ -29,22 +25,15 @@ public class FormaterUtil {
     }
 
     /**
-     * 生成结算中心商户外部编号<br>
-     * 如果超过10位，从后往前截取
+     * 生成结算中心商户外部编号
+     * <p>结算中心商户外部编号 = 收单机构编号 + 收单机构商户外部编号</p>
      */
     public static String externalIdFormat(String acquirerId, String outExternalId) {
 
         StringBuilder strBuilder = new StringBuilder();
 
-        if (StringUtils.isNotBlank(acquirerId) && acquirerId.length() > MAX_LENGTH) {
-            acquirerId = acquirerId.substring(acquirerId.length() - MAX_LENGTH);
-        }
-
-        if (StringUtils.isNotBlank(outExternalId) && outExternalId.length() > MAX_LENGTH) {
-            outExternalId = outExternalId.substring(outExternalId.length() - MAX_LENGTH);
-        }
-
         return strBuilder.append(acquirerId).append(outExternalId).toString();
+
     }
 
 }

@@ -26,10 +26,10 @@ public class RefundQueryRequest extends BaseRequest {
     private String            merchantId;
 
     /** (特殊可选)商户网站订单系统中唯一订单号，和支付宝交易号不能同时为空 */
-    @JSONField(name = "out_trade_no")
     private String            outTradeNo;
 
     /** (特殊可选)支付宝交易号，和商户订单号不能同时为空 */
+    @JSONField(name = "trade_no")
     private String            alipayTradeNo;
 
     /** (必填)退款请求号 */
