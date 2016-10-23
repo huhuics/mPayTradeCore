@@ -110,10 +110,16 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(payRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "条码支付订单已存在");
 
-        //3.请求参数转换成支付宝支付请求参数
+        //3.创建条码交易订单对象
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
+
+        //4.本地持久化
+        payRepository.savePayOrder(payOrder);
+
+        //5.请求参数转换成支付宝支付请求参数
         AlipayTradePayRequest alipayRequest = createAlipayRequest(payRequest);
 
-        //4.调用支付宝条码支付接口
+        //6.调用支付宝条码支付接口
         AlipayTradePayResponse payResponse = null;
         try {
             payResponse = (AlipayTradePayResponse) getResponse(alipayRequest, acquirer.getAppId());
@@ -123,35 +129,32 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回条码支付响应,payResponse={0}", JSON.toJSONString(payResponse, SerializerFeature.UseSingleQuotes));
 
-        //5.创建条码交易订单对象
-        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(payRequest);
-
-        //6.根据调用结果分别处理
+        //7.根据调用结果分别处理
         if (isResponseSuccess(payResponse)) {
-            //6.1 支付明确成功
+            //7.1 支付明确成功
             LogUtil.info(logger, "条码支付返回成功");
             setPayOrderSuccess(payOrder, payResponse);
         } else if (isPayProcessing(payResponse)) {
-            //6.2 返回处理中
+            //7.2 返回处理中
             LogUtil.warn(logger, "条码支付返回业务处理中");
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setAlipayTradeNo(payResponse.getTradeNo());
         } else if (isResponseError(payResponse)) {
-            //6.3 系统错误
+            //7.3 系统错误
             LogUtil.warn(logger, "条码支付返回系统错误,outTradeNo={0}", payRequest.getOutTradeNo());
             payOrder.setOrderStatus(AlipayTradeStatusEnum.UNKNOWN.getCode());
         } else {
-            //6.4 其它情况可以明确支付失败
+            //7.4 其它情况可以明确支付失败
             LogUtil.warn(logger, "条码支付失败,outTradeNo={0}", payRequest.getOutTradeNo());
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
+        //8.保存支付宝返回信息
         if (payResponse != null) {
             payOrder.setReturnDetail(payResponse.getBody());
         }
 
-        //7.保存订单数据
-        payRepository.savePayOrder(payOrder);
+        //9.更新订单数据
+        payRepository.updatePayOrder(payOrder);
 
         return setPayResponse(payResponse, payRequest.getOutTradeNo());
     }
@@ -173,10 +176,16 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(createRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "支付订单已存在");
 
-        //2.请求参数转换为支付宝请求参数
+        //3.创建支付订单
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(createRequest);
+
+        //4.本地持久化
+        payRepository.savePayOrder(payOrder);
+
+        //5.请求参数转换为支付宝请求参数
         AlipayTradeCreateRequest alipayCreateRequest = createAlipayCreateRequest(createRequest);
 
-        //3.调用支付宝订单创建接口
+        //6.调用支付宝订单创建接口
         AlipayTradeCreateResponse createResponse = null;
         try {
             createResponse = (AlipayTradeCreateResponse) getResponse(alipayCreateRequest, acquirer.getAppId());
@@ -186,13 +195,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回订单创建业务结果,createResponse:{0}", JSON.toJSONString(createResponse, SerializerFeature.UseSingleQuotes));
 
-        //4.创建支付订单
-        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(createRequest);
-
-        //5.根据调用结果分别处理
+        //7.根据调用结果分别处理
         if (isResponseSuccess(createResponse)) {
             LogUtil.info(logger, "订单创建返回成功");
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setAlipayTradeNo(createResponse.getTradeNo());
         } else if (isResponseError(createResponse)) {
             LogUtil.warn(logger, "订单创建返回系统错误,outTradeNo={0}", createRequest.getOutTradeNo());
@@ -202,13 +207,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        //6.保存支付宝返回信息
+        //8.保存支付宝返回信息
         if (createResponse != null) {
             payOrder.setReturnDetail(JSON.toJSONString(createResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
-        //7.保存订单数据
-        payRepository.savePayOrder(payOrder);
+        //9.保存订单数据
+        payRepository.updatePayOrder(payOrder);
 
         return setCreateResponse(createResponse, createRequest.getOutTradeNo());
     }
@@ -226,14 +231,20 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         AssertUtil.assertTrue(acquirerService.isMerchantNormal(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId()), "收单机构或商户不存在或状态非法");
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(precreateRequest.getAcquirerId());
 
-        //  1.2幂等判断
+        //  2.幂等判断
         BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrderByTradeNo(precreateRequest.getTradeNo());
         AssertUtil.assertNull(nativePayOrder, "扫码支付订单已存在");
 
-        //2.请求参数转换成支付宝支付请求参数
+        //3.创建扫码支付订单
+        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
+
+        //4.本地持久化
+        payRepository.savePayOrder(payOrder);
+
+        //5.请求参数转换成支付宝支付请求参数
         AlipayTradePrecreateRequest alipayPrecreateRequest = createAlipayPrecreateRequest(precreateRequest);
 
-        //3.调用支付宝扫码支付接口
+        //6.调用支付宝扫码支付接口
         AlipayTradePrecreateResponse precreateResponse = null;
         try {
             precreateResponse = (AlipayTradePrecreateResponse) getResponse(alipayPrecreateRequest, acquirer.getAppId());
@@ -243,13 +254,9 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
         LogUtil.info(logger, "支付宝返回扫码支付业务结果,precreateResponse={0}", JSON.toJSONString(precreateResponse, SerializerFeature.UseSingleQuotes));
 
-        //4.创建扫码支付订单
-        BizAlipayPayOrder payOrder = Convertor.convert2PayOrder(precreateRequest);
-
-        //5.根据调用结果分别处理
+        //7.根据调用结果分别处理
         if (isResponseSuccess(precreateResponse)) {
             LogUtil.info(logger, "扫码支付返回成功");
-            payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
             payOrder.setQrCode(precreateResponse.getQrCode());
         } else if (isResponseError(precreateResponse)) {
             LogUtil.warn(logger, "扫码支付返回系统错误,outTradeNo={0}", precreateRequest.getOutTradeNo());
@@ -259,13 +266,13 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
             payOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_FAILED.getCode());
         }
 
-        //6.保存支付宝返回信息
+        //8.保存支付宝返回信息
         if (precreateResponse != null) {
             payOrder.setReturnDetail(JSON.toJSONString(precreateResponse.getBody(), SerializerFeature.UseSingleQuotes));
         }
 
-        //7.保存订单数据
-        payRepository.savePayOrder(payOrder);
+        //9.更新订单数据
+        payRepository.updatePayOrder(payOrder);
 
         return setPrecreateResponse(precreateResponse, precreateRequest.getOutTradeNo());
     }
@@ -284,8 +291,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(queryRequest.getAcquirerId());
 
         //2.查询本地订单
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(),
-            queryRequest.getAlipayTradeNo());
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
         AssertUtil.assertNotNull(nativePayOrder, "原订单查询为空");
 
         //3.转换成支付宝查询请求参数
@@ -338,8 +344,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundQueryRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(),
-            refundQueryRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(), refundQueryRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -351,8 +356,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         try {
             refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest, acquirer.getAppId());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(),
-                refundQueryRequest.getAlipayTradeNo());
+            LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(), refundQueryRequest.getAlipayTradeNo());
         }
 
         LogUtil.info(logger, "支付宝返回退款查询业务结果,refundQueryResponse={0}", JSON.toJSONString(refundQueryResponse, SerializerFeature.UseSingleQuotes));
@@ -390,8 +394,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
-            refundRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
@@ -406,8 +409,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         try {
             refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest, acquirer.getAppId());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(),
-                refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
+            LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
         }
 
         LogUtil.info(logger, "支付宝返回退款业务结果,refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
@@ -444,8 +446,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(cancelRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
-            cancelRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -481,8 +482,7 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             if (StringUtils.equals(CancelActionEnum.REFUND.getCode(), cancelResponse.getAction())) {
                 //判断是否存在全额退款记录(通过退款金额判断)
-                Money refundedMoney = refundRepository.getRefundedMoney(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
-                    cancelRequest.getAlipayTradeNo());
+                Money refundedMoney = refundRepository.getRefundedMoney(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
                 if (!refundedMoney.equals(oriOrder.getTotalAmount())) {
                     LogUtil.info(logger, "撤销引起资金变动,本地持久化一条完全退款记录,tradeNo={0}", oriOrder.getTradeNo());
                     //没有退款,则插入一笔完全退款记录
@@ -504,8 +504,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         }
 
         //8.幂等.查询本地是否有撤销成功记录，如果本地为空，则持久化撤销订单，并修改原交易订单的撤销状态；如果本地不为空，则不修改本地订单数据，直接返回支付宝响应
-        List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
-            cancelRequest.getAlipayTradeNo(), AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+        List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo(),
+            AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
 
         if (CollectionUtils.isEmpty(cancelOrders)) {
             //8.1 本地持久化撤销数据

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.OrderCheckEnum;
 import org.tradecore.alipay.trade.constants.JSONFieldConstant;
 import org.tradecore.alipay.trade.request.CancelRequest;
@@ -17,8 +18,8 @@ import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.common.util.DateUtil;
-import org.tradecore.common.util.Money;
 import org.tradecore.common.util.FormaterUtil;
+import org.tradecore.common.util.Money;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
@@ -105,6 +106,8 @@ public class Convertor {
 
         BizAlipayPayOrder payOrder = convertCommonFields(payRequest);
 
+        payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
+
         payOrder.setAuthCode(payRequest.getAuthCode());
 
         return payOrder;
@@ -118,6 +121,8 @@ public class Convertor {
     public static BizAlipayPayOrder convert2PayOrder(CreateRequest createRequest) {
 
         BizAlipayPayOrder payOrder = convertCommonFields(createRequest);
+
+        payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
 
         payOrder.setAccountDetail(reCreateAccountDetail(payOrder.getAccountDetail(), createRequest.getBuyerLogonId(), createRequest.getBuyerId()));
 
@@ -151,6 +156,8 @@ public class Convertor {
     public static BizAlipayPayOrder convert2PayOrder(PrecreateRequest precreateRequest) {
 
         BizAlipayPayOrder payOrder = convertCommonFields(precreateRequest);
+
+        payOrder.setOrderStatus(AlipayTradeStatusEnum.WAIT_BUYER_PAY.getCode());
 
         //设置out_notify_url
         payOrder.setOutNotifyUrl(precreateRequest.getOutNotifyUrl());
