@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.tradecore.dao.BankDetailDAO">
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BankDetailInfo">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="DAY" jdbcType="CHAR" property="day" />
+    <result column="BEGINNING_BALANCE" jdbcType="DECIMAL" property="beginningBalance" />
+    <result column="ENDING_BALANCE" jdbcType="DECIMAL" property="endingBalance" />
+    <result column="IN_MONEY" jdbcType="DECIMAL" property="inMoney" />
+    <result column="IN_REFUND" jdbcType="DECIMAL" property="inRefund" />
+    <result column="IN_INTEREST" jdbcType="DECIMAL" property="inInterest" />
+    <result column="IN_OTHER" jdbcType="DECIMAL" property="inOther" />
+    <result column="IN_TOTAL" jdbcType="DECIMAL" property="inTotal" />
+    <result column="OUT_MONEY" jdbcType="DECIMAL" property="outMoney" />
+    <result column="OUT_REFUND" jdbcType="DECIMAL" property="outRefund" />
+    <result column="OUT_OTHER" jdbcType="DECIMAL" property="outOther" />
+    <result column="OUT_ACCOUNT_FEE" jdbcType="DECIMAL" property="outAccountFee" />
+    <result column="OUT_TOTAL" jdbcType="DECIMAL" property="outTotal" />
+    <result column="ACC_NO" jdbcType="VARCHAR" property="accNo" />
+    <result column="ACC_NAME" jdbcType="VARCHAR" property="accName" />
+    <result column="ACC_BANK_NO" jdbcType="VARCHAR" property="accBankNo" />
+    <result column="ACC_BANK_CODE" jdbcType="VARCHAR" property="accBankCode" />
+    <result column="ACC_BANK_NAME" jdbcType="VARCHAR" property="accBankName" />
+    <result column="ORG_ID" jdbcType="CHAR" property="orgId" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, DAY, BEGINNING_BALANCE, ENDING_BALANCE, IN_MONEY, IN_REFUND, IN_INTEREST, IN_OTHER, 
+    IN_TOTAL, OUT_MONEY, OUT_REFUND, OUT_OTHER, OUT_ACCOUNT_FEE, OUT_TOTAL, ACC_NO, ACC_NAME, 
+    ACC_BANK_NO, ACC_BANK_CODE, ACC_BANK_NAME, ORG_ID
+  </sql>
+  
+   <select id="getListByDay" parameterType="Map" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from BIZ_BANK_DETAIL
+	    where day =#{day}
+  </select>
+</mapper>

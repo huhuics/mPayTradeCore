@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.tradecore.dao.BizPayOrgClearDAO" >
+  <resultMap id="BaseResultMap" type="org.tradecore.dao.domain.BizPayOrgClearInfo" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="DAY" property="day" jdbcType="CHAR" />
+    <result column="TRADE_STATE" property="tradeState" jdbcType="CHAR" />
+    <result column="SUC_NUM" property="sucNum" jdbcType="DECIMAL" />
+    <result column="SUC_MONEY" property="sucMoney" jdbcType="DECIMAL" />
+    <result column="REFUND_NUM" property="refundNum" jdbcType="DECIMAL" />
+    <result column="REFUND_MONEY" property="refundMoney" jdbcType="DECIMAL" />
+    <result column="RECEIPT_MONEY" property="receiptMoney" jdbcType="DECIMAL" />
+    <result column="CLEAR_MONEY" property="clearMoney" jdbcType="DECIMAL" />
+    <result column="ALL_FEE" property="allFee" jdbcType="DECIMAL" />
+    <result column="CLEAR_DAY" property="clearDay" jdbcType="CHAR" />
+    <result column="DEALING" property="dealing" jdbcType="CHAR" />
+    <result column="FAIL_COUNT" property="failCount" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, DAY, TRADE_STATE, SUC_NUM, SUC_MONEY, REFUND_NUM, REFUND_MONEY, RECEIPT_MONEY, 
+    CLEAR_MONEY, ALL_FEE, CLEAR_DAY, DEALING,FAIL_COUNT
+  </sql>
+  
+	
+	<select id="getListByDay" parameterType="Map" resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" />
+	    from BIZ_PAY_ORG_CLEAR
+	    where day =#{day}
+  	</select>
+</mapper>

@@ -4,11 +4,20 @@
  */
 package org.tradecore.mvc.simulator.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -31,6 +40,7 @@ import org.tradecore.alipay.trade.request.PrecreateRequest;
 import org.tradecore.alipay.trade.request.QueryRequest;
 import org.tradecore.alipay.trade.request.RefundQueryRequest;
 import org.tradecore.alipay.trade.request.RefundRequest;
+import org.tradecore.alipay.trade.service.FundMngService;
 import org.tradecore.alipay.trade.service.MerchantService;
 import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.config.AlipayConfigs;
@@ -81,6 +91,8 @@ public class BizSimulatorController {
 
     private static final String TO_MECH_QUERY       = "toMechQuery";
 
+    private static final String TO_FUND_MNG         = "toFundMng";
+
     private static final String RESULT              = "result";
 
     private static final String QUERY_RESULT        = "queryResult";
@@ -88,6 +100,8 @@ public class BizSimulatorController {
     private static final String REFUND_QUERY_RESULT = "refundQueryResult";
 
     private static final String MECH_QUERY_RESULT   = "mechQueryResult";
+
+    private static final String FUND_MNG_RESULT     = "fundMngResult";
 
     private static final String MERCHANT_ID         = "16371057142";
 
@@ -100,6 +114,9 @@ public class BizSimulatorController {
     /** 商户服务接口 */
     @Resource
     private MerchantService     merchantService;
+
+    @Resource
+    private FundMngService      fundMngService;
 
     /**
      * 跳转至菜单页
@@ -166,6 +183,12 @@ public class BizSimulatorController {
     public String toQuery(WebRequest request, ModelMap map) {
 
         return TO_QUERY;
+    }
+
+    @RequestMapping(value = "/toFundMng", method = RequestMethod.GET)
+    public String toMoneyManageQuery(WebRequest request, ModelMap map) {
+
+        return TO_FUND_MNG;
     }
 
     @RequestMapping(value = "/toRefundQuery", method = RequestMethod.GET)
@@ -609,6 +632,55 @@ public class BizSimulatorController {
         return MECH_QUERY_RESULT;
     }
 
+    @RequestMapping(value = "/funMngQuery", method = RequestMethod.POST)
+    public String funMngQuery(HttpServletRequest request, ModelMap map) {
+        
+        LogUtil.info(logger, "模拟器收到资金管理平台查询HTTP请求");
+        //获取请求带过来的参数
+        String interfacetype = request.getParameter("interfacetype");//接口类型
+        String querytype = request.getParameter("querytype");//查询类型
+
+        Map<String, Object> responseStrMap = fundMngService.query(request);
+        
+        String responseStr = (String) responseStrMap.get("responseXml");
+
+        if (StringUtils.isNotBlank(responseStr)) {
+            LogUtil.info(logger, "模拟器返回资金管理平台查询响应,queryResponse={0}", responseStr);
+            responseStr = responseStr.replace("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", "");
+        }
+
+        Document document = null;
+        try {
+            document = DocumentHelper.parseText(responseStr);
+        } catch (DocumentException e) {
+            LogUtil.error(e, logger, "XML格式字符串转换为XML DOM对象时发生异常");
+        }
+        Element root = document.getRootElement();
+        //遍历 
+        Map<String, String> dataMap = new HashMap<String, String>();
+        Map<String, String> responseMap = listNodes(root, dataMap);
+
+        map.put("map", responseMap);//响应信息
+        map.put("queryType", querytype);//报表数据类型
+        map.put("flag", interfacetype);//区分是返回日期还是报表数据
+        String datas = responseMap.get("Datas");
+        if (datas != null) {
+            String[] entitys = datas.split("\n");
+            List<Map<String, Object>> reports = new ArrayList<Map<String, Object>>();
+            for (String entity : entitys) {
+                String[] data = entity.split("\\|");
+                Map<String, Object> entityMap = new HashMap<String, Object>();
+                for (int i = 0; i < data.length; i++) {
+                    entityMap.put("key" + i, data[i]);
+                }
+                reports.add(entityMap);
+            }
+            map.put("reports", reports);
+        }
+
+        return FUND_MNG_RESULT;
+    }
+
     private MerchantQueryRequest buildMechQueryRequest(WebRequest request) {
 
         MerchantQueryRequest queryRequest = new MerchantQueryRequest();
@@ -772,8 +844,7 @@ public class BizSimulatorController {
         precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
         precreateRequest.setScene(request.getParameter("scene"));
         precreateRequest.setOutTradeNo(request.getParameter("out_trade_no"));
-        precreateRequest.setTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(),
-            precreateRequest.getOutTradeNo()));
+        precreateRequest.setTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
         precreateRequest.setSellerId(request.getParameter("seller_id"));
         precreateRequest.setTotalAmount(request.getParameter("total_amount"));
         precreateRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
@@ -846,6 +917,27 @@ public class BizSimulatorController {
      */
     private String geneRandomId() {
         return (System.currentTimeMillis() + (long) (Math.random() * 10000000L)) + "";
+    }
+
+    /**
+     * 
+     * 方法描述 :遍历当前节点下的所有节点    
+     * @param node
+     * @return Map<String,String>
+     */
+    public Map<String, String> listNodes(Element node, Map<String, String> map) {
+        //如果当前节点内容不为空，则保存
+        if (!(node.getTextTrim().equals(""))) {
+            map.put(node.getName(), node.getText());
+        }
+        //同时迭代当前节点下面的所有子节点  
+        //使用递归  
+        Iterator<Element> iterator = node.elementIterator();
+        while (iterator.hasNext()) {
+            Element e = iterator.next();
+            listNodes(e, map);
+        }
+        return map;
     }
 
 }

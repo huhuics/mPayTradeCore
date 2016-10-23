@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.tradecore.dao.WorkCalendarDAO">
+	<resultMap id="BaseResultMap" type="org.tradecore.dao.domain.WorkCalendar">
+		<id column="DAY_ID" property="dayId" jdbcType="VARCHAR" />
+		<result column="WORK_FLAG" property="workDayType" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		DAY_ID, WORK_FLAG
+	</sql>
+	
+	<select id="get" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from T_BSS_WORK_CALENDAR
+		where DAY_ID = #{dayId,jdbcType=VARCHAR}
+	</select>
+</mapper>
