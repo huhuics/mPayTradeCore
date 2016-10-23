@@ -53,6 +53,21 @@ public class CancelRepositoryImpl implements CancelRepository {
     }
 
     @Override
+    public void updateCancelOrder(BizAlipayCancelOrder cancelOrder) {
+
+        LogUtil.info(logger, "收到撤销订单更新请求");
+
+        try {
+            bizAlipayCancelOrderDAO.updateByPrimaryKey(cancelOrder);
+        } catch (Exception e) {
+            throw new RuntimeException("撤销订单更新失败", e);
+        }
+
+        LogUtil.info(logger, "撤销订单更新结果,cancelOrder={0}", cancelOrder);
+
+    }
+
+    @Override
     public List<BizAlipayCancelOrder> selectCancelOrder(String merchantId, String outTradeNo, String alipayTradeNo, String cancelStatus) {
 
         LogUtil.info(logger, "收到撤销订单查询请求,merchantId={0},outTradeNo={1},alipayTradeNo={2}", merchantId, outTradeNo, alipayTradeNo);

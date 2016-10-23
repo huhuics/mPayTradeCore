@@ -25,6 +25,12 @@ public interface CancelRepository {
     BizAlipayCancelOrder saveCancelOrder(BizAlipayCancelOrder cancelOrder);
 
     /**
+     * 更新撤销订单记录
+     * @param cancelOrder
+     */
+    void updateCancelOrder(BizAlipayCancelOrder cancelOrder);
+
+    /**
      * 查询撤销成功的记录
      * @param merchantId
      * @param outTradeNo

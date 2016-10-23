@@ -17,12 +17,14 @@ import org.tradecore.alipay.trade.request.CreateRequest;
 import org.tradecore.alipay.trade.request.DefaultPayRequest;
 import org.tradecore.alipay.trade.request.PayRequest;
 import org.tradecore.alipay.trade.request.PrecreateRequest;
+import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.DateUtil;
 import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.Money;
 import org.tradecore.common.util.UUIDUtil;
 import org.tradecore.dao.domain.BizAlipayCancelOrder;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
+import org.tradecore.dao.domain.BizAlipayRefundOrder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -186,6 +188,7 @@ public class Convertor {
         cancelOrder.setTradeNo(FormaterUtil.tradeNoFormat(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId(), oriOrder.getOutTradeNo()));
 
         cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
+        cancelOrder.setCancelStatus(AlipayTradeStatusEnum.WAIT_FOR_CANCEL.getCode());
 
         //TODO:时间从配置中读取
         cancelOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
@@ -194,6 +197,52 @@ public class Convertor {
         cancelOrder.setGmtUpdate(new Date());
 
         return cancelOrder;
+
+    }
+
+    /**
+     * 将refundRequest转换成domian对象<br>
+     * 只转化公共参数，有些参数，如状态、支付宝返回字段此处不转化
+     * @param oriOrder
+     * @param refundRequest
+     * @return
+     */
+    public static BizAlipayRefundOrder convert2RefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest) {
+
+        BizAlipayRefundOrder refundOrder = new BizAlipayRefundOrder();
+        refundOrder.setId(UUIDUtil.geneId());
+        refundOrder.setAcquirerId(refundRequest.getAcquirerId());
+        refundOrder.setMerchantId(refundRequest.getMerchantId());
+        refundOrder.setAlipayTradeNo(refundRequest.getAlipayTradeNo());
+
+        //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
+        refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+
+        refundOrder.setTotalAmount(oriOrder.getTotalAmount());
+
+        //由于refundAmount不可能为空，故此处不再校验
+        refundOrder.setRefundAmount(new Money(refundRequest.getRefundAmount()));
+
+        refundOrder.setRefundReason(refundRequest.getRefundReason());
+        refundOrder.setOutRequestNo(refundRequest.getOutRequestNo());
+        refundOrder.setRefundStatus(AlipayTradeStatusEnum.WAIT_FOR_REFUND.getCode());
+
+        //封装merchantDetail参数
+        Map<String, Object> merchantDetailMap = new HashMap<String, Object>();
+        merchantDetailMap.put(JSONFieldConstant.STORE_ID, refundRequest.getStoreId());
+        merchantDetailMap.put(JSONFieldConstant.TERMINAL_ID, refundRequest.getTerminalId());
+        refundOrder.setMerchantDetail(JSON.toJSONString(merchantDetailMap));
+
+        refundOrder.setCheckStatus(OrderCheckEnum.UNCHECK.getCode());
+
+        //TODO:时间从配置中读取
+        refundOrder.setCreateDate(DateUtil.format(new Date(), DateUtil.shortFormat));
+
+        refundOrder.setGmtCreate(new Date());
+        refundOrder.setGmtUpdate(new Date());
+
+        return refundOrder;
 
     }
 

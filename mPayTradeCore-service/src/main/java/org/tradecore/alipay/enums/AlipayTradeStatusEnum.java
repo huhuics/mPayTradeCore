@@ -51,11 +51,17 @@ public enum AlipayTradeStatusEnum {
     /** 撤销失败 */
     CANCEL_FAILED("CANCEL_FAILED", "撤销失败"),
 
+    /** 撤销中 */
+    WAIT_FOR_CANCEL("WAIT_FOR_CANCEL", "撤销失败"),
+
     /** 退款成功 */
     REFUND_SUCCESS("REFUND_SUCCESS", "退款成功"),
 
     /** 退款失败 */
     REFUND_FAILED("REFUND_FAILED", "退款失败"),
+
+    /** 退款中 */
+    WAIT_FOR_REFUND("WAIT_FOR_REFUND", "退款中"),
 
     ;
 

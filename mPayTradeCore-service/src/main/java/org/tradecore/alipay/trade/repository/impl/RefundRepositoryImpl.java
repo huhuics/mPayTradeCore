@@ -57,14 +57,9 @@ public class RefundRepositoryImpl implements RefundRepository {
     private BizAlipayRefundOrderDAO bizAlipayRefundOrderDAO;
 
     @Override
-    public BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse response) {
+    public void updateRefundOrder(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder, AlipayTradeRefundResponse response) {
 
         LogUtil.info(logger, "收到退款订单持久化请求");
-
-        //将公共参数封装成Domain对象
-        BizAlipayRefundOrder refundOrder = convert2RefundOrder(refundRequest, oriOrder);
-
-        LogUtil.info(logger, "退款请求对象refundRequest转换成refundOrder对象成功,refundOrder={0}", refundOrder);
 
         if (response != null && StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             LogUtil.info(logger, "支付宝退款业务成功");
@@ -83,8 +78,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             oriOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
-            if (isTotalRefund(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), oriOrder.getTotalAmount(),
-                refundOrder.getRefundAmount())) {
+            if (isTotalRefund(refundOrder.getMerchantId(), refundOrder.getOutTradeNo(), refundOrder.getAlipayTradeNo(), oriOrder.getTotalAmount(), refundOrder.getRefundAmount())) {
                 oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             }
 
@@ -99,7 +93,7 @@ public class RefundRepositoryImpl implements RefundRepository {
             }
 
             //当前订单已经成功退款的金额
-            Money refundedMoney = getRefundedMoney(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
+            Money refundedMoney = getRefundedMoney(refundOrder.getMerchantId(), refundOrder.getOutTradeNo(), refundOrder.getAlipayTradeNo());
 
             //原始订单退款状态修改逻辑：1.如果是全额退款，原订单退款状态和支付宝返回一致；2.如果是部分退款，只记录退款成功，退款失败不更改原订单退款记录
             if (refundedMoney.equals(new Money(0))) {//1.没有历史退款
@@ -119,14 +113,13 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setGmtUpdate(new Date());
 
         try {
-            bizAlipayRefundOrderDAO.insert(refundOrder);
+            bizAlipayRefundOrderDAO.updateByPrimaryKey(refundOrder);
         } catch (Exception e) {
             throw new RuntimeException("退款记录持久化失败", e);
         }
 
         LogUtil.info(logger, "退款订单持久化成功");
 
-        return refundOrder;
     }
 
     @Override
@@ -209,8 +202,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
-                                   AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
+    public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository, AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
 
         LogUtil.info(logger, "收到退款状态更新请求");
 

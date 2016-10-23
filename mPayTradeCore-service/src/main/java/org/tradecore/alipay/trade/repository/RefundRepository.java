@@ -7,7 +7,6 @@ package org.tradecore.alipay.trade.repository;
 import java.util.List;
 
 import org.tradecore.alipay.trade.request.RefundQueryRequest;
-import org.tradecore.alipay.trade.request.RefundRequest;
 import org.tradecore.common.util.Money;
 import org.tradecore.dao.domain.BizAlipayPayOrder;
 import org.tradecore.dao.domain.BizAlipayRefundOrder;
@@ -23,14 +22,13 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 public interface RefundRepository {
 
     /**
-     * 将退款请求转化为Domian对象，并持久化<br>
-     * 收单机构退款请求第一次到结算中心，结算中心持久化退款数据
-     * @param oriOrder                 原订单
-     * @param refundRequest            退款请求
-     * @param refundResponse    支付宝响应
+     * 根据退款结果对退款记录进行更新
+     * @param oriOrder             原订单  
+     * @param refundOrder          退款订单记录
+     * @param refundResponse       支付宝退款结果
      * @return
      */
-    BizAlipayRefundOrder saveRefundOrder(BizAlipayPayOrder oriOrder, RefundRequest refundRequest, AlipayTradeRefundResponse refundResponse);
+    void updateRefundOrder(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder, AlipayTradeRefundResponse refundResponse);
 
     /**
      * 保存退款记录
@@ -62,8 +60,7 @@ public interface RefundRepository {
      * @param payRepository
      * @param refundQueryResponse
      */
-    void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
-                            AlipayTradeFastpayRefundQueryResponse refundQueryResponse);
+    void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository, AlipayTradeFastpayRefundQueryResponse refundQueryResponse);
 
     /**
      * 修改退款订单
