@@ -59,7 +59,7 @@ public class RefundRepositoryImpl implements RefundRepository {
     @Override
     public void updateRefundOrder(BizAlipayPayOrder oriOrder, BizAlipayRefundOrder refundOrder, AlipayTradeRefundResponse response) {
 
-        LogUtil.info(logger, "收到退款订单持久化请求");
+        LogUtil.info(logger, "收到退款订单更新请求");
 
         if (response != null && StringUtils.equals(response.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
             LogUtil.info(logger, "支付宝退款业务成功");
@@ -115,10 +115,10 @@ public class RefundRepositoryImpl implements RefundRepository {
         try {
             bizAlipayRefundOrderDAO.updateByPrimaryKey(refundOrder);
         } catch (Exception e) {
-            throw new RuntimeException("退款记录持久化失败", e);
+            throw new RuntimeException("退款记录更新失败", e);
         }
 
-        LogUtil.info(logger, "退款订单持久化成功");
+        LogUtil.info(logger, "退款订单更新成功");
 
     }
 
