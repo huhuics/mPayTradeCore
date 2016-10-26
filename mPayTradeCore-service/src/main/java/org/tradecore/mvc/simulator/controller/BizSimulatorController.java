@@ -634,14 +634,14 @@ public class BizSimulatorController {
 
     @RequestMapping(value = "/funMngQuery", method = RequestMethod.POST)
     public String funMngQuery(HttpServletRequest request, ModelMap map) {
-        
+
         LogUtil.info(logger, "模拟器收到资金管理平台查询HTTP请求");
         //获取请求带过来的参数
         String interfacetype = request.getParameter("interfacetype");//接口类型
         String querytype = request.getParameter("querytype");//查询类型
 
         Map<String, Object> responseStrMap = fundMngService.query(request);
-        
+
         String responseStr = (String) responseStrMap.get("responseXml");
 
         if (StringUtils.isNotBlank(responseStr)) {
@@ -807,7 +807,7 @@ public class BizSimulatorController {
         createRequest.setBuyerLogonId(request.getParameter("buyer_logon_id"));
         createRequest.setScene(request.getParameter("scene"));
         createRequest.setOutTradeNo(request.getParameter("out_trade_no"));
-        createRequest.setTradeNo(FormaterUtil.tradeNoFormat(createRequest.getAcquirerId(), createRequest.getMerchantId(), createRequest.getOutTradeNo()));
+        createRequest.setTradeNo(FormaterUtil.tradeNoFormat(createRequest.getAcquirerId(), createRequest.getOutTradeNo()));
         createRequest.setSellerId(request.getParameter("seller_id"));
         createRequest.setTotalAmount(request.getParameter("total_amount"));
         createRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
@@ -844,7 +844,7 @@ public class BizSimulatorController {
         precreateRequest.setSubMerchantId(precreateRequest.getMerchantId());
         precreateRequest.setScene(request.getParameter("scene"));
         precreateRequest.setOutTradeNo(request.getParameter("out_trade_no"));
-        precreateRequest.setTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(), precreateRequest.getMerchantId(), precreateRequest.getOutTradeNo()));
+        precreateRequest.setTradeNo(FormaterUtil.tradeNoFormat(precreateRequest.getAcquirerId(), precreateRequest.getOutTradeNo()));
         precreateRequest.setSellerId(request.getParameter("seller_id"));
         precreateRequest.setTotalAmount(request.getParameter("total_amount"));
         precreateRequest.setDiscountableAmount(request.getParameter("discountable_amount"));
@@ -885,7 +885,7 @@ public class BizSimulatorController {
         payRequest.setSubMerchantId(payRequest.getMerchantId());
         payRequest.setScene(request.getParameter("scene"));
         payRequest.setOutTradeNo(request.getParameter("out_trade_no"));
-        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo()));
+        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getOutTradeNo()));
         payRequest.setSellerId(request.getParameter("seller_id"));
         payRequest.setTotalAmount(request.getParameter("total_amount"));
         payRequest.setDiscountableAmount(request.getParameter("discountable_amount"));

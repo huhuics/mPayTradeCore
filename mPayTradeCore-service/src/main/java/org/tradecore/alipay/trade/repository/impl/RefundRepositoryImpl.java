@@ -78,7 +78,8 @@ public class RefundRepositoryImpl implements RefundRepository {
             oriOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
 
             //如果是全额退款，修改交易订单状态为TRADE_CLOSED
-            if (isTotalRefund(refundOrder.getMerchantId(), refundOrder.getOutTradeNo(), refundOrder.getAlipayTradeNo(), oriOrder.getTotalAmount(), refundOrder.getRefundAmount())) {
+            if (isTotalRefund(refundOrder.getMerchantId(), refundOrder.getOutTradeNo(), refundOrder.getAlipayTradeNo(), oriOrder.getTotalAmount(),
+                refundOrder.getRefundAmount())) {
                 oriOrder.setOrderStatus(AlipayTradeStatusEnum.TRADE_CLOSED.getCode());
             }
 
@@ -202,7 +203,8 @@ public class RefundRepositoryImpl implements RefundRepository {
     }
 
     @Override
-    public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository, AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
+    public void updateRefundStatus(BizAlipayPayOrder payOrder, List<BizAlipayRefundOrder> refundOrders, PayRepository payRepository,
+                                   AlipayTradeFastpayRefundQueryResponse refundQueryResponse) {
 
         LogUtil.info(logger, "收到退款状态更新请求");
 
@@ -335,7 +337,7 @@ public class RefundRepositoryImpl implements RefundRepository {
         refundOrder.setOutTradeNo(payOrder.getOutTradeNo());
         refundOrder.setRefundStatus(AlipayTradeStatusEnum.REFUND_SUCCESS.getCode());
         refundOrder.setTotalAmount(payOrder.getTotalAmount());
-        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(payOrder.getAcquirerId(), payOrder.getMerchantId(), payOrder.getOutTradeNo()));
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(payOrder.getAcquirerId(), payOrder.getOutTradeNo()));
         refundOrder.setRefundAmount(new Money(refundQueryResponse.getRefundAmount()));
         refundOrder.setRefundReason(refundQueryResponse.getRefundReason());
         refundOrder.setOutRequestNo(refundQueryResponse.getOutRequestNo());
@@ -366,7 +368,7 @@ public class RefundRepositoryImpl implements RefundRepository {
 
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
         refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
-        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), oriOrder.getOutTradeNo()));
 
         refundOrder.setTotalAmount(oriOrder.getTotalAmount());
 

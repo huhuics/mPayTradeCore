@@ -41,6 +41,7 @@ public class DefaultPayRequest extends BaseRequest {
      *  (必填)商户网站订单系统中唯一订单号，64个字符以内，只能包含字母、数字、下划线，需保证商户系统端不能重复，建议通过数据库sequence生成<br>
      *   在结算中心角度，商户订单号为outTradeNo
      */
+    @JSONField(name = "merchant_order_no")
     protected String            outTradeNo;
 
     /**

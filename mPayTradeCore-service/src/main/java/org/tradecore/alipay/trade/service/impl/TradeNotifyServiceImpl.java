@@ -105,7 +105,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         LogUtil.info(logger, "完成发送扫码支付响应到收单机构,response={0}", response);
 
-        return StringUtils.equals(response, ParamConstant.NOTIFY_SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
+        return StringUtils.equalsIgnoreCase(response, ParamConstant.NOTIFY_SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /**

@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
 import org.tradecore.alipay.enums.AlipayTradeStatusEnum;
 import org.tradecore.alipay.enums.CancelActionEnum;
@@ -93,7 +92,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     private AcquirerService     acquirerService;
 
     @Override
-    @Transactional
     public AlipayTradePayResponse pay(PayRequest payRequest) {
 
         LogUtil.info(logger, "收到条码支付请求参数,payRequest={0}", payRequest);
@@ -159,7 +157,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradeCreateResponse create(CreateRequest createRequest) {
 
         LogUtil.info(logger, "收到订单创建请求,createRequest={0}", createRequest);
@@ -218,7 +215,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradePrecreateResponse precreate(PrecreateRequest precreateRequest) {
 
         LogUtil.info(logger, "收到扫码支付请求参数,precreateRequest={0}", precreateRequest);
@@ -277,7 +273,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradeQueryResponse query(QueryRequest queryRequest) {
 
         LogUtil.info(logger, "收到订单查询请求,queryRequest={0}", queryRequest);
@@ -290,7 +285,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(queryRequest.getAcquirerId());
 
         //2.查询本地订单
-        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(), queryRequest.getAlipayTradeNo());
+        BizAlipayPayOrder nativePayOrder = payRepository.selectPayOrder(queryRequest.getMerchantId(), queryRequest.getOutTradeNo(),
+            queryRequest.getAlipayTradeNo());
         AssertUtil.assertNotNull(nativePayOrder, "原订单查询为空");
 
         //3.转换成支付宝查询请求参数
@@ -330,7 +326,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradeFastpayRefundQueryResponse refundQuery(RefundQueryRequest refundQueryRequest) {
 
         LogUtil.info(logger, "收到退款订单查询请求,refundQueryRequest={0}", refundQueryRequest);
@@ -343,7 +338,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundQueryRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(), refundQueryRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundQueryRequest.getMerchantId(), refundQueryRequest.getOutTradeNo(),
+            refundQueryRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
@@ -355,7 +351,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         try {
             refundQueryResponse = (AlipayTradeFastpayRefundQueryResponse) getResponse(alipayRefundQueryRequest, acquirer.getAppId());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(), refundQueryRequest.getAlipayTradeNo());
+            LogUtil.error(e, logger, "退款订单查询调用支付宝异常,outTradeNo={0},alipayTradeNo={1}", refundQueryRequest.getOutTradeNo(),
+                refundQueryRequest.getAlipayTradeNo());
         }
 
         LogUtil.info(logger, "支付宝返回退款查询业务结果,refundQueryResponse={0}", JSON.toJSONString(refundQueryResponse, SerializerFeature.UseSingleQuotes));
@@ -380,7 +377,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradeRefundResponse refund(RefundRequest refundRequest) {
 
         LogUtil.info(logger, "收到订单退款请求,refundRequest={0}", refundRequest);
@@ -393,7 +389,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(refundRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(refundRequest.getMerchantId(), refundRequest.getOutTradeNo(),
+            refundRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空，退款失败");
 
@@ -417,7 +414,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         try {
             refundResponse = (AlipayTradeRefundResponse) getResponse(alipayRefundRequest, acquirer.getAppId());
         } catch (Exception e) {
-            LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(), refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
+            LogUtil.error(e, logger, "订单退款调用支付宝异常,outTradeNo={0},alipayTradeNo={1},outRequestNo={2}", refundRequest.getOutTradeNo(),
+                refundRequest.getAlipayTradeNo(), refundRequest.getOutRequestNo());
         }
 
         LogUtil.info(logger, "支付宝返回退款业务结果,refundResponse={0}", JSON.toJSONString(refundResponse, SerializerFeature.UseSingleQuotes));
@@ -439,7 +437,6 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
     }
 
     @Override
-    @Transactional
     public AlipayTradeCancelResponse cancel(CancelRequest cancelRequest) {
 
         LogUtil.info(logger, "收到订单撤销请求,cancelRequest={0}", cancelRequest);
@@ -452,15 +449,16 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
         BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(cancelRequest.getAcquirerId());
 
         //2.查询原始订单
-        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
+        BizAlipayPayOrder oriOrder = payRepository.selectPayOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+            cancelRequest.getAlipayTradeNo());
 
         AssertUtil.assertNotNull(oriOrder, "原始订单查询为空");
 
         //3.判断是否在撤销时效内
         AssertUtil.assertTrue(checkCancelTime(oriOrder.getGmtCreate()), "已超过可撤销时间，订单无法进行撤销");
 
-        List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo(),
-            AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
+        List<BizAlipayCancelOrder> cancelOrders = cancelRepository.selectCancelOrder(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+            cancelRequest.getAlipayTradeNo(), AlipayTradeStatusEnum.CANCEL_SUCCESS.getCode());
 
         //4.构造撤销订单
         BizAlipayCancelOrder cancelOrder = Convertor.convert2CancelOrder(oriOrder, cancelRequest);
@@ -494,7 +492,8 @@ public class TradeServiceImpl extends AbstractAlipayTradeService implements Trad
 
             if (StringUtils.equals(CancelActionEnum.REFUND.getCode(), cancelResponse.getAction())) {
                 //判断是否存在全额退款记录(通过退款金额判断)
-                Money refundedMoney = refundRepository.getRefundedMoney(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(), cancelRequest.getAlipayTradeNo());
+                Money refundedMoney = refundRepository.getRefundedMoney(cancelRequest.getMerchantId(), cancelRequest.getOutTradeNo(),
+                    cancelRequest.getAlipayTradeNo());
                 if (!refundedMoney.equals(oriOrder.getTotalAmount())) {
                     LogUtil.info(logger, "撤销引起资金变动,本地持久化一条完全退款记录,tradeNo={0}", oriOrder.getTradeNo());
                     //没有退款,则插入一笔完全退款记录

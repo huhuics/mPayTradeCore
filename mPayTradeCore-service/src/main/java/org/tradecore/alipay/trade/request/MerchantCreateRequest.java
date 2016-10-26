@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.request;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tradecore.common.util.AssertUtil;
 
 /**
@@ -110,6 +111,8 @@ public class MerchantCreateRequest extends BaseRequest {
         AssertUtil.assertNotEmpty(name, "商户名称不能为空");
 
         AssertUtil.assertNotEmpty(alias_name, "商户简称不能为空");
+
+        AssertUtil.assertTrue(StringUtils.length(alias_name) <= 64, "商户简称超长");
 
         AssertUtil.assertNotEmpty(service_phone, "客服电话不能为空");
 

@@ -49,7 +49,7 @@ public class Convertor {
         payOrder.setAcquirerId(request.getAcquirerId());
         payOrder.setMerchantId(request.getMerchantId());
         payOrder.setOutTradeNo(request.getOutTradeNo());
-        payOrder.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
+        payOrder.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getOutTradeNo()));
 
         payOrder.setScene(request.getScene());
 
@@ -185,7 +185,7 @@ public class Convertor {
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证撤销表中outTradeNo值一定不为空
         cancelOrder.setOutTradeNo(oriOrder.getOutTradeNo());
 
-        cancelOrder.setTradeNo(FormaterUtil.tradeNoFormat(cancelRequest.getAcquirerId(), cancelRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+        cancelOrder.setTradeNo(FormaterUtil.tradeNoFormat(cancelRequest.getAcquirerId(), oriOrder.getOutTradeNo()));
 
         cancelOrder.setTotalAmount(oriOrder.getTotalAmount());
         cancelOrder.setCancelStatus(AlipayTradeStatusEnum.WAIT_FOR_CANCEL.getCode());
@@ -217,7 +217,7 @@ public class Convertor {
 
         //为防止商户不传outTradeNo值，此处用原始订单的outTradeNo，保证退款表中outTradeNo值一定不为空
         refundOrder.setOutTradeNo(oriOrder.getOutTradeNo());
-        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), refundRequest.getMerchantId(), oriOrder.getOutTradeNo()));
+        refundOrder.setTradeNo(FormaterUtil.tradeNoFormat(refundRequest.getAcquirerId(), oriOrder.getOutTradeNo()));
 
         refundOrder.setTotalAmount(oriOrder.getTotalAmount());
 

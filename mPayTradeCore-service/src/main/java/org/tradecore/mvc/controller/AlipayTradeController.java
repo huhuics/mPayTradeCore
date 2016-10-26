@@ -505,7 +505,7 @@ public class AlipayTradeController extends AbstractBizController {
         request.setMerchantId(bizParaMap.get("merchant_id"));
         request.setSubMerchantId(request.getMerchantId());
         request.setOutTradeNo(bizParaMap.get("out_trade_no"));
-        request.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getMerchantId(), request.getOutTradeNo()));
+        request.setTradeNo(FormaterUtil.tradeNoFormat(request.getAcquirerId(), request.getOutTradeNo()));
         request.setSellerId(bizParaMap.get("seller_id"));
         request.setTotalAmount(bizParaMap.get("total_amount"));
         request.setDiscountableAmount(bizParaMap.get("discountable_amount"));

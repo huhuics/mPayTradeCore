@@ -62,13 +62,13 @@ public class TradeServiceTest extends BaseTest {
         //组装参数
         PayRequest payRequest = new PayRequest();
         payRequest.setAcquirerId("10880010001");
-        payRequest.setMerchantId("27862");
+        payRequest.setMerchantId("16371057142");
         payRequest.setSubMerchantId(payRequest.getMerchantId());
         payRequest.setScene(AlipaySceneEnum.BAR_CODE.getCode());
         //支付条码
         payRequest.setAuthCode("286246899167157888");
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
-        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getMerchantId(), payRequest.getOutTradeNo()));
+        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getOutTradeNo()));
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("结算中心条码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
@@ -103,10 +103,11 @@ public class TradeServiceTest extends BaseTest {
 
         //组装参数
         PrecreateRequest payRequest = new PrecreateRequest();
-        payRequest.setAcquirerId("acquire_id_" + geneRandomId());
-        payRequest.setMerchantId("27");
+        payRequest.setAcquirerId("10880010001");
+        payRequest.setMerchantId("16371057142");
         payRequest.setScene(AlipaySceneEnum.SCAN_CODE.getCode());
         payRequest.setOutTradeNo("tradepay" + geneRandomId());
+        payRequest.setTradeNo(FormaterUtil.tradeNoFormat(payRequest.getAcquirerId(), payRequest.getOutTradeNo()));
         payRequest.setTotalAmount("0.01");
         payRequest.setSubject("结算中心扫码交易测试" + geneRandomId());
         payRequest.setStoreId("store_id_" + geneRandomId());
