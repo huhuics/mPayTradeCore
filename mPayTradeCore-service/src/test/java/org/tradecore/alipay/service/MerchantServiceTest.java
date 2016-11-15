@@ -102,6 +102,11 @@ public class MerchantServiceTest extends BaseTest {
     }
 
     @Test
+    public void testUpdate() {
+
+    }
+
+    @Test
     public void testModify() throws Exception {
 
         Assert.assertNotNull(merchantService);
