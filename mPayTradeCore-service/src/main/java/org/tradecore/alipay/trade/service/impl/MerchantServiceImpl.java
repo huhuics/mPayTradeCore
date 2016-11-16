@@ -80,8 +80,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
-            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(),
-                AlipayBizResultEnum.SUCCESS.getDesc(), null, null);
+            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(), AlipayBizResultEnum.SUCCESS.getDesc(), null, null);
         }
 
         //3.将请求转化为支付宝商户入驻请求
@@ -104,8 +103,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg(),
-            alipayResponse.getSubCode(), alipayResponse.getSubMsg());
+        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg(), alipayResponse.getSubCode(),
+            alipayResponse.getSubMsg());
     }
 
     @Override
@@ -120,8 +119,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         AssertUtil.assertNotNull(acquirerService.selectNormalAcquirerById(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(),
-            merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getOut_external_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(), merchantQueryRequest.getMerchant_id(),
+            merchantQueryRequest.getOut_external_id());
 
         LogUtil.info(logger, "本地查询商户信息结果merchantInfo={0}", merchantInfo);
 
@@ -143,8 +142,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         AssertUtil.assertNotNull(acquirer, "收单机构不存在或状态非法");
 
         //3.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(),
-            merchantModifyRequest.getMerchant_id(), merchantModifyRequest.getOut_external_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(), merchantModifyRequest.getMerchant_id(),
+            merchantModifyRequest.getOut_external_id());
 
         AssertUtil.assertNotNull(merchantInfo, "商户信息查询为空,商户修改失败");
 
@@ -209,9 +208,7 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         if (StringUtils.isNotBlank(merchantModifyRequest.getContact_email())) {
             merchantInfo.setContactEmail(merchantModifyRequest.getContact_email());
         }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getCategory_id())) {
-            merchantInfo.setCategoryId(merchantModifyRequest.getCategory_id());
-        }
+
         if (StringUtils.isNotBlank(merchantModifyRequest.getMemo())) {
             merchantInfo.setMemo(merchantModifyRequest.getMemo());
         }

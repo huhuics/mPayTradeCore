@@ -38,7 +38,7 @@ public interface MerchantService {
      * @param merchantModifyRequest
      * @return
      */
-    @Deprecated
+
     MerchantModifyResponse modify(MerchantModifyRequest merchantModifyRequest);
 
 }

@@ -72,11 +72,6 @@ public class MerchantModifyRequest extends BaseRequest {
     private String            contact_email;
 
     /**
-     *  (必填)经营类目id
-     */
-    private String            category_id;
-
-    /**
      *  商户来源标识
      */
     private String            source;
@@ -104,8 +99,6 @@ public class MerchantModifyRequest extends BaseRequest {
         AssertUtil.assertNotEmpty(alias_name, "商户简称不能为空");
 
         AssertUtil.assertNotEmpty(service_phone, "客服电话不能为空");
-
-        AssertUtil.assertNotEmpty(category_id, "经营类目编号不能为空");
 
     }
 
@@ -195,14 +188,6 @@ public class MerchantModifyRequest extends BaseRequest {
 
     public void setContact_email(String contact_email) {
         this.contact_email = contact_email;
-    }
-
-    public String getCategory_id() {
-        return category_id;
-    }
-
-    public void setCategory_id(String category_id) {
-        this.category_id = category_id;
     }
 
     public String getSource() {

@@ -210,9 +210,6 @@
       <if test="contactEmail != null">
         CONTACT_EMAIL = #{contactEmail,jdbcType=VARCHAR},
       </if>
-      <if test="categoryId != null">
-        CATEGORY_ID = #{categoryId,jdbcType=VARCHAR},
-      </if>
       <if test="source != null">
         SOURCE = #{source,jdbcType=VARCHAR},
       </if>

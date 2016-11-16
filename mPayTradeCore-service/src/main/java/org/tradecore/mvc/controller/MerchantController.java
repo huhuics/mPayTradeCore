@@ -135,41 +135,36 @@ public class MerchantController extends AbstractBizController {
     /**
      * 商户修改
      */
-    @Deprecated
+    @ResponseBody
+    @RequestMapping(value = "/modify", method = RequestMethod.POST)
     public String modify(WebRequest request, ModelMap map) {
-
         LogUtil.info(logger, "收到商户信息修改HTTP请求");
-
         MerchantModifyResponse modifyResponse = new MerchantModifyResponse();
-
-        MerchantModifyRequest modifyRequest = null;
-
+        MerchantModifyRequest merchantModifyRequest = null;
         try {
-
-            //参数组装
+            //组装参数
             Map<String, String> paraMap = getParameters(request);
-
-            LogUtil.info(logger, "商户修改原始报文参数paraMap={0}", paraMap);
-
+            LogUtil.info(logger, "商户信息修改原始报文参数paraMap={0}", paraMap);
+            //验签
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+            //参数转换
+            merchantModifyRequest = buildModifyRequest(paraMap);
+            //修改
+            modifyResponse = merchantService.modify(merchantModifyRequest);
 
-            modifyRequest = buildModifyRequest(paraMap);
-
-            modifyResponse = merchantService.modify(modifyRequest);
-
+            //抛异常
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户信息修改HTTP调用异常,Message={0}", e.getMessage());
             modifyResponse.setBizFailed(e.getMessage());
         }
-
+        //签名
         String sign = SecureUtil.sign(modifyResponse.buildSortedParaMap());
 
-        String mechModifyResponseStr = ResponseUtil.buildResponse(ParamConstant.MERCHANT_MODIFY_RESPONSE, modifyResponse, sign);
+        String mechModifyResponse = ResponseUtil.buildResponse(ParamConstant.MERCHANT_MODIFY_RESPONSE, modifyResponse, sign);
 
-        LogUtil.info(logger, "返回商户信息修改响应,mechModifyResponseStr={0}", mechModifyResponseStr);
+        LogUtil.info(logger, "返回商户修改响应,mechModifyResponse={0}", mechModifyResponse);
 
-        return mechModifyResponseStr;
-
+        return mechModifyResponse;
     }
 
     private MerchantModifyRequest buildModifyRequest(Map<String, String> paraMap) {
