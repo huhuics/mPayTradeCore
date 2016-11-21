@@ -138,21 +138,28 @@ public class MerchantController extends AbstractBizController {
     @ResponseBody
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
     public String modify(WebRequest request, ModelMap map) {
+
         LogUtil.info(logger, "收到商户信息修改HTTP请求");
+
         MerchantModifyResponse modifyResponse = new MerchantModifyResponse();
+
         MerchantModifyRequest merchantModifyRequest = null;
+
         try {
             //组装参数
             Map<String, String> paraMap = getParameters(request);
+
             LogUtil.info(logger, "商户信息修改原始报文参数paraMap={0}", paraMap);
+
             //验签
             AssertUtil.assertTrue(verify(paraMap), "验签不通过");
+
             //参数转换
             merchantModifyRequest = buildModifyRequest(paraMap);
+
             //修改
             modifyResponse = merchantService.modify(merchantModifyRequest);
 
-            //抛异常
         } catch (Exception e) {
             LogUtil.error(e, logger, "商户信息修改HTTP调用异常,Message={0}", e.getMessage());
             modifyResponse.setBizFailed(e.getMessage());
