@@ -6,12 +6,10 @@ package org.tradecore.alipay.service;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tradecore.alipay.enums.DefaultBizResultEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantModifyResponse;
 import org.tradecore.alipay.facade.response.MerchantQueryResponse;
@@ -101,11 +99,6 @@ public class MerchantServiceTest extends BaseTest {
 
     }
 
-    @Test
-    public void testUpdate() {
-
-    }
-
     /**
      * 测试商户修改
      * 
@@ -119,22 +112,15 @@ public class MerchantServiceTest extends BaseTest {
         //封装测试请求参数
         MerchantModifyRequest modifyreateRequest = new MerchantModifyRequest();
         modifyreateRequest.setOut_external_id("14707489");
-        modifyreateRequest.setAcquirer_id("10880010001");
-        modifyreateRequest.setMerchant_id("27774");
-        modifyreateRequest.setName("测试商户111");
+        modifyreateRequest.setAcquirer_id("10880010001");//
+        modifyreateRequest.setMerchant_id("27774");//
         modifyreateRequest.setAlias_name("测试别名123");
         modifyreateRequest.setService_phone("9518888");
         modifyreateRequest.setContact_name("小二2");
-        modifyreateRequest.setContact_phone("0795-110");
-        modifyreateRequest.setContact_mobile("15013789478");
-        modifyreateRequest.setContact_email("user@126.com");
-        //modifyreateRequest.setCategory_id("2015110500080520");
-        modifyreateRequest.setSource("2016070723781231");
-        modifyreateRequest.setMemo("备注信息");
+        modifyreateRequest.setSource("");
 
         MerchantModifyResponse modifyRet = merchantService.modify(modifyreateRequest);
 
-        Assert.assertTrue(StringUtils.equals(modifyRet.getModify_result(), DefaultBizResultEnum.SUCCESS.getCode()));
     }
 
     @Test

@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tradecore.alipay.enums.AlipayBizResultEnum;
-import org.tradecore.alipay.enums.DefaultBizResultEnum;
 import org.tradecore.alipay.enums.SubMerchantBizStatusEnum;
 import org.tradecore.alipay.facade.response.MerchantCreateResponse;
 import org.tradecore.alipay.facade.response.MerchantModifyResponse;
@@ -40,8 +39,10 @@ import org.tradecore.dao.domain.BizMerchantInfo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.api.request.AlipayBossProdSubmerchantCreateRequest;
+import com.alipay.api.request.AlipayBossProdSubmerchantModifyRequest;
 import com.alipay.api.request.AlipayBossProdSubmerchantQueryRequest;
 import com.alipay.api.response.AlipayBossProdSubmerchantCreateResponse;
+import com.alipay.api.response.AlipayBossProdSubmerchantModifyResponse;
 import com.alipay.api.response.AlipayBossProdSubmerchantQueryResponse;
 
 /**
@@ -80,7 +81,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
 
         //  2.1.幂等控制
         if (oriBizMerchantInfo != null) {
-            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(), AlipayBizResultEnum.SUCCESS.getDesc(), null, null);
+            return buildResponse(oriBizMerchantInfo.getAcquirerId(), oriBizMerchantInfo.getMerchantId(), AlipayBizResultEnum.SUCCESS.getCode(),
+                AlipayBizResultEnum.SUCCESS.getDesc(), null, null);
         }
 
         //3.将请求转化为支付宝商户入驻请求
@@ -103,8 +105,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         //6.持久化商户信息
         AssertUtil.assertTrue(insert(bizMerchantInfo), "商户信息持久化失败");
 
-        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg(), alipayResponse.getSubCode(),
-            alipayResponse.getSubMsg());
+        return buildResponse(merchantCreateRequest.getAcquirer_id(), alipayResponse.getSubMerchantId(), alipayResponse.getCode(), alipayResponse.getMsg(),
+            alipayResponse.getSubCode(), alipayResponse.getSubMsg());
     }
 
     @Override
@@ -119,8 +121,8 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         AssertUtil.assertNotNull(acquirerService.selectNormalAcquirerById(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(), merchantQueryRequest.getMerchant_id(),
-            merchantQueryRequest.getOut_external_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(),
+            merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getOut_external_id());
 
         LogUtil.info(logger, "本地查询商户信息结果merchantInfo={0}", merchantInfo);
 
@@ -142,45 +144,27 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         AssertUtil.assertNotNull(acquirer, "收单机构不存在或状态非法");
 
         //3.查询本地商户数据
-        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(), merchantModifyRequest.getMerchant_id(),
-            merchantModifyRequest.getOut_external_id());
+        BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantModifyRequest.getAcquirer_id(),
+            merchantModifyRequest.getMerchant_id(), merchantModifyRequest.getOut_external_id());
 
         AssertUtil.assertNotNull(merchantInfo, "商户信息查询为空,商户修改失败");
 
-        //4.将修改请求填充Domain对象
-        fillBizMerchantInfo(merchantModifyRequest, merchantInfo);
+        //4.将本地请求转化为支付宝请求
+        AlipayBossProdSubmerchantModifyRequest alipayModifyRequest = convert2AlipayModifyRequest(merchantModifyRequest);
 
-        return buildMerchantModifyResponse(merchantInfo);
-    }
-
-    /**
-     * 创建商户信息修改响应
-     * @param merchantInfo
-     * @return
-     */
-    private MerchantModifyResponse buildMerchantModifyResponse(BizMerchantInfo merchantInfo) {
-
-        MerchantModifyResponse response = new MerchantModifyResponse();
-
-        response.setAcquirer_id(merchantInfo.getAcquirerId());
-        response.setMerchant_id(merchantInfo.getMerchantId());
-        response.setExternal_id(merchantInfo.getOutExternalId());
-
+        //4.调用支付宝商户修改接口
+        AlipayBossProdSubmerchantModifyResponse alipayResponse = null;
         try {
-            if (bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo) > 0) {
-                response.setModify_result(DefaultBizResultEnum.SUCCESS.getCode());
-                response.setCode(AlipayBizResultEnum.SUCCESS.getCode());
-                response.setMsg(AlipayBizResultEnum.SUCCESS.getDesc());
-            } else {
-                response.setModify_result(DefaultBizResultEnum.FAILED.getCode());
-                response.setCode(AlipayBizResultEnum.FAILED.getCode());
-                response.setMsg(AlipayBizResultEnum.FAILED.getDesc());
-            }
+            alipayResponse = (AlipayBossProdSubmerchantModifyResponse) getResponse(alipayModifyRequest, acquirer.getAppId());
         } catch (Exception e) {
-            throw new RuntimeException("更新商户信息失败", e);
+            LogUtil.error(e, logger, "调用支付宝商户修改接口异常,alipayCreateRequest={0}", JSON.toJSONString(alipayModifyRequest, SerializerFeature.UseSingleQuotes));
+            throw new RuntimeException("调用支付宝商户修改接口异常", e);
         }
 
-        return response;
+        //4.将修改请求填充Domain对象并根据支付宝返回结果修改本地商户数据
+        fillBizMerchantInfo(merchantModifyRequest, merchantInfo, alipayResponse);
+
+        return buildMerchantModifyResponse(merchantInfo, alipayResponse);
     }
 
     /**
@@ -188,32 +172,34 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @param merchantModifyRequest
      * @param merchantInfo
      */
-    private void fillBizMerchantInfo(MerchantModifyRequest merchantModifyRequest, BizMerchantInfo merchantInfo) {
+    private void fillBizMerchantInfo(MerchantModifyRequest merchantModifyRequest, BizMerchantInfo merchantInfo,
+                                     AlipayBossProdSubmerchantModifyResponse alipayResponse) {
 
-        if (StringUtils.isNotBlank(merchantModifyRequest.getAlias_name())) {
-            merchantInfo.setAliasName(merchantModifyRequest.getAlias_name());
-        }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getService_phone())) {
-            merchantInfo.setServicePhone(merchantModifyRequest.getService_phone());
-        }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_name())) {
-            merchantInfo.setContactName(merchantModifyRequest.getContact_name());
-        }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_phone())) {
-            merchantInfo.setContactPhone(merchantModifyRequest.getContact_phone());
-        }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_mobile())) {
-            merchantInfo.setContactMobile(merchantModifyRequest.getContact_mobile());
-        }
-        if (StringUtils.isNotBlank(merchantModifyRequest.getContact_email())) {
-            merchantInfo.setContactEmail(merchantModifyRequest.getContact_email());
-        }
+        if (alipayResponse != null && StringUtils.equals(alipayResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
 
-        if (StringUtils.isNotBlank(merchantModifyRequest.getMemo())) {
-            merchantInfo.setMemo(merchantModifyRequest.getMemo());
-        }
+            if (StringUtils.isNotBlank(merchantModifyRequest.getAlias_name())) {
+                merchantInfo.setAliasName(merchantModifyRequest.getAlias_name());
+            }
+            if (StringUtils.isNotBlank(merchantModifyRequest.getService_phone())) {
+                merchantInfo.setServicePhone(merchantModifyRequest.getService_phone());
+            }
+            if (StringUtils.isNotBlank(merchantModifyRequest.getContact_name())) {
+                merchantInfo.setContactName(merchantModifyRequest.getContact_name());
+            }
+            if (StringUtils.isNotBlank(merchantModifyRequest.getSource())) {
+                merchantInfo.setSource(merchantModifyRequest.getSource());
+            }
 
-        merchantInfo.setGmtUpdate(new Date());
+            merchantInfo.setGmtUpdate(new Date());
+
+            try {
+                bizMerchantInfoDAO.updateByPrimaryKey(merchantInfo);
+            } catch (SQLException e) {
+                throw new RuntimeException("修改商户信息数据库返回失败", e);
+            }
+        } else {
+            LogUtil.info(logger, "商户修改支付宝没有响应成功,不修改本地商户信息.alipayResponse={0}", alipayResponse);
+        }
 
     }
 
@@ -324,6 +310,18 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
     }
 
     /**
+     * 请求转化为支付宝商户修改请求参数
+     */
+    private AlipayBossProdSubmerchantModifyRequest convert2AlipayModifyRequest(MerchantModifyRequest merchantModifyRequest) {
+        AlipayBossProdSubmerchantModifyRequest alipayModifyRequest = new AlipayBossProdSubmerchantModifyRequest();
+        alipayModifyRequest.setBizContent(JSON.toJSONString(merchantModifyRequest));
+
+        LogUtil.info(logger, "merchant modify.bizContent:{0}", alipayModifyRequest.getBizContent());
+
+        return alipayModifyRequest;
+    }
+
+    /**
      * 请求转换成支付宝商户入驻请求参数
      * @param merchantCreateRequest
      * @return
@@ -404,6 +402,25 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         createResponse.setSub_msg(subMsg);
 
         return createResponse;
+    }
+
+    /**
+     * 创建商户信息修改响应
+     * @param merchantInfo
+     * @return
+     */
+    private MerchantModifyResponse buildMerchantModifyResponse(BizMerchantInfo merchantInfo, AlipayBossProdSubmerchantModifyResponse alipayResponse) {
+
+        MerchantModifyResponse response = new MerchantModifyResponse();
+
+        response.setAcquirer_id(merchantInfo.getAcquirerId());
+        response.setMerchant_id(merchantInfo.getMerchantId());
+        response.setCode(alipayResponse.getCode());
+        response.setMsg(alipayResponse.getMsg());
+        response.setSub_code(alipayResponse.getSubCode());
+        response.setSub_msg(alipayResponse.getSubMsg());
+
+        return response;
     }
 
     private MerchantQueryResponse buildResponse(BizMerchantInfo merchantInfo) {

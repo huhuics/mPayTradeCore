@@ -4,6 +4,7 @@
  */
 package org.tradecore.alipay.trade.request;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tradecore.common.util.AssertUtil;
 
 /**
@@ -37,6 +38,11 @@ public class MerchantModifyRequest extends BaseRequest {
     private String            merchant_id;
 
     /**
+     *  (必填)商户识别号(传支付宝)
+     */
+    private String            sub_merchant_id;
+
+    /**
      *  (必填)商户名称
      */
     private String            name;
@@ -57,29 +63,9 @@ public class MerchantModifyRequest extends BaseRequest {
     private String            contact_name;
 
     /**
-     * 联系人电话
-     */
-    private String            contact_phone;
-
-    /**
-     *  联系人手机号
-     */
-    private String            contact_mobile;
-
-    /**
-     *  联系人邮箱
-     */
-    private String            contact_email;
-
-    /**
      *  商户来源标识
      */
     private String            source;
-
-    /**
-     *  商户备注
-     */
-    private String            memo;
 
     /**
      * 非空参数校验
@@ -88,17 +74,11 @@ public class MerchantModifyRequest extends BaseRequest {
     @Override
     public void validate() {
 
-        AssertUtil.assertNotEmpty(out_external_id, "商户外部编号不能为空");
+        AssertUtil.assertNotBlank(acquirer_id, "收单机构号不能为空");
 
-        AssertUtil.assertNotEmpty(acquirer_id, "收单机构号不能为空");
-
-        AssertUtil.assertNotEmpty(merchant_id, "商户标识号不能为空");
-
-        AssertUtil.assertNotEmpty(name, "商户名称不能为空");
-
-        AssertUtil.assertNotEmpty(alias_name, "商户简称不能为空");
-
-        AssertUtil.assertNotEmpty(service_phone, "客服电话不能为空");
+        if (StringUtils.isBlank(out_external_id) && StringUtils.isBlank(sub_merchant_id)) {
+            throw new RuntimeException("商户外部编号和商户识别号不能同时为空");
+        }
 
     }
 
@@ -166,30 +146,6 @@ public class MerchantModifyRequest extends BaseRequest {
         this.contact_name = contact_name;
     }
 
-    public String getContact_phone() {
-        return contact_phone;
-    }
-
-    public void setContact_phone(String contact_phone) {
-        this.contact_phone = contact_phone;
-    }
-
-    public String getContact_mobile() {
-        return contact_mobile;
-    }
-
-    public void setContact_mobile(String contact_mobile) {
-        this.contact_mobile = contact_mobile;
-    }
-
-    public String getContact_email() {
-        return contact_email;
-    }
-
-    public void setContact_email(String contact_email) {
-        this.contact_email = contact_email;
-    }
-
     public String getSource() {
         return source;
     }
@@ -198,12 +154,12 @@ public class MerchantModifyRequest extends BaseRequest {
         this.source = source;
     }
 
-    public String getMemo() {
-        return memo;
+    public String getSub_merchant_id() {
+        return sub_merchant_id;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo;
+    public void setSub_merchant_id(String sub_merchant_id) {
+        this.sub_merchant_id = sub_merchant_id;
     }
 
 }

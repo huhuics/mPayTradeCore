@@ -7,7 +7,6 @@ package org.tradecore.alipay.facade.response;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tradecore.alipay.enums.DefaultBizResultEnum;
 
 /**
  * 商户信息修改响应
@@ -23,13 +22,6 @@ public class MerchantModifyResponse extends BaseResponse {
 
     private String            merchant_id;
 
-    private String            external_id;
-
-    /** 
-     * 修改结果,{@link DefaultBizResultEnum}
-     */
-    private String            modify_result;
-
     /**
      * 将不为空的参数放入TreeMap，用于签名
      */
@@ -40,12 +32,6 @@ public class MerchantModifyResponse extends BaseResponse {
         }
         if (StringUtils.isNotBlank(merchant_id)) {
             paraMap.put("merchant_id", merchant_id);
-        }
-        if (StringUtils.isNotBlank(external_id)) {
-            paraMap.put("external_id", external_id);
-        }
-        if (StringUtils.isNotBlank(modify_result)) {
-            paraMap.put("modify_result", modify_result);
         }
 
         return paraMap;
@@ -65,22 +51,6 @@ public class MerchantModifyResponse extends BaseResponse {
 
     public void setMerchant_id(String merchant_id) {
         this.merchant_id = merchant_id;
-    }
-
-    public String getExternal_id() {
-        return external_id;
-    }
-
-    public void setExternal_id(String external_id) {
-        this.external_id = external_id;
-    }
-
-    public String getModify_result() {
-        return modify_result;
-    }
-
-    public void setModify_result(String modify_result) {
-        this.modify_result = modify_result;
     }
 
 }

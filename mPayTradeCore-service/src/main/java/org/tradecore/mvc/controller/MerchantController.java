@@ -189,6 +189,7 @@ public class MerchantController extends AbstractBizController {
         //对external_id和out_external_id进行转化
         modifyRequest.setOut_external_id(modifyRequest.getExternal_id());
         modifyRequest.setExternal_id(FormaterUtil.externalIdFormat(modifyRequest.getAcquirer_id(), modifyRequest.getOut_external_id()));
+        modifyRequest.setSub_merchant_id(modifyRequest.getMerchant_id());
 
         LogUtil.info(logger, "商户信息修改参数转换完成");
 
