@@ -43,11 +43,6 @@ public class MerchantModifyRequest extends BaseRequest {
     private String            sub_merchant_id;
 
     /**
-     *  (必填)商户名称
-     */
-    private String            name;
-
-    /**
      *  (必填)商户简称
      */
     private String            alias_name;
@@ -61,6 +56,26 @@ public class MerchantModifyRequest extends BaseRequest {
      * 联系人名称
      */
     private String            contact_name;
+
+    /**
+     * 商户所在省份编码
+     */
+    private String            province_code;
+
+    /**
+     * 商户所在城市编码
+     */
+    private String            city_code;
+
+    /**
+     * 商户所在区县编码
+     */
+    private String            district_code;
+
+    /**
+     * 商户详细经营地址
+     */
+    private String            address;
 
     /**
      *  商户来源标识
@@ -114,14 +129,6 @@ public class MerchantModifyRequest extends BaseRequest {
         this.merchant_id = merchant_id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getAlias_name() {
         return alias_name;
     }
@@ -160,6 +167,38 @@ public class MerchantModifyRequest extends BaseRequest {
 
     public void setSub_merchant_id(String sub_merchant_id) {
         this.sub_merchant_id = sub_merchant_id;
+    }
+
+    public String getProvince_code() {
+        return province_code;
+    }
+
+    public void setProvince_code(String province_code) {
+        this.province_code = province_code;
+    }
+
+    public String getCity_code() {
+        return city_code;
+    }
+
+    public void setCity_code(String city_code) {
+        this.city_code = city_code;
+    }
+
+    public String getDistrict_code() {
+        return district_code;
+    }
+
+    public void setDistrict_code(String district_code) {
+        this.district_code = district_code;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 }

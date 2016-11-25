@@ -118,13 +118,26 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
         validateRequest(merchantQueryRequest);
 
         //  1.1判断收单机构是否存在
-        AssertUtil.assertNotNull(acquirerService.selectNormalAcquirerById(merchantQueryRequest.getAcquirer_id()), "收单机构不存在或状态非法");
+        BizAcquirerInfo acquirer = acquirerService.selectNormalAcquirerById(merchantQueryRequest.getAcquirer_id());
+        AssertUtil.assertNotNull(acquirer, "收单机构不存在或状态非法");
 
         //2.查询本地商户数据
         BizMerchantInfo merchantInfo = selectMerchantInfoByMerchantIdOrOutExternalId(merchantQueryRequest.getAcquirer_id(),
             merchantQueryRequest.getMerchant_id(), merchantQueryRequest.getOut_external_id());
 
         LogUtil.info(logger, "本地查询商户信息结果merchantInfo={0}", merchantInfo);
+
+        /*  //3.将请求转化为支付宝查询请求
+          AlipayBossProdSubmerchantQueryRequest alipayQueryRequest = convert2AlipayQueryRequest(merchantQueryRequest);
+
+          //4.调用支付宝
+          AlipayBossProdSubmerchantQueryResponse alipayResponse = null;
+          try {
+              alipayResponse = (AlipayBossProdSubmerchantQueryResponse) getResponse(alipayQueryRequest, acquirer.getAppId());
+          } catch (Exception e) {
+              LogUtil.error(e, logger, "调用支付宝商户查询接口异常,alipayQueryRequest={0}", JSON.toJSONString(alipayQueryRequest, SerializerFeature.UseSingleQuotes));
+              throw new RuntimeException("调用支付宝商户查询接口异常", e);
+          }*/
 
         //返回
         return buildResponse(merchantInfo);
@@ -227,7 +240,6 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @param alipayResponse
      * @return
      */
-    @Deprecated
     private BizMerchantInfo convert2BizMerchantInfo(MerchantQueryRequest merchantQueryRequest, AlipayBossProdSubmerchantQueryResponse alipayResponse) {
         //如果业务失败，则返回null
         if (!StringUtils.equals(alipayResponse.getCode(), AlipayBizResultEnum.SUCCESS.getCode())) {
@@ -301,10 +313,11 @@ public class MerchantServiceImpl extends AbstractAlipayService implements Mercha
      * @param merchantQueryRequest
      * @return
      */
-    @Deprecated
     private AlipayBossProdSubmerchantQueryRequest convert2AlipayQueryRequest(MerchantQueryRequest merchantQueryRequest) {
         AlipayBossProdSubmerchantQueryRequest alipayQueryRequest = new AlipayBossProdSubmerchantQueryRequest();
         alipayQueryRequest.setBizContent(JSON.toJSONString(merchantQueryRequest));
+
+        LogUtil.info(logger, "merchant query.bizContent:{0}", alipayQueryRequest.getBizContent());
 
         return alipayQueryRequest;
     }

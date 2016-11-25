@@ -42,6 +42,36 @@ public class MerchantQueryResponse extends BaseResponse {
 
     private String            source;
 
+    /**
+     * 商户营业执照编号
+     */
+    private String            business_license;
+
+    /**
+     * 商户身份证编号
+     */
+    private String            id_card;
+
+    /**
+     * 商户所在省份编码
+     */
+    private String            province_code;
+
+    /**
+     * 商户所在城市编码
+     */
+    private String            city_code;
+
+    /**
+     * 商户所在区县编码
+     */
+    private String            district_code;
+
+    /**
+     * 商户详细经营地址
+     */
+    private String            address;
+
     private String            memo;
 
     public String getAcquirer_id() {
@@ -148,6 +178,54 @@ public class MerchantQueryResponse extends BaseResponse {
         this.memo = memo;
     }
 
+    public String getBusiness_license() {
+        return business_license;
+    }
+
+    public void setBusiness_license(String business_license) {
+        this.business_license = business_license;
+    }
+
+    public String getId_card() {
+        return id_card;
+    }
+
+    public void setId_card(String id_card) {
+        this.id_card = id_card;
+    }
+
+    public String getProvince_code() {
+        return province_code;
+    }
+
+    public void setProvince_code(String province_code) {
+        this.province_code = province_code;
+    }
+
+    public String getCity_code() {
+        return city_code;
+    }
+
+    public void setCity_code(String city_code) {
+        this.city_code = city_code;
+    }
+
+    public String getDistrict_code() {
+        return district_code;
+    }
+
+    public void setDistrict_code(String district_code) {
+        this.district_code = district_code;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     /**
      * 将不为空的参数放入TreeMap，用于签名
      */
@@ -192,6 +270,25 @@ public class MerchantQueryResponse extends BaseResponse {
         }
         if (StringUtils.isNotBlank(memo)) {
             paraMap.put("memo", memo);
+        }
+
+        if (StringUtils.isNotBlank(business_license)) {
+            paraMap.put("business_license", business_license);
+        }
+        if (StringUtils.isNotBlank(id_card)) {
+            paraMap.put("id_card", id_card);
+        }
+        if (StringUtils.isNotBlank(province_code)) {
+            paraMap.put("province_code", province_code);
+        }
+        if (StringUtils.isNotBlank(city_code)) {
+            paraMap.put("city_code", city_code);
+        }
+        if (StringUtils.isNotBlank(district_code)) {
+            paraMap.put("district_code", district_code);
+        }
+        if (StringUtils.isNotBlank(address)) {
+            paraMap.put("address", address);
         }
 
         return paraMap;

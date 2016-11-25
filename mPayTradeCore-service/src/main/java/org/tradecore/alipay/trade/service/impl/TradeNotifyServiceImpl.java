@@ -82,7 +82,7 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
 
         String outNotifyUrl = oriOrder.getOutNotifyUrl();
 
-        LogUtil.info(logger, "开始发送扫码支付响应到收单机构,outNotifyUrl={0}", outNotifyUrl);
+        LogUtil.info(logger, "开始发送扫码支付响应到收单机构acquirerId={0},outNotifyUrl={1}", oriOrder.getAcquirerId(), outNotifyUrl);
 
         AssertUtil.assertNotBlank(outNotifyUrl, "异步通知地址为空,发送消息失败");
 
@@ -103,9 +103,9 @@ public class TradeNotifyServiceImpl implements TradeNotifyService {
         //发送
         String response = HttpUtil.httpClientPost(outNotifyUrl, paraList);
 
-        LogUtil.info(logger, "完成发送扫码支付响应到收单机构,response={0}", response);
+        LogUtil.info(logger, "完成发送扫码支付响应到收单机构,acquirerId={0},response={1}", oriOrder.getAcquirerId(), response);
 
-        return StringUtils.equals(response, ParamConstant.NOTIFY_SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
+        return StringUtils.equalsIgnoreCase(response, ParamConstant.NOTIFY_SUCCESS) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     /**
