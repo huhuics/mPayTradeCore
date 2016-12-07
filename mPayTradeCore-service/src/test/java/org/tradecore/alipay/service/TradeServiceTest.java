@@ -27,6 +27,7 @@ import org.tradecore.alipay.trade.service.TradeService;
 import org.tradecore.common.util.FormaterUtil;
 import org.tradecore.common.util.ImageUtil;
 import org.tradecore.common.util.LogUtil;
+import org.tradecore.common.util.ResponseUtil;
 import org.tradecore.service.test.BaseTest;
 
 import com.alibaba.fastjson.JSON;
@@ -163,6 +164,10 @@ public class TradeServiceTest extends BaseTest {
         AlipayTradeQueryResponse ret = tradeService.query(queryRequest);
 
         LogUtil.info(logger, "订单查询结果ret={0}", JSON.toJSONString(ret, SerializerFeature.UseSingleQuotes));
+
+        String queryResponseStr = ResponseUtil.buildResponse(ret.getBody(), ParamConstant.ALIPAY_TRADE_QUERY_RESPONSE);
+
+        LogUtil.info(logger, "订单查询HTTP调用结果,queryResponse={0}", queryResponseStr);
 
         Assert.assertTrue(StringUtils.equals(ret.getCode(), AlipayBizResultEnum.SUCCESS.getCode()));
     }
